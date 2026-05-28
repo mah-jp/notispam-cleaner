@@ -22,6 +22,8 @@ This extension requests only the minimum permissions necessary to function as a 
   - Used to display system-level alerts when the Real-time Protection Guard automatically blocks a suspicious notification permission.
 - **`storage`**
   - Used to save the settings (e.g. guard status) and your custom whitelist of trusted domains locally inside Chrome.
+- **Host Permissions (`http://*/*`, `https://*/*` - Access to all websites)**
+  - Used to inject and run the content script to monitor notification permission changes in real-time. This is necessary to trigger the Protection Guard (automatic blocking) immediately when a user grants notifications on any website. This process runs strictly locally, and we never monitor your page content or transmit any browsing data.
 
 ## 3. Third-Party Services
 We do not integrate any third-party ads, analytics trackers, or telemetry tools. No data is ever shared with, sold to, or accessible by third parties.
