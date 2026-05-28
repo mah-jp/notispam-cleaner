@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: 通知垃圾廣告清理器"
+  },
+  "extDesc": {
+    "message": "掃描並清理可疑網站的通知權限。即時攔截通知垃圾郵件和詐騙廣告。"
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "通知垃圾廣告清理器"
+  },
+  "globalStatusLabel": {
+    "message": "預設通知權限:"
+  },
+  "statusBlocked": {
+    "message": "已攔截 (最高安全等級)"
+  },
+  "statusAsk": {
+    "message": "發送前詢問 (標準)"
+  },
+  "statusAllowed": {
+    "message": "允许所有 (極度危險!)"
+  },
+  "togglePromptLabel": {
+    "message": "允許網站請求發送通知"
+  },
+  "realtimeGuardLabel": {
+    "message": "即時保護"
+  },
+  "realtimeGuardDesc": {
+    "message": "一旦未經驗證的網站獲得通知權限，立即自動攔截。"
+  },
+  "silentGuardianLabel": {
+    "message": "無感守護 (家庭模式)"
+  },
+  "silentGuardianDesc": {
+    "message": "在背景自動靜默攔截未驗證網站的通知，不顯示任何彈窗警告。適合家中長輩的電腦。"
+  },
+  "backgroundBlockedLabel": {
+    "message": "背景已自動攔截: {count} 個網站"
+  },
+  "clearLogBtn": {
+    "message": "重置"
+  },
+  "scanBtn": {
+    "message": "掃描已允許通知的網站 (歷史/分頁)"
+  },
+  "scanningMessage": {
+    "message": "正在掃描瀏覽歷史、書籤和打開的分頁..."
+  },
+  "allowedSectionTitle": {
+    "message": "已允許通知的網站"
+  },
+  "suspiciousLabel": {
+    "message": "待確認 / 未驗證 ({count})"
+  },
+  "trustedLabel": {
+    "message": "受信任網站 ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "點擊“掃描”來檢查是否有未驗證的網站獲得了發送通知的權限。"
+  },
+  "safeStateMsg": {
+    "message": "未檢測到未驗證的通知權限。\n\n如果您之前看到過可疑的警告或廣告，它們可能是濫用瀏覽器通知設置的垃圾廣告。\n\n只要將源域名攔截，這些垃圾通知就會停止出現。"
+  },
+  "cleanAllBtn": {
+    "message": "一鍵攔截所有未驗證網站"
+  },
+  "clearAllRulesBtn": {
+    "message": "重置已攔截網站"
+  },
+  "confirmClearAllRules": {
+    "message": "這將清除由 NotiSpam Cleaner 創建的所有針對特定網站的通知攔截和設置，恢復為瀏覽器預設設置。確定要這樣做嗎？"
+  },
+  "blockBtnTooltip": {
+    "message": "攔截該網站"
+  },
+  "trustBtnTooltip": {
+    "message": "移至受信任列表"
+  },
+  "confirmResetAll": {
+    "message": "您確定要取消所有未驗證網站的通知權限嗎？"
+  },
+  "confirmResetActiveDomain": {
+    "message": "該網站目前正在瀏覽器中打開。在此狀態下重置其通知設置可能會導致自動攔截警告立即再次出現。請先關閉該網站的分頁，然後進行重置。是否繼續？"
+  },
+  "guardNotificationTitle": {
+    "message": "安全警告 — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "已自動攔截未驗證網站 \"$domain$\" 的通知權限。如果是誤判，請點擊下方信任該網站。",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "已攔截來自 \"$domain$\" 的通知。",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "信任該網站 (允許)"
+  },
+  "guardNotificationKeep": {
+    "message": "保持攔截狀態"
+  },
+  "currentSiteLabel": {
+    "message": "當前訪問網站:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "通知權限狀態:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "允許"
+  },
+  "currentSiteBlockBtn": {
+    "message": "攔截"
+  },
+  "currentSiteResetBtn": {
+    "message": "恢復預設"
+  },
+  "statusActiveBlocked": {
+    "message": "已攔截 (安全)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "已攔截 (通過本套件)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "已攔截 (通過瀏覽器設置)"
+  },
+  "statusActiveAllowed": {
+    "message": "允許中 (注意安全)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "允許中 (本套件已信任)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "允許中 (瀏覽器設置 - 未經驗證)"
+  },
+  "statusActiveAsk": {
+    "message": "發送前詢問 (標準)"
+  },
+  "statusActiveDefault": {
+    "message": "瀏覽器預設"
+  },
+  "labelAllowedBrowser": {
+    "message": "瀏覽器已允許"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "該權限保存在瀏覽器中。如果關閉網站或從歷史記錄中清除，它將從掃描結果中消失，但您隨時可以在瀏覽器設置中進行管理。"
+  },
+  "labelAllowedTrusted": {
+    "message": "本套件已信任"
+  },
+  "labelBlockedApp": {
+    "message": "已由本套件攔截"
+  },
+  "labelBlockedBrowser": {
+    "message": "已由瀏覽器攔截"
+  },
+  "allowedLabel": {
+    "message": "允許中 ({count})"
+  },
+  "blockedLabel": {
+    "message": "已攔截 ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "目前沒有被 NotiSpam Cleaner 攔截的網站。"
+  },
+  "unblockBtnTooltip": {
+    "message": "取消攔截該網站 (恢復預設)"
+  },
+  "helpTitle": {
+    "message": "什麼是通知濫用 (通知垃圾廣告)？"
+  },
+  "helpDesc": {
+    "message": "惡意網站經常通過顯示虛假的驗證碼（“點擊允許以驗證您不是機器人”）或假安全警報來誘騙您點擊“允許”。一旦允許，它們就會直接在螢幕上推送垃圾廣告和虛假防病毒通知。NotiSpam Cleaner 可輕鬆檢測這些內容，允許您一鍵清理，並即時保護您。\n\n*注意：NotiSpam Cleaner 中的設置（攔截/信任）與瀏覽器的原生通知設置資料庫直接同步。"
+  },
+  "settingsLinkNotice": {
+    "message": "由於瀏覽器限制，已關閉且不在分頁或近期歷史記錄中的舊授權網站無法被掃描到。要管理完整列表，請打開瀏覽器設置。"
+  },
+  "openSettingsBtn": {
+    "message": "打開瀏覽器通知設置"
+  },
+  "sectionCurrentSite": {
+    "message": "當前網站"
+  },
+  "sectionGlobalSettings": {
+    "message": "全局保護設置"
+  }
+}

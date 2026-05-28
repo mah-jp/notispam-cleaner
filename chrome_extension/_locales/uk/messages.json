@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Блокувальник спам-сповіщень"
+  },
+  "extDesc": {
+    "message": "Сканує та очищує дозволи на сповіщення від підозрілих сайтів. Захищає від спаму та шахрайської реклами в реальному часі."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Блокувальник спаму"
+  },
+  "globalStatusLabel": {
+    "message": "Поведінка за замовчуванням:"
+  },
+  "statusBlocked": {
+    "message": "Заблоковано (Макс. безпека)"
+  },
+  "statusAsk": {
+    "message": "Питати перед надсиланням (Стандарт)"
+  },
+  "statusAllowed": {
+    "message": "Дозволити все (Дуже небезпечно!)"
+  },
+  "togglePromptLabel": {
+    "message": "Дозволити сайтам запитувати надсилання сповіщень"
+  },
+  "realtimeGuardLabel": {
+    "message": "Захист у реальному часі"
+  },
+  "realtimeGuardDesc": {
+    "message": "Миттєво блокує доступ до сповіщень, якщо неперевірений сайт отримує дозвіл."
+  },
+  "silentGuardianLabel": {
+    "message": "Тихий страж (Сімейний режим)"
+  },
+  "silentGuardianDesc": {
+    "message": "Непомітно блокує сповіщення від неперевірених сайтів у фоновому режимі без спливаючих вікон. Ідеально для ПК ваших близьких."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Автоматично заблоковано у фоновому режимі: {count} сайтів"
+  },
+  "clearLogBtn": {
+    "message": "Скинути"
+  },
+  "scanBtn": {
+    "message": "Сканувати дозволені сайти (Історія/Вкладки)"
+  },
+  "scanningMessage": {
+    "message": "Сканування історії переглядів, закладок та відкритих вкладок..."
+  },
+  "allowedSectionTitle": {
+    "message": "Сайти з дозволеними сповіщеннями"
+  },
+  "suspiciousLabel": {
+    "message": "Неперевірені / Невідомі ({count})"
+  },
+  "trustedLabel": {
+    "message": "Довірені сайти ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Натисніть «Сканувати», щоб перевірити, чи мають неперевірені сайти доступ до надсилання сповіщень."
+  },
+  "safeStateMsg": {
+    "message": "Неперевірених дозволів на сповіщення не виявлено.\n\nЯкщо ви бачили підозрілі попередження або небажану рекламу, це міг бути спам через сповіщення браузера.\n\nПісля блокування вихідних доменів ці сповіщення перестануть з'являтися."
+  },
+  "cleanAllBtn": {
+    "message": "Заблокувати всі неперевірені сайти"
+  },
+  "clearAllRulesBtn": {
+    "message": "Скинути заблоковані сайти"
+  },
+  "confirmClearAllRules": {
+    "message": "Це видалить усі блокування та налаштування сповіщень, створені NotiSpam Cleaner, повернувши їх до стандартних налаштувань браузера. Продовжити?"
+  },
+  "blockBtnTooltip": {
+    "message": "Заблокувати цей сайт"
+  },
+  "trustBtnTooltip": {
+    "message": "Додати до списку довірених"
+  },
+  "confirmResetAll": {
+    "message": "Ви впевнені, що хочете відкликати дозволи на сповіщення для всіх неперевірених сайтів?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Цей сайт відкритий в браузері. Скидання налаштувань сповіщень зараз може призвести до негайного повторного виникнення попередження про автоблокування. Будь ласка, спочатку закрийте вкладку сайту, а потім скиньте налаштування. Продовжити?"
+  },
+  "guardNotificationTitle": {
+    "message": "Попередження безпеки — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Автоматично заблоковано сповіщення від неперевіреного сайту \"$domain$\". Натисніть нижче, щоб дозволити, якщо це була помилка.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Сповіщення від \"$domain$\" заблоковано.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Довіряти сайту (Дозволити)"
+  },
+  "guardNotificationKeep": {
+    "message": "Залишити заблокованим"
+  },
+  "currentSiteLabel": {
+    "message": "Поточний сайт:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Дозвіл на сповіщення:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Дозволити"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Блокувати"
+  },
+  "currentSiteResetBtn": {
+    "message": "Скинути за замовчуванням"
+  },
+  "statusActiveBlocked": {
+    "message": "Заблоковано (Безпечно)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Заблоковано (Додатком)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Заблоковано (Браузером)"
+  },
+  "statusActiveAllowed": {
+    "message": "Дозволено (Увага)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Дозволено (Довіряється додатком)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Дозволено (Браузером - Не перевірено)"
+  },
+  "statusActiveAsk": {
+    "message": "Питати перед надсиланням (Стандарт)"
+  },
+  "statusActiveDefault": {
+    "message": "За замовчуванням для браузера"
+  },
+  "labelAllowedBrowser": {
+    "message": "Дозволено браузером"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Цей дозвіл збережено в браузері. Він зникне зі сканування, якщо сайт закрити або видалити з історії, але ви завжди можете керувати ним в налаштуваннях браузера."
+  },
+  "labelAllowedTrusted": {
+    "message": "Довіряється додатком"
+  },
+  "labelBlockedApp": {
+    "message": "Заблоковано додатком"
+  },
+  "labelBlockedBrowser": {
+    "message": "Заблоковано браузером"
+  },
+  "allowedLabel": {
+    "message": "Дозволено ({count})"
+  },
+  "blockedLabel": {
+    "message": "Заблоковано ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Наразі немає сайтів, заблокованих NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Розблокувати цей сайт (Скинути за замовчуванням)"
+  },
+  "helpTitle": {
+    "message": "Що таке зловживання сповіщеннями?"
+  },
+  "helpDesc": {
+    "message": "Шкідливі сайти часто обманом змушують натиснути «Дозволити», показуючи фальшиві капчі («Натисніть Дозволити, щоб підтвердити, що ви не робот») або неправдиві попередження про безпеку. Після дозволу вони надсилають рекламу та фальшиві антивірусні сповіщення прямо на ваш екран. NotiSpam Cleaner виявляє це, дозволяє очистити в один клік і захищає вас динамічно.\n\n*Примітка: Налаштування NotiSpam Cleaner (Блокувати/Довіряти) синхронізуються безпосередньо з базою даних сповіщень вашого браузера."
+  },
+  "settingsLinkNotice": {
+    "message": "Через обмеження браузера дозволені сайти, яких немає у відкритих вкладках або нещодавній історії, не можуть бути проскановані. Відкрийте налаштування браузера, щоб керувати повним списком."
+  },
+  "openSettingsBtn": {
+    "message": "Відкрити налаштування сповіщень браузера"
+  },
+  "sectionCurrentSite": {
+    "message": "Активний сайт"
+  },
+  "sectionGlobalSettings": {
+    "message": "Загальні налаштування захисту"
+  }
+}

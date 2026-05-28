@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: 알림 스팸 차단기"
+  },
+  "extDesc": {
+    "message": "의심스러운 웹사이트의 알림 권한을 스캔하고 정리합니다. 스팸 및 사기성 광고로부터 실시간으로 보호합니다."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "알림 스팸 차단기"
+  },
+  "globalStatusLabel": {
+    "message": "기본 알림 동작:"
+  },
+  "statusBlocked": {
+    "message": "차단됨 (가장 안전)"
+  },
+  "statusAsk": {
+    "message": "전송 전에 확인 (표준)"
+  },
+  "statusAllowed": {
+    "message": "모두 허용 (매우 위험!)"
+  },
+  "togglePromptLabel": {
+    "message": "사이트에서 알림 표시를 요청하도록 허용"
+  },
+  "realtimeGuardLabel": {
+    "message": "실시간 보호"
+  },
+  "realtimeGuardDesc": {
+    "message": "검증되지 않은 사이트가 알림 권한을 획득하면 즉시 차단합니다."
+  },
+  "silentGuardianLabel": {
+    "message": "자동 보호 (패밀리 모드)"
+  },
+  "silentGuardianDesc": {
+    "message": "검증되지 않은 사이트의 알림 권한을 알림 창(팝업) 표시 없이 백그라운드에서 조용히 자동 차단합니다. 가족 컴퓨터에 적합합니다."
+  },
+  "backgroundBlockedLabel": {
+    "message": "백그라운드에서 자동 차단된 사이트: {count}개"
+  },
+  "clearLogBtn": {
+    "message": "재설정"
+  },
+  "scanBtn": {
+    "message": "알림 허용 사이트 스캔 (방문 기록/탭 등)"
+  },
+  "scanningMessage": {
+    "message": "방문 기록, 북마크, 열린 탭 스캔 중..."
+  },
+  "allowedSectionTitle": {
+    "message": "알림 허용 웹사이트"
+  },
+  "suspiciousLabel": {
+    "message": "확인 필요 / 미검증 ({count})"
+  },
+  "trustedLabel": {
+    "message": "신뢰할 수 있는 사이트 ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "스캔을 실행하여 알림 권한을 가진 미검증 웹사이트가 있는지 확인하세요."
+  },
+  "safeStateMsg": {
+    "message": "검증되지 않은 알림 허용 규칙이 발견되지 않았습니다.\n\n화면에 의심스러운 경고나 원치 않는 광고가 표시되는 경우, 브라우저 알림 설정을 악용한 스팸일 수 있습니다.\n\n해당 도메인의 알림을 차단하면 알림이 더 이상 표시되지 않습니다."
+  },
+  "cleanAllBtn": {
+    "message": "미검증 사이트 일괄 차단"
+  },
+  "clearAllRulesBtn": {
+    "message": "모든 차단 해제"
+  },
+  "confirmClearAllRules": {
+    "message": "NotiSpam Cleaner에 의해 차단된 모든 사이트의 개별 알림 설정을 해제하고 초기 상태로 되돌립니다. 진행하시겠습니까?"
+  },
+  "blockBtnTooltip": {
+    "message": "이 사이트 차단"
+  },
+  "trustBtnTooltip": {
+    "message": "신뢰 목록에 추가"
+  },
+  "confirmResetAll": {
+    "message": "스캔에서 감지된 모든 미검증 사이트의 알림 권한을 차단하시겠습니까?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "이 웹사이트는 현재 브라우저에서 열려 있습니다. 이 상태에서 설정을 초기화하면 자동 차단 경고가 즉시 다시 나타날 수 있습니다. 웹사이트 탭을 먼저 닫은 후 초기화 작업을 진행하세요. 계속하시겠습니까?"
+  },
+  "guardNotificationTitle": {
+    "message": "보안 알림 — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "검증되지 않은 사이트 \"$domain$\"의 알림 권한을 자동으로 차단했습니다. 오판인 경우 아래를 클릭하여 허용하세요.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "\"$domain$\"의 알림을 차단했습니다.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "이 사이트 신뢰 및 허용"
+  },
+  "guardNotificationKeep": {
+    "message": "차단 상태 유지"
+  },
+  "currentSiteLabel": {
+    "message": "현재 방문 중인 웹사이트:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "알림 권한 설정:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "허용"
+  },
+  "currentSiteBlockBtn": {
+    "message": "차단"
+  },
+  "currentSiteResetBtn": {
+    "message": "기본값으로 초기화"
+  },
+  "statusActiveBlocked": {
+    "message": "차단됨 (안전)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "차단됨 (앱에 의해)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "차단됨 (브라우저 설정)"
+  },
+  "statusActiveAllowed": {
+    "message": "허용됨 (주의 요함)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "허용됨 (앱에 의해 신뢰)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "허용됨 (브라우저 설정 - 미검증)"
+  },
+  "statusActiveAsk": {
+    "message": "전송 전에 확인 (표준)"
+  },
+  "statusActiveDefault": {
+    "message": "브라우저 기본값"
+  },
+  "labelAllowedBrowser": {
+    "message": "브라우저에서 허용"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "이 권한은 브라우저에 저장됩니다. 사이트를 닫거나 방문 기록에서 지우면 스캔에서 사라지지만, 브라우저 설정에서 언제든지 관리할 수 있습니다."
+  },
+  "labelAllowedTrusted": {
+    "message": "앱에 의해 신뢰됨"
+  },
+  "labelBlockedApp": {
+    "message": "앱에 의해 차단됨"
+  },
+  "labelBlockedBrowser": {
+    "message": "브라우저에 의해 차단됨"
+  },
+  "allowedLabel": {
+    "message": "허용됨 ({count})"
+  },
+  "blockedLabel": {
+    "message": "차단됨 ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "NotiSpam Cleaner에 의해 차단된 웹사이트가 없습니다."
+  },
+  "unblockBtnTooltip": {
+    "message": "이 사이트 차단 해제 (기본값으로 되돌리기)"
+  },
+  "helpTitle": {
+    "message": "알림 기능 악용(알림 스팸)이란?"
+  },
+  "helpDesc": {
+    "message": "악성 사이트는 \"로봇이 아님을 증명하기 위해 허용을 누르세요\"와 같은 거짓 인증 화면이나 가짜 보안 경고를 표시하여 알림 버튼을 클릭하도록 유도합니다. 허용되면 브라우저가 닫혀 있어도 화면에 불법 광고나 사기 경고가 알림으로 계속 오게 됩니다. NotiSpam Cleaner는 이를 즉시 감지하여 한 번의 클릭으로 정리하고 실시간으로 자동 차단합니다.\n\n*참고: NotiSpam Cleaner의 설정(차단/신뢰)은 브라우저의 기본 알림 설정 데이터베이스와 직접 동기화됩니다."
+  },
+  "settingsLinkNotice": {
+    "message": "브라우저의 제한으로 인해 방문 기록이나 활성 탭에 더 이상 없는 오래된 허용 사이트는 스캔할 수 없습니다. 전체 목록을 관리하려면 브라우저 설정을 여세요."
+  },
+  "openSettingsBtn": {
+    "message": "브라우저 알림 설정 열기"
+  },
+  "sectionCurrentSite": {
+    "message": "활성 웹사이트"
+  },
+  "sectionGlobalSettings": {
+    "message": "전체 보호 설정"
+  }
+}

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>NotiSpam Cleaner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <svg class="logo-icon" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <div class="logo-text">
+          <div class="logo-title-row">
+            <h1 data-i18n="appTitle">NotiSpam Cleaner</h1>
+            <span class="version-tag">v1.0</span>
+          </div>
+          <span class="app-subtitle" data-i18n="appSubtitle">通知スパムクリーナー</span>
+        </div>
+      </div>
+      <button id="help-btn" class="icon-btn-secondary" title="Help">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-body">
+      <!-- Section: Current Website (Shown dynamically) -->
+      <div id="current-site-card" class="current-site-section hidden">
+        <div class="section-title">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round" class="title-icon">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          <span data-i18n="sectionCurrentSite">Active Website</span>
+        </div>
+        <section class="card current-site-card hero-card">
+          <div class="current-site-header">
+            <span class="current-site-label" data-i18n="currentSiteLabel">Current Website:</span>
+            <span id="current-site-domain" class="current-site-domain">...</span>
+          </div>
+          <div class="current-site-status-row">
+            <span class="status-label" data-i18n="currentSiteStatusLabel">Notification Permission:</span>
+            <span id="current-site-status" class="status-value">...</span>
+          </div>
+          <div class="current-site-actions">
+            <button id="current-site-allow" class="btn btn-secondary btn-small"
+              data-i18n="currentSiteAllowBtn">Allow</button>
+            <button id="current-site-block" class="btn btn-secondary btn-small"
+              data-i18n="currentSiteBlockBtn">Block</button>
+            <button id="current-site-reset" class="btn btn-secondary btn-small"
+              data-i18n="currentSiteResetBtn">Reset</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- Section: Global Settings -->
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round" class="title-icon">
+          <line x1="4" y1="21" x2="4" y2="14"></line>
+          <line x1="4" y1="10" x2="4" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12" y2="3"></line>
+          <line x1="20" y1="21" x2="20" y2="16"></line>
+          <line x1="20" y1="12" x2="20" y2="3"></line>
+          <line x1="1" y1="14" x2="7" y2="14"></line>
+          <line x1="9" y1="8" x2="15" y2="8"></line>
+          <line x1="17" y1="16" x2="23" y2="16"></line>
+        </svg>
+        <span data-i18n="sectionGlobalSettings">Global Protection Settings</span>
+      </div>
+      <section class="card global-settings-card">
+        <!-- Default behavior status row -->
+        <div class="setting-row default-status-row">
+          <span class="status-label" data-i18n="globalStatusLabel">Default behavior:</span>
+          <span id="global-status" class="status-value loading">...</span>
+        </div>
+
+        <!-- Default behavior toggle row -->
+        <div class="setting-row toggle-row">
+          <span class="switch-label" data-i18n="togglePromptLabel">Allow sites to ask for notifications</span>
+          <label class="switch">
+            <input type="checkbox" id="default-toggle" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+
+        <!-- Real-time Alert Guard Toggle -->
+        <div class="setting-row toggle-row">
+          <div class="guard-title-container">
+            <span class="guard-label">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="label-icon">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <span data-i18n="realtimeGuardLabel">Real-time Guard</span>
+            </span>
+            <p class="guard-desc" data-i18n="realtimeGuardDesc">Blocks suspicious notifications in real-time.</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="guard-toggle" checked>
+            <span class="slider round"></span>
+          </label>
+        </div>
+
+        <!-- Silent Guardian Toggle -->
+        <div class="setting-row toggle-row">
+          <div class="guard-title-container">
+            <span class="guard-label">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="label-icon">
+                <path
+                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                </path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+              <span data-i18n="silentGuardianLabel">Silent Guardian (Family Mode)</span>
+            </span>
+            <p class="guard-desc" data-i18n="silentGuardianDesc">Quietly blocks notifications without showing popups.
+            </p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="silent-toggle">
+            <span class="slider round"></span>
+          </label>
+        </div>
+
+        <!-- Background Block Stat Log -->
+        <div id="block-log-row" class="setting-row log-row hidden">
+          <span id="block-log-text" class="status-label">Quietly blocked: 0 sites</span>
+          <button id="clear-log-btn" class="btn-link" data-i18n="clearLogBtn">Reset</button>
+        </div>
+      </section>
+
+      <!-- Action Panel -->
+      <section class="action-panel">
+        <button id="scan-btn" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span data-i18n="scanBtn">Scan Allowed Sites (History/Tabs)</span>
+        </button>
+      </section>
+
+      <!-- Tabs & Segmented Control -->
+      <div class="tab-control">
+        <button id="tab-allowed" class="tab-btn active">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" class="tab-icon">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          <span id="label-allowed">...</span>
+        </button>
+        <button id="tab-blocked" class="tab-btn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" class="tab-icon">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+          <span id="label-blocked">...</span>
+        </button>
+      </div>
+
+      <!-- Results Area -->
+      <section class="results-section">
+        <div class="list-container">
+          <!-- Scanner Loader -->
+          <div id="scan-loader" class="loader-container hidden">
+            <div class="scanner-circle"></div>
+            <p data-i18n="scanningMessage">Scanning...</p>
+          </div>
+
+          <!-- Allowed Sites List -->
+          <ul id="allowed-list" class="site-list">
+            <li class="empty-state">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <p data-i18n="emptyStateMsg">Run scan to check allowed websites.</p>
+            </li>
+          </ul>
+
+          <!-- Blocked Sites List -->
+          <ul id="blocked-list" class="site-list hidden">
+            <li class="empty-state">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+              </svg>
+              <p data-i18n="emptyStateBlockedMsg">No blocked sites.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- System settings link notice -->
+      <div class="settings-link-card card">
+        <div class="settings-link-content">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          <div class="settings-link-text">
+            <span data-i18n="settingsLinkNotice">Due to browser limitations (e.g. cleared history), some allowed sites
+              may not show up in scan results. To manage the complete list, open settings.</span>
+            <button id="open-settings-btn" class="text-link-btn" data-i18n="openSettingsBtn">Open Settings</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer Actions -->
+    <footer class="app-footer">
+      <button id="reset-all-btn" class="btn btn-danger hidden">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+        <span data-i18n="cleanAllBtn">Clean All Suspicious</span>
+      </button>
+
+      <button id="clear-all-rules-btn" class="btn btn-secondary">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 2v6h6"></path>
+          <path d="M3 13a9 9 0 1 0 3-7.7L3 8"></path>
+        </svg>
+        <span data-i18n="clearAllRulesBtn">Reset Blocked Sites</span>
+      </button>
+    </footer>
+
+    <!-- Help Drawer Overlay -->
+    <div id="help-overlay" class="overlay hidden">
+      <div class="card help-card">
+        <div class="help-header">
+          <h3 data-i18n="helpTitle">What is Notification Abuse?</h3>
+          <button id="close-help-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="help-body">
+          <p data-i18n="helpDesc">Detailed info on notification spam.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="config.js"></script>
+  <script src="popup.js"></script>
+</body>
+
+</html>

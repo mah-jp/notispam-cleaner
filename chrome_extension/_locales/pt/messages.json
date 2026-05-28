@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Bloqueador de Spam de Notificações"
+  },
+  "extDesc": {
+    "message": "Verifica e limpa permissões de notificação de sites suspeitos. Protege contra spam e anúncios enganosos em tempo real."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Bloqueador de Spam"
+  },
+  "globalStatusLabel": {
+    "message": "Comportamento padrão:"
+  },
+  "statusBlocked": {
+    "message": "Bloqueado (Máxima segurança)"
+  },
+  "statusAsk": {
+    "message": "Perguntar antes de enviar (Padrão)"
+  },
+  "statusAllowed": {
+    "message": "Permitir todos (Muito perigoso!)"
+  },
+  "togglePromptLabel": {
+    "message": "Permitir que os sites solicitem o envio de notificações"
+  },
+  "realtimeGuardLabel": {
+    "message": "Proteção em tempo real"
+  },
+  "realtimeGuardDesc": {
+    "message": "Bloqueia instantaneamente o acesso a notificações se um site não verificado obtiver permissão."
+  },
+  "silentGuardianLabel": {
+    "message": "Guardião silencioso (Modo familiar)"
+  },
+  "silentGuardianDesc": {
+    "message": "Bloqueia discretamente em segundo plano as notificações de sites não verificados, sem exibir alertas. Ideal para o PC de parentes."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Bloqueados automaticamente em segundo plano: {count} sites"
+  },
+  "clearLogBtn": {
+    "message": "Redefinir"
+  },
+  "scanBtn": {
+    "message": "Verificar sites permitidos (Histórico/Abas)"
+  },
+  "scanningMessage": {
+    "message": "Verificando histórico de navegação, favoritos e abas abertas..."
+  },
+  "allowedSectionTitle": {
+    "message": "Sites com notificações permitidas"
+  },
+  "suspiciousLabel": {
+    "message": "Não verificados / Desconhecidos ({count})"
+  },
+  "trustedLabel": {
+    "message": "Sites confiáveis ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Clique em Verificar para checar se algum site não verificado tem permissão para enviar notificações."
+  },
+  "safeStateMsg": {
+    "message": "Nenhuma permissão de notificação não verificada detectada.\n\nSe você estava vendo avisos suspeitos ou anúncios indesejados, eles podem ser mensagens de spam abusando das configurações de notificação.\n\nUma vez que os domínios de origem são bloqueados, essas notificações pararão de aparecer."
+  },
+  "cleanAllBtn": {
+    "message": "Bloquear todos os sites não verificados"
+  },
+  "clearAllRulesBtn": {
+    "message": "Redefinir sites bloqueados"
+  },
+  "confirmClearAllRules": {
+    "message": "Isso limpará todos os bloqueios e configurações de notificações criados pelo NotiSpam Cleaner, revertendo-os para os padrões do navegador. Tem certeza?"
+  },
+  "blockBtnTooltip": {
+    "message": "Bloquear este site"
+  },
+  "trustBtnTooltip": {
+    "message": "Adicionar à lista de confiança"
+  },
+  "confirmResetAll": {
+    "message": "Tem certeza de que deseja revogar as permissões de notificação de todos os sites não verificados?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Este site está aberto no momento. Redefinir suas configurações agora pode fazer com que o alerta de bloqueio automático reapareça imediatamente. Feche a aba do site primeiro. Continuar?"
+  },
+  "guardNotificationTitle": {
+    "message": "Alerta de segurança — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Permissões de notificação bloqueadas automaticamente para o site não verificado \"$domain$\". Clique abaixo para confiar no site se foi um erro.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Notificações bloqueadas de \"$domain$\".",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Confiar no site (Permitir)"
+  },
+  "guardNotificationKeep": {
+    "message": "Manter bloqueado"
+  },
+  "currentSiteLabel": {
+    "message": "Site atual:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Permissão de notificação:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Permitir"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Bloquear"
+  },
+  "currentSiteResetBtn": {
+    "message": "Restabelecer ao padrão"
+  },
+  "statusActiveBlocked": {
+    "message": "Bloqueado (Seguro)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Bloqueado (Pelo app)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Bloqueado (Pelo navegador)"
+  },
+  "statusActiveAllowed": {
+    "message": "Permitido (Atenção)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Permitido (De confiança pelo app)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Permitido (Pelo navegador - Não verificado)"
+  },
+  "statusActiveAsk": {
+    "message": "Perguntar antes de enviar (Padrão)"
+  },
+  "statusActiveDefault": {
+    "message": "Padrão do navegador"
+  },
+  "labelAllowedBrowser": {
+    "message": "Permitido pelo navegador"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Esta permissão está salva no navegador. Ela desaparecerá desta verificação se o site for fechado ou limpo do histórico, mas você pode sempre gerenciá-la nas configurações do navegador."
+  },
+  "labelAllowedTrusted": {
+    "message": "De confiança pelo app"
+  },
+  "labelBlockedApp": {
+    "message": "Bloqueado pelo app"
+  },
+  "labelBlockedBrowser": {
+    "message": "Bloqueado pelo navegador"
+  },
+  "allowedLabel": {
+    "message": "Permitidos ({count})"
+  },
+  "blockedLabel": {
+    "message": "Bloqueados ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Atualmente não há sites bloqueados pelo NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Desbloquear este site (Restabelecer ao padrão)"
+  },
+  "helpTitle": {
+    "message": "O que é abuso de notificações?"
+  },
+  "helpDesc": {
+    "message": "Sites maliciosos costumam enganar para que você clique em \"Permitir\", exibindo Captchas falsos (\"Clique em Permitir para verificar que você não é um robô\") ou falsos alertas de segurança. Uma vez permitido, eles enviam anúncios indesejados e alertas falsos de antivírus diretamente na tela. O NotiSpam Cleaner detecta isso, permite limpar em um clique e te protege ativamente.\n\n*Nota: As configurações do NotiSpam Cleaner (Bloquear/Confiar) sincronizam diretamente com a base de dados de notificações nativa do seu navegador."
+  },
+  "settingsLinkNotice": {
+    "message": "Devido a limitações do navegador, sites autorizados que não estejam mais nas abas abertas ou no histórico recente não podem ser verificados. Abra as configurações do navegador para gerenciar a lista completa."
+  },
+  "openSettingsBtn": {
+    "message": "Abrir configurações de notificação do navegador"
+  },
+  "sectionCurrentSite": {
+    "message": "Site ativo"
+  },
+  "sectionGlobalSettings": {
+    "message": "Configurações de proteção global"
+  }
+}

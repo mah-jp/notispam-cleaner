@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: חוסם ספאם של התראות"
+  },
+  "extDesc": {
+    "message": "סורק ומנקה הרשאות התראה של אתרים חשודים. מגן מפני ספאם ופרסומות הונאה בזמן אמת."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "חוסם ספאם"
+  },
+  "globalStatusLabel": {
+    "message": "התנהגות הרשאות כברירת מחדל:"
+  },
+  "statusBlocked": {
+    "message": "חסום (האבטחה הגבוהה ביותר)"
+  },
+  "statusAsk": {
+    "message": "שאל לפני שליחה (סטנדרטי)"
+  },
+  "statusAllowed": {
+    "message": "אפשר הכל (מסוכן מאוד!)"
+  },
+  "togglePromptLabel": {
+    "message": "אפשר לאתרים לבקש לשלוח התראות"
+  },
+  "realtimeGuardLabel": {
+    "message": "הגנה בזמן אמת"
+  },
+  "realtimeGuardDesc": {
+    "message": "חוסם באופן מיידי גישת התראות אם אתר לא מאומת מקבל הרשאה."
+  },
+  "silentGuardianLabel": {
+    "message": "שומר שקט (מצב משפחתי)"
+  },
+  "silentGuardianDesc": {
+    "message": "חוסם בשקט ברקע התראות מאתרים לא מאומתים ללא הצגת התראות כלל. מתאים למחשבים של בני משפחה."
+  },
+  "backgroundBlockedLabel": {
+    "message": "נחסמו אוטומטית ברקע: {count} אתרים"
+  },
+  "clearLogBtn": {
+    "message": "איפוס"
+  },
+  "scanBtn": {
+    "message": "סרוק אתרים מאושרים (היסטוריה/לשוניות)"
+  },
+  "scanningMessage": {
+    "message": "סורק היסטוריית גלישה, סימניות ולשוניות פתוחות..."
+  },
+  "allowedSectionTitle": {
+    "message": "אתרים המורשים לשלוח התראות"
+  },
+  "suspiciousLabel": {
+    "message": "לא מאומתים / לא מוכרים ({count})"
+  },
+  "trustedLabel": {
+    "message": "אתרים מהימנים ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "לחץ על סרוק כדי לבדוק אם לאתרים לא מאומתים יש הרשאה לשלוח התראות."
+  },
+  "safeStateMsg": {
+    "message": "לא זוהו הרשאות התראה לא מאומתות.\n\nאם ראית אזהרות חשודות או פרסומות לא רצויות, ייתכן שמדובר בהודעות ספאם המנצלות את הגדרות ההתראות בדפדפן.\n\nברגע שכתובות המקור ייחסמו, התראות אלו יפסיקו להופיע."
+  },
+  "cleanAllBtn": {
+    "message": "חסום את כל האתרים הלא מאומתים"
+  },
+  "clearAllRulesBtn": {
+    "message": "אפס אתרים חסומים"
+  },
+  "confirmClearAllRules": {
+    "message": "פעולה זו תנקה את כל חסימות ההתראה וההגדרות שנוצרו על ידי NotiSpam Cleaner ותחזיר אותן לברירת המחדל של הדפדפן. האם אתה בטוח?"
+  },
+  "blockBtnTooltip": {
+    "message": "חסום אתר זה"
+  },
+  "trustBtnTooltip": {
+    "message": "הוסף לרשימת המהימנים"
+  },
+  "confirmResetAll": {
+    "message": "האם אתה בטוח שברצונך לבטל את הרשאות ההתראה עבור כל האתרים הלא מאומתים?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "אתר זה פתוח כעת בדפדפן. איפוס הגדרות ההתראות שלו במצב זה עלול לגרום לאזהרת החסימה האוטומטית להופיע שוב מיד. אנא סגור תחילה את לשונית האתר ולאחר מכן בצע את האיפוס. להמשיך?"
+  },
+  "guardNotificationTitle": {
+    "message": "אזהרת אבטחה — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "הרשאות ההתראה עבור האתר הלא מאומת \"$domain$\" נחסמו אוטומטית. לחץ למטה כדי לאשר אם זו הייתה טעות.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "התראות מ-\"$domain$\" נחסמו.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "סמוך על אתר זה (אפשר)"
+  },
+  "guardNotificationKeep": {
+    "message": "השאר חסום"
+  },
+  "currentSiteLabel": {
+    "message": "אתר נוכחי:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "הרשאת התראות:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "אפשר"
+  },
+  "currentSiteBlockBtn": {
+    "message": "חסום"
+  },
+  "currentSiteResetBtn": {
+    "message": "אפס לברירת מחדל"
+  },
+  "statusActiveBlocked": {
+    "message": "חסום (בטוח)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "חסום (על ידי האפליקציה)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "חסום (על ידי הדפדפן)"
+  },
+  "statusActiveAllowed": {
+    "message": "מותר (זהירות)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "מותר (סומן כמהימן באפליקציה)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "מותר (על ידי הדפדפן - לא מאומת)"
+  },
+  "statusActiveAsk": {
+    "message": "שאל לפני שליחה (סטנדרטי)"
+  },
+  "statusActiveDefault": {
+    "message": "ברירת מחדל של הדפדפן"
+  },
+  "labelAllowedBrowser": {
+    "message": "מותר על ידי הדפדפן"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "הרשאה זו נשמרת בדפדפן. היא תיעלם מסריקה זו אם האתר ייסגר או יימחק מההיסטוריה, אך תמיד תוכל לנהל אותה בהגדרות הדפדפן."
+  },
+  "labelAllowedTrusted": {
+    "message": "סומן כמהימן באפליקציה"
+  },
+  "labelBlockedApp": {
+    "message": "נחסם על ידי האפליקציה"
+  },
+  "labelBlockedBrowser": {
+    "message": "נחסם על ידי הדפדפן"
+  },
+  "allowedLabel": {
+    "message": "מורשים ({count})"
+  },
+  "blockedLabel": {
+    "message": "חסומים ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "אין כרגע אתרים חסומים על ידי NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "בטל חסימת אתר זה (אפס לברירת מחדל)"
+  },
+  "helpTitle": {
+    "message": "מהו ניצול לרעה של התראות?"
+  },
+  "helpDesc": {
+    "message": "אתרים זדוניים מפתים לעיתים קרובות ללחוץ על \"אפשר\" על ידי הצגת מבחני קאפצ'ה מזויפים (\"לחץ אפשר כדי לאשר שאינך רובוט\") או אזהרות אבטחה כוזבות. לאחר האישור, הם שולחים פרסומות לא רצויות ואזהרות אנטי-וירוס מזויפות ישירות למסך שלך. NotiSpam Cleaner מזהה זאת, מאפשר לך לנקות אותם בלחיצה אחת, ומגן עליך דינמית.\n\n*הערה: ההגדרות ב-NotiSpam Cleaner (חסום/סמוך) מסתנכרנות ישירות עם מסד הנתונים של ההתראות המובנה בדפדפן שלך."
+  },
+  "settingsLinkNotice": {
+    "message": "בשל מגבלות הדפדפן, אתרים מאושרים שאינם פתוחים עוד בלשוניות או בהיסטוריה האחרונה לא ניתנים לסריקה. פתח את הגדרות הדפדפן כדי לנהל את הרשימה המלאה."
+  },
+  "openSettingsBtn": {
+    "message": "פתח הגדרות התראה של הדפדפן"
+  },
+  "sectionCurrentSite": {
+    "message": "אתר פעיל"
+  },
+  "sectionGlobalSettings": {
+    "message": "הגדרות הגנה גלובליות"
+  }
+}

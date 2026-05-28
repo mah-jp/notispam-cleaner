@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Notification Spam Blocker"
+  },
+  "extDesc": {
+    "message": "Scans and cleans suspicious website notification permissions. Protects against spam and scam ads in real-time."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Notification Spam Blocker"
+  },
+  "globalStatusLabel": {
+    "message": "Default Permission Behavior:"
+  },
+  "statusBlocked": {
+    "message": "Blocked (Highest Security)"
+  },
+  "statusAsk": {
+    "message": "Ask before sending (Standard)"
+  },
+  "statusAllowed": {
+    "message": "Allow All (Highly Dangerous!)"
+  },
+  "togglePromptLabel": {
+    "message": "Allow sites to ask for notifications"
+  },
+  "realtimeGuardLabel": {
+    "message": "Real-time Protection"
+  },
+  "realtimeGuardDesc": {
+    "message": "Instantly blocks notification access if a non-whitelisted site gains permission."
+  },
+  "silentGuardianLabel": {
+    "message": "Silent Guardian (Family Mode)"
+  },
+  "silentGuardianDesc": {
+    "message": "Quietly blocks notifications from non-whitelisted sites in the background without showing any alerts."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Quietly blocked in background: {count} sites"
+  },
+  "clearLogBtn": {
+    "message": "Reset"
+  },
+  "scanBtn": {
+    "message": "Scan Allowed Sites (History/Tabs)"
+  },
+  "scanningMessage": {
+    "message": "Scanning browsing history, bookmarks, and open tabs..."
+  },
+  "allowedSectionTitle": {
+    "message": "Notification-Allowed Sites"
+  },
+  "suspiciousLabel": {
+    "message": "Unverified / Unknown ({count})"
+  },
+  "trustedLabel": {
+    "message": "Trusted Sites ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Click Scan to check if any unverified websites have permission to send notifications."
+  },
+  "safeStateMsg": {
+    "message": "No unverified notification permissions detected.\n\nIf you were seeing suspicious warnings or unwanted advertisements, they may have been spam messages exploiting browser notification settings.\n\nOnce the source domains are blocked, those notifications will stop appearing."
+  },
+  "cleanAllBtn": {
+    "message": "Block All Unverified Sites"
+  },
+  "clearAllRulesBtn": {
+    "message": "Reset Blocked Sites"
+  },
+  "confirmClearAllRules": {
+    "message": "This will clear all site-specific notification blocks and settings created by NotiSpam Cleaner, reverting them to browser defaults. Are you sure?"
+  },
+  "blockBtnTooltip": {
+    "message": "Block this site"
+  },
+  "trustBtnTooltip": {
+    "message": "Move to trusted list"
+  },
+  "confirmResetAll": {
+    "message": "Are you sure you want to revoke notification permissions for all unverified websites?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "This website is currently open in your browser. Resetting its notification settings in this state may cause the automatic block warning to reappear immediately. Please close the website's tab first, then perform the reset operation. Do you want to continue?"
+  },
+  "guardNotificationTitle": {
+    "message": "Security Alert — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Automatically blocked notification permissions for unverified site \"$domain$\". Click below to trust this site if it was a mistake.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Blocked notifications from \"$domain$\".",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Trust Site (Allow)"
+  },
+  "guardNotificationKeep": {
+    "message": "Dismiss"
+  },
+  "currentSiteLabel": {
+    "message": "Current Website:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Notification Permission:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Allow"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Block"
+  },
+  "currentSiteResetBtn": {
+    "message": "Reset to Default"
+  },
+  "statusActiveBlocked": {
+    "message": "Blocked (Safe)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Blocked (By App)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Blocked (By Browser)"
+  },
+  "statusActiveAllowed": {
+    "message": "Allowed (Caution)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Allowed (Trusted by App)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Allowed (By Browser - Unverified)"
+  },
+  "statusActiveAsk": {
+    "message": "Ask before sending (Standard)"
+  },
+  "statusActiveDefault": {
+    "message": "Browser Default"
+  },
+  "labelAllowedBrowser": {
+    "message": "Allowed by Browser"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "This permission is stored in the browser. It will disappear from this scan if the site is closed or cleared from history, but you can always manage it in browser settings."
+  },
+  "labelAllowedTrusted": {
+    "message": "Trusted by App"
+  },
+  "labelBlockedApp": {
+    "message": "Blocked by App"
+  },
+  "labelBlockedBrowser": {
+    "message": "Blocked by Browser"
+  },
+  "allowedLabel": {
+    "message": "Allowed ({count})"
+  },
+  "blockedLabel": {
+    "message": "Blocked ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "No websites are currently blocked by NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Unblock this site (Revert to default)"
+  },
+  "helpTitle": {
+    "message": "What is Notification Abuse?"
+  },
+  "helpDesc": {
+    "message": "Malicious sites often trick you into clicking \"Allow\" by showing fake Captchas (\"Click Allow to verify you are not a robot\") or fake security alerts. Once permitted, they push malicious popups and fake antivirus notifications directly to your screen as website notifications. NotiSpam Cleaner easily flags these, lets you clean them with one click, and guards you dynamically.\n\n*Note: Settings in NotiSpam Cleaner (Block/Trust) sync directly with your browser's native notification settings database. Changes made here are immediately applied to the browser, and vice versa."
+  },
+  "settingsLinkNotice": {
+    "message": "Due to browser limitations, allowed sites that are no longer in your active tabs or recent history cannot be scanned (including reset sites). To manage the complete list, please open browser settings."
+  },
+  "openSettingsBtn": {
+    "message": "Open Notification Settings"
+  },
+  "sectionCurrentSite": {
+    "message": "Active Website"
+  },
+  "sectionGlobalSettings": {
+    "message": "Global Protection Settings"
+  }
+}

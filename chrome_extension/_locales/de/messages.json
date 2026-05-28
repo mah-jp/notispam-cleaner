@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Benachrichtigungs-Spam-Blocker"
+  },
+  "extDesc": {
+    "message": "Scant und löscht Benachrichtigungsberechtigungen verdächtiger Websites. Schützt in Echtzeit vor Spam und Betrugswerbung."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Spam-Blocker"
+  },
+  "globalStatusLabel": {
+    "message": "Standard-Verhalten:"
+  },
+  "statusBlocked": {
+    "message": "Blockiert (Höchste Sicherheit)"
+  },
+  "statusAsk": {
+    "message": "Vor dem Senden fragen (Standard)"
+  },
+  "statusAllowed": {
+    "message": "Alle zulassen (Sehr gefährlich!)"
+  },
+  "togglePromptLabel": {
+    "message": "Websites erlauben, nach Benachrichtigungen zu fragen"
+  },
+  "realtimeGuardLabel": {
+    "message": "Echtzeitschutz"
+  },
+  "realtimeGuardDesc": {
+    "message": "Blockiert sofort den Benachrichtigungszugriff, wenn eine nicht verifizierte Website Berechtigungen erhält."
+  },
+  "silentGuardianLabel": {
+    "message": "Stiller Wächter (Familienmodus)"
+  },
+  "silentGuardianDesc": {
+    "message": "Blockiert Benachrichtigungen von nicht verifizierten Websites leise im Hintergrund, ohne Warnungen anzuzeigen. Ideal für PCs von Verwandten."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Im Hintergrund automatisch blockiert: {count} Websites"
+  },
+  "clearLogBtn": {
+    "message": "Zurücksetzen"
+  },
+  "scanBtn": {
+    "message": "Zugelassene Websites scannen (Verlauf/Tabs)"
+  },
+  "scanningMessage": {
+    "message": "Verlauf, Lesezeichen und offene Tabs werden gescannt..."
+  },
+  "allowedSectionTitle": {
+    "message": "Websites mit erlaubten Benachrichtigungen"
+  },
+  "suspiciousLabel": {
+    "message": "Nicht verifiziert / Unbekannt ({count})"
+  },
+  "trustedLabel": {
+    "message": "Vertrauenswürdige Websites ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Klicken Sie auf Scannen, um zu prüfen, ob nicht verifizierte Websites Benachrichtigungen senden dürfen."
+  },
+  "safeStateMsg": {
+    "message": "Keine nicht verifizierten Benachrichtigungsberechtigungen gefunden.\n\nWenn Sie verdächtige Warnungen oder unerwünschte Werbung gesehen haben, handelte es sich wahrscheinlich um Spam über Benachrichtigungen.\n\nSobald die Quell-Domains blockiert sind, erscheinen diese Benachrichtigungen nicht mehr."
+  },
+  "cleanAllBtn": {
+    "message": "Alle nicht verifizierten Websites blockieren"
+  },
+  "clearAllRulesBtn": {
+    "message": "Blockierte Websites zurücksetzen"
+  },
+  "confirmClearAllRules": {
+    "message": "Dadurch werden alle von NotiSpam Cleaner erstellten benachrichtigungsspezifischen Blockierungen und Einstellungen gelöscht und auf die Standardeinstellungen des Browsers zurückgesetzt. Sind Sie sicher?"
+  },
+  "blockBtnTooltip": {
+    "message": "Diese Website blockieren"
+  },
+  "trustBtnTooltip": {
+    "message": "Auf vertrauenswürdige Liste setzen"
+  },
+  "confirmResetAll": {
+    "message": "Sind Sie sicher, dass Sie die Benachrichtigungsberechtigungen für alle nicht verifizierten Websites entziehen möchten?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Diese Website ist derzeit geöffnet. Das Zurücksetzen der Einstellungen kann dazu führen, dass die automatische Blockierwarnung sofort wieder angezeigt wird. Schließen Sie zuerst den Tab. Fortfahren?"
+  },
+  "guardNotificationTitle": {
+    "message": "Sicherheitswarnung — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Benachrichtigungen für die nicht verifizierte Website \"$domain$\" automatisch blockiert. Klicken Sie unten, um ihr zu vertrauen, falls es ein Fehler war.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Benachrichtigungen von \"$domain$\" blockiert.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Website vertrauen (Zulassen)"
+  },
+  "guardNotificationKeep": {
+    "message": "Blockiert lassen"
+  },
+  "currentSiteLabel": {
+    "message": "Aktuelle Website:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Benachrichtigungsberechtigung:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Zulassen"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Blockieren"
+  },
+  "currentSiteResetBtn": {
+    "message": "Auf Standard zurücksetzen"
+  },
+  "statusActiveBlocked": {
+    "message": "Blockiert (Sicher)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Blockiert (Durch App)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Blockiert (Durch Browser)"
+  },
+  "statusActiveAllowed": {
+    "message": "Erlaubt (Vorsicht)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Erlaubt (Durch App vertraut)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Erlaubt (Durch Browser - Nicht verifiziert)"
+  },
+  "statusActiveAsk": {
+    "message": "Vor dem Senden fragen (Standard)"
+  },
+  "statusActiveDefault": {
+    "message": "Browser-Standard"
+  },
+  "labelAllowedBrowser": {
+    "message": "Vom Browser erlaubt"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Diese Berechtigung ist im Browser gespeichert. Sie verschwindet aus dem Scan, wenn die Website geschlossen oder aus dem Verlauf gelöscht wird, kann aber jederzeit in den Browsereinstellungen verwaltet werden."
+  },
+  "labelAllowedTrusted": {
+    "message": "Durch App vertraut"
+  },
+  "labelBlockedApp": {
+    "message": "Durch App blockiert"
+  },
+  "labelBlockedBrowser": {
+    "message": "Durch Browser blockiert"
+  },
+  "allowedLabel": {
+    "message": "Erlaubt ({count})"
+  },
+  "blockedLabel": {
+    "message": "Blockiert ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Derzeit sind keine Websites von NotiSpam Cleaner blockiert."
+  },
+  "unblockBtnTooltip": {
+    "message": "Blockierung aufheben (Auf Standard zurücksetzen)"
+  },
+  "helpTitle": {
+    "message": "Was ist Missbrauch von Benachrichtigungen?"
+  },
+  "helpDesc": {
+    "message": "Bösartige Websites verleiten oft zum Klicken auf \"Zulassen\", indem sie falsche Captchas (\"Klicken Sie auf Zulassen, um zu bestätigen, dass Sie kein Roboter sind\") oder gefälschte Sicherheitswarnungen anzeigen. Nach der Freigabe senden sie unerwünschte Werbung und gefälschte Antivirus-Warnungen direkt auf Ihren Bildschirm. NotiSpam Cleaner erkennt dies, bereinigt es mit einem Klick und schützt Sie dynamisch.\n\n*Hinweis: Einstellungen in NotiSpam Cleaner (Blockieren/Vertrauen) synchronisieren direkt mit der Benachrichtigungsdatenbank Ihres Browsers."
+  },
+  "settingsLinkNotice": {
+    "message": "Aufgrund von Browser-Einschränkungen können zugelassene Websites, die sich nicht mehr in offenen Tabs oder im Verlauf befinden, nicht gescannt werden. Öffnen Sie die Browsereinstellungen, um die vollständige Liste zu verwalten."
+  },
+  "openSettingsBtn": {
+    "message": "Browsereinstellungen für Benachrichtigungen öffnen"
+  },
+  "sectionCurrentSite": {
+    "message": "Aktive Website"
+  },
+  "sectionGlobalSettings": {
+    "message": "Globale Schutzeinstellungen"
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: 通知スパムクリーナー"
+  },
+  "extDesc": {
+    "message": "詐欺広告や迷惑通知を送るサイトを履歴等から発見し、簡単な操作で一括ブロック。リアルタイムでブラウザを保護します。"
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "通知スパムクリーナー"
+  },
+  "globalStatusLabel": {
+    "message": "デフォルトの通知許可動作:"
+  },
+  "statusBlocked": {
+    "message": "通知要求をブロック中 (安全)"
+  },
+  "statusAsk": {
+    "message": "送信する前に確認 (標準)"
+  },
+  "statusAllowed": {
+    "message": "すべての通知を許可 (危険)"
+  },
+  "togglePromptLabel": {
+    "message": "サイトからの通知要求を許可する"
+  },
+  "realtimeGuardLabel": {
+    "message": "リアルタイム保護"
+  },
+  "realtimeGuardDesc": {
+    "message": "信頼リスト外のサイトが通知許可を取得した際に、即座に検知して自動的にブロックします。"
+  },
+  "silentGuardianLabel": {
+    "message": "サイレント保護 (ファミリーモード)"
+  },
+  "silentGuardianDesc": {
+    "message": "信頼リスト外のサイトからの通知許可を、警告 (ポップアップ) を出さずに自動でブロックします。ご家族のPCに最適です。"
+  },
+  "backgroundBlockedLabel": {
+    "message": "バックグラウンドで自動ブロックしたサイト: {count} 件"
+  },
+  "clearLogBtn": {
+    "message": "リセット"
+  },
+  "scanBtn": {
+    "message": "通知許可サイトをスキャン (履歴・タブ等)"
+  },
+  "scanningMessage": {
+    "message": "閲覧履歴、ブックマーク、開いているタブをスキャン中..."
+  },
+  "allowedSectionTitle": {
+    "message": "通知を許可しているサイト"
+  },
+  "suspiciousLabel": {
+    "message": "要確認・未検証のサイト ({count})"
+  },
+  "trustedLabel": {
+    "message": "信頼するサイト ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "スキャンを実行して、現在通知を許可している未検証のサイトがないか確認してください。"
+  },
+  "safeStateMsg": {
+    "message": "未検証の通知許可ルールは検出されませんでした。\n\nもし画面上に不審な警告や不要な広告が表示されていた場合、それらはブラウザの通知設定を悪用したスパムである可能性があります。\n\n対象ドメインの通知設定がブロックされていれば、そこからの通知が届くことはありません。"
+  },
+  "cleanAllBtn": {
+    "message": "未検証のサイトを一括ブロック"
+  },
+  "clearAllRulesBtn": {
+    "message": "すべてのブロックを解除"
+  },
+  "confirmClearAllRules": {
+    "message": "この拡張機能によってブロックされたすべての通知設定 (個別ルール) を解除し、初期状態に戻します。よろしいですか？"
+  },
+  "blockBtnTooltip": {
+    "message": "このサイトからの通知をブロック"
+  },
+  "trustBtnTooltip": {
+    "message": "このサイトを信頼リストに追加"
+  },
+  "confirmResetAll": {
+    "message": "スキャンで検出されたすべての未検証サイトからの通知をブロックします。よろしいですか？"
+  },
+  "confirmResetActiveDomain": {
+    "message": "このサイトは現在ブラウザで開かれています。この状態で通知設定を初期設定に戻すと、ふたたび自動ブロック警告が表示される可能性があります。サイトを閉じてから初期設定に戻す操作を行ってください。処理を続行しますか？"
+  },
+  "guardNotificationTitle": {
+    "message": "セキュリティ警告 — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "未知のサイト「$domain$」からの通知を自動的にブロックしました。信頼して許可する場合は以下をクリックしてください。",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "「$domain$」からの通知をブロックしました。",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "このサイトを信頼して許可"
+  },
+  "guardNotificationKeep": {
+    "message": "ブロック状態を維持"
+  },
+  "currentSiteLabel": {
+    "message": "閲覧中のウェブサイト:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "通知許可の設定:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "許可する"
+  },
+  "currentSiteBlockBtn": {
+    "message": "ブロックする"
+  },
+  "currentSiteResetBtn": {
+    "message": "初期設定に戻す"
+  },
+  "statusActiveBlocked": {
+    "message": "ブロック中 (安全)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "ブロック中 (本アプリ)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "ブロック中 (ブラウザ設定)"
+  },
+  "statusActiveAllowed": {
+    "message": "許可中 (要注意)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "許可中 (本アプリで信頼)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "許可中 (ブラウザ設定 - 要検証)"
+  },
+  "statusActiveAsk": {
+    "message": "送信する前に確認 (標準)"
+  },
+  "statusActiveDefault": {
+    "message": "ブラウザ標準"
+  },
+  "labelAllowedBrowser": {
+    "message": "ブラウザで許可 (要検証)"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "この通知許可設定はブラウザ側に保存されています。サイトを閉じたり履歴から消えるとスキャンに表示されなくなりますが、ブラウザの設定画面からいつでも管理できます。"
+  },
+  "labelAllowedTrusted": {
+    "message": "本アプリで信頼"
+  },
+  "labelBlockedApp": {
+    "message": "本アプリでブロック"
+  },
+  "labelBlockedBrowser": {
+    "message": "ブラウザでブロック"
+  },
+  "allowedLabel": {
+    "message": "許可中 ({count})"
+  },
+  "blockedLabel": {
+    "message": "ブロック中 ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "NotiSpam Cleanerによってブロックされているサイトはありません。"
+  },
+  "unblockBtnTooltip": {
+    "message": "このサイトのブロックを解除 (初期設定に戻す)"
+  },
+  "helpTitle": {
+    "message": "通知機能の悪用 (通知スパム) とは？"
+  },
+  "helpDesc": {
+    "message": "悪質なサイトは、「ロボットではないことを証明するために『許可』を押してください」といった偽の認証画面や、偽のウイルス感染警告を表示して、ユーザーに通知ボタンをクリックさせようとします。一度許可してしまうと、ブラウザを閉じていても、端末の画面上に「サイトからの通知」として不適切な広告や詐欺の警告が届くようになります。NotiSpam Cleanerは、これらを即座に検知し、クリーンアップやリアルタイムでの自動ブロックを行います。\n\n※本拡張機能での設定 (ブロック/信頼) は、ブラウザ自体の通知設定データベースと直接同期しています。拡張機能で変更した内容は即座にブラウザ設定に反映されます。"
+  },
+  "settingsLinkNotice": {
+    "message": "ブラウザの制限により、履歴やタブから消えた古い許可サイトはスキャンで検出できません (リセットしたサイトも同様です)。完全なリストはブラウザ設定から確認・管理してください。"
+  },
+  "openSettingsBtn": {
+    "message": "ブラウザの通知設定を開く"
+  },
+  "sectionCurrentSite": {
+    "message": "閲覧中のウェブサイト"
+  },
+  "sectionGlobalSettings": {
+    "message": "共通・保護設定"
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: مانع إشعارات السبام"
+  },
+  "extDesc": {
+    "message": "يقوم بفحص وتطهير أذونات الإشعارات للمواقع المشبوهة لحمايتك من السبام والإعلانات الاحتيالية في الوقت الفعلي."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "مانع إشعارات السبام"
+  },
+  "globalStatusLabel": {
+    "message": "السلوك الافتراضي للإذن:"
+  },
+  "statusBlocked": {
+    "message": "محظور (أعلى مستويات الأمان)"
+  },
+  "statusAsk": {
+    "message": "السؤال قبل الإرسال (قياسي)"
+  },
+  "statusAllowed": {
+    "message": "السماح للجميع (خطير جداً!)"
+  },
+  "togglePromptLabel": {
+    "message": "السماح للمواقع بطلب إرسال الإشعارات"
+  },
+  "realtimeGuardLabel": {
+    "message": "الحماية في الوقت الفعلي"
+  },
+  "realtimeGuardDesc": {
+    "message": "يحظر فوراً إذن الإشعارات لأي موقع غير موثوق يطلبها."
+  },
+  "silentGuardianLabel": {
+    "message": "الحارس الصامت (وضع العائلة)"
+  },
+  "silentGuardianDesc": {
+    "message": "يحظر إشعارات المواقع غير الموثوقة بصمت في الخلفية دون إظهار أي تنبيهات. مثالي لأجهزة أفراد العائلة غير التقنيين."
+  },
+  "backgroundBlockedLabel": {
+    "message": "المواقع المحظورة بصمت في الخلفية: {count}"
+  },
+  "clearLogBtn": {
+    "message": "إعادة تعيين"
+  },
+  "scanBtn": {
+    "message": "فحص المواقع المسموح لها (السجل/التبويبات)"
+  },
+  "scanningMessage": {
+    "message": "جاري فحص سجل التصفح، الإشارات المرجعية، والتبويبات المفتوحة..."
+  },
+  "allowedSectionTitle": {
+    "message": "المواقع المسموح لها بالإشعارات"
+  },
+  "suspiciousLabel": {
+    "message": "غير موثوقة / مجهولة ({count})"
+  },
+  "trustedLabel": {
+    "message": "المواقع الموثوقة ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "انقر فوق فحص للتحقق مما إذا كانت هناك مواقع غير موثوقة تملك إذناً لإرسال الإشعارات."
+  },
+  "safeStateMsg": {
+    "message": "لم يتم العثور على أذونات إشعارات غير موثوقة.\n\nإذا كنت ترى تنبيهات أمنية وهمية أو إعلانات مزعجة، فقد تكون رسائل سبام تستغل إعدادات إشعارات المتصفح.\n\nبمجرد حظر النطاقات المصدر، ستتوقف هذه الإشعارات عن الظهور."
+  },
+  "cleanAllBtn": {
+    "message": "حظر جميع المواقع غير الموثوقة"
+  },
+  "clearAllRulesBtn": {
+    "message": "إعادة تعيين المواقع المحظورة"
+  },
+  "confirmClearAllRules": {
+    "message": "سيؤدي هذا إلى مسح كافة إعدادات حظر الإشعارات التي تم إنشاؤها بواسطة NotiSpam Cleaner وإعادتها إلى افتراضيات المتصفح. هل أنت متأكد؟"
+  },
+  "blockBtnTooltip": {
+    "message": "حظر هذا الموقع"
+  },
+  "trustBtnTooltip": {
+    "message": "إضافة إلى القائمة الموثوقة"
+  },
+  "confirmResetAll": {
+    "message": "هل أنت متأكد من رغبتك في إلغاء أذونات الإشعارات لجميع المواقع غير الموثوقة؟"
+  },
+  "confirmResetActiveDomain": {
+    "message": "هذا الموقع مفتوح حالياً في متصفحك. إعادة تعيين إعداداته الآن قد يؤدي لظهور تنبيه الحظر التلقائي فوراً. يرجى إغلاق تبويب الموقع أولاً ثم إعادة المحاولة. هل تريد الاستمرار؟"
+  },
+  "guardNotificationTitle": {
+    "message": "تنبيه أمني — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "تم تلقائياً حظر أذونات الإشعارات للموقع غير الموثوق \"$domain$\". انقر أدناه للموافقة عليه إذا كان ذلك خطأ.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "تم حظر إشعارات \"$domain$\".",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "الوثوق بالموقع والسماح له"
+  },
+  "guardNotificationKeep": {
+    "message": "الإبقاء على الحظر"
+  },
+  "currentSiteLabel": {
+    "message": "الموقع الحالي:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "إذن الإشعارات:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "سماح"
+  },
+  "currentSiteBlockBtn": {
+    "message": "حظر"
+  },
+  "currentSiteResetBtn": {
+    "message": "إعادة للوضع الافتراضي"
+  },
+  "statusActiveBlocked": {
+    "message": "محظور (آمن)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "محظور (بواسطة التطبيق)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "محظور (بواسطة المتصفح)"
+  },
+  "statusActiveAllowed": {
+    "message": "مسموح (احذر)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "مسموح (موثوق بواسطة التطبيق)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "مسموح (بواسطة المتصفح - غير موثوق)"
+  },
+  "statusActiveAsk": {
+    "message": "السؤال قبل الإرسال (قياسي)"
+  },
+  "statusActiveDefault": {
+    "message": "افتراضي المتصفح"
+  },
+  "labelAllowedBrowser": {
+    "message": "مسموح به من المتصفح"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "هذا الإذن مخزن بالمتصفح. سيختفي من الفحص إذا تم إغلاق الموقع أو حذفه من السجل، لكن يمكنك دائماً إدارته من إعدادات المتصفح."
+  },
+  "labelAllowedTrusted": {
+    "message": "موثوق بواسطة التطبيق"
+  },
+  "labelBlockedApp": {
+    "message": "محظور بواسطة التطبيق"
+  },
+  "labelBlockedBrowser": {
+    "message": "محظور بواسطة المتصفح"
+  },
+  "allowedLabel": {
+    "message": "مسموح به ({count})"
+  },
+  "blockedLabel": {
+    "message": "محظور ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "لا توجد مواقع محظورة حالياً بواسطة NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "إلغاء حظر الموقع (إعادة للافتراضي)"
+  },
+  "helpTitle": {
+    "message": "ما هو إساءة استخدام الإشعارات؟"
+  },
+  "helpDesc": {
+    "message": "تقوم المواقع الضارة بخداعك للنقر على \"سماح\" عبر عرض اختبار كابتشا زائف (\"اضغط سماح لتأكيد أنك لست روبوت\") أو تنبيهات أمنية مزيفة. بمجرد السماح لها، ترسل إعلانات وتنبيهات أمنية زائفة مباشرة لشاشتك. يكشف NotiSpam Cleaner هذا ويحظرها تلقائياً.\n\n*ملاحظة: تتزامن إعدادات NotiSpam Cleaner (حظر/سماح) مباشرة مع قاعدة بيانات إشعارات المتصفح الافتراضية."
+  },
+  "settingsLinkNotice": {
+    "message": "بسبب قيود المتصفح، المواقع المسموح لها والتي لم تعد بالتبويبات المفتوحة أو سجل التصفح الأخير لا يمكن فحصها. افتح إعدادات المتصفح لإدارة القائمة الكاملة."
+  },
+  "openSettingsBtn": {
+    "message": "فتح إعدادات إشعارات المتصفح"
+  },
+  "sectionCurrentSite": {
+    "message": "الموقع النشط"
+  },
+  "sectionGlobalSettings": {
+    "message": "إعدادات الحماية العامة"
+  }
+}
