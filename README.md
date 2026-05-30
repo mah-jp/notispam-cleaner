@@ -1,6 +1,6 @@
 # NotiSpam Cleaner — Notification Spam Blocker
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.0.0-blue.svg)](https://chrome.google.com/webstore)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.0.0-blue.svg)](https://chromewebstore.google.com/detail/notispam-cleaner-notifica/dahnhdiabhegihofjijbchegffnkiaap)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **NotiSpam Cleaner** is a privacy-first, open-source Google Chrome extension designed to scan, manage, and block website notification permissions to protect against notification spam. By revoking or blocking permission settings for suspicious domains, it prevents fake virus warnings, scam advertisements, and unwanted desktop popups from appearing on your screen.
@@ -15,15 +15,15 @@ Because Chrome does not provide a direct API to retrieve a bulk list of all cust
 
 ## Key Features
 
-*   **🔍 Smart Scanner & One-Click Cleanup:** Instantly audits allowed website permissions against your local history, bookmarks, and open tabs. It automatically separates sites into "Trusted" (whitelisted) and "Unverified" (suspicious), letting you revoke permissions from all suspicious websites at once with a single click.
-*   **🛡️ Real-time Protection Guard:** Monitors permission changes. If an unverified or non-whitelisted site gains notification permission, it instantly blocks it and raises a desktop warning with an option to undo.
-*   **🤫 Silent Guardian (Family Mode):** Quietly blocks new, unverified notification permissions in the background without showing any popups. Perfect for computers used by non-tech-savvy family members.
-*   **🔒 100% Privacy-First:** All scans, audits, and blocks are processed locally on your machine. Absolutely zero data is collected, stored, or transmitted off your device.
+*   **🔒 100% Privacy-First & Open-Source:** All scans, audits, and blocks are processed strictly on your local machine. Absolutely zero data is collected, stored, or transmitted off your device. The extension is fully open-source (MIT License) for full auditing.
+*   **🔍 Scan & One-Click Clean:** Instantly audits allowed website permissions against your local history, bookmarks, and open tabs. It automatically separates sites into "Trusted" and "Suspicious/Unknown", letting you revoke permissions from all suspicious websites at once.
+*   **🛡️ Real-Time Guard & Silent Protection:** Actively monitors notification permission changes. When an unverified site gets allowed, the extension detects and blocks it. Includes a "Silent Protection" mode to auto-block notifications in the background—ideal for family members' PCs.
 
 ## Installation
 
 ### Method A: Install from Chrome Web Store (Recommended)
-*Coming soon! Link will be updated upon publication.*
+You can install the extension directly from the [Chrome Web Store](https://chromewebstore.google.com/detail/notispam-cleaner-notifica/dahnhdiabhegihofjijbchegffnkiaap).
+
 
 ### Method B: Manual Developer Mode Installation
 1.  Clone this repository:
