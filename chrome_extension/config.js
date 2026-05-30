@@ -94,7 +94,7 @@ function getHostAndPortFromUrl(urlString) {
     port = protocol === 'https' ? '443' : '80';
   }
 
-  return `${hostname}:${port}`;
+  return `${hostname.toLowerCase()}:${port}`;
 }
 
 // Fast string-based port stripper from primary patterns
