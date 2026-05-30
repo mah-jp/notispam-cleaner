@@ -5,6 +5,9 @@
 
 **NotiSpam Cleaner** は、Google Chrome の「通知許可」設定をスキャン・一括ブロックして整理し、通知スパムからブラウザを保護するためのプライバシー優先のオープンソースな Chrome 拡張機能です。不審なウェブサイトに与えられた通知許可設定を解除・ブロックすることで、偽のウイルス警告や不要な広告通知が画面に届くのを防ぎます。
 
+> [!NOTE]
+> **互換性:** この拡張機能は `chrome.contentSettings` API を使用しているため、Chromium系ブラウザ (Google Chrome、Microsoft Edge、Brave、Vivaldi、Opera など) でのみ動作します。Firefox や Safari には対応していません。
+
 *他の言語で読む:*
 * 🇺🇸 [English (README.md)](README.md)
 

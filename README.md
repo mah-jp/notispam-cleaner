@@ -5,6 +5,9 @@
 
 **NotiSpam Cleaner** is a privacy-first, open-source Google Chrome extension designed to scan, manage, and block website notification permissions to protect against notification spam. By revoking or blocking permission settings for suspicious domains, it prevents fake virus warnings, scam advertisements, and unwanted desktop popups from appearing on your screen.
 
+> [!NOTE]
+> **Compatibility:** This extension is designed specifically for Chromium-based browsers (such as Google Chrome, Microsoft Edge, Brave, Vivaldi, Opera, etc.) due to its reliance on the `chrome.contentSettings` API. It is not compatible with Firefox or Safari.
+
 *Read this document in other languages:*
 * 🇯🇵 [日本語版 (README.ja.md)](README.ja.md)
 
