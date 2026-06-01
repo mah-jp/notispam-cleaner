@@ -12,7 +12,7 @@ const TRUSTED_DOMAINS = [
 
   // Collaboration & Business Tools
   'microsoft.com', 'office.com', 'office365.com', 'slack.com', 'zoom.us', 'zoom.com',
-  'asana.com', 'trello.com', 'notion.so', 'monday.com',
+  'webex.com', 'asana.com', 'trello.com', 'notion.so', 'monday.com',
 
   // Developer Tools & Platforms
   'github.com', 'gitlab.com', 'bitbucket.org', 'atlassian.net',
