@@ -65,7 +65,7 @@ graph TD
         C --> D{Is Guard enabled?}
         D -- No --> E[End Process]
         D -- Yes --> F{Is domain whitelisted?}
-        F -- Yes --> G[End Process (Keep Allowed)]
+        F -- Yes --> G["End Process (Keep Allowed)"]
         F -- No --> H[Immediately set notification setting to 'block']
 
         H --> I{Is Silent Guardian active?}
@@ -87,7 +87,7 @@ graph TD
 
     subgraph User Action (Desktop Notification)
         M --> N{User Choice}
-        N -- "Dismiss" --> O[Clear notification (Keep Blocked)]
+        N -- "Dismiss" --> O["Clear notification (Keep Blocked)"]
         N -- "Trust & Allow" --> P[Add domain to whitelist]
         P --> Q[Change setting to 'allow']
         Q --> R[Clear notification & Update icon]
