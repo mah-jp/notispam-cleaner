@@ -56,12 +56,12 @@ graph TD
     classDef api fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
     classDef user fill:#fff3e0,stroke:#ef6c00,stroke-width:2px;
 
-    subgraph Web Page / Content Script
+    subgraph web_page ["Web Page / Content Script"]
         A[Page Load / Permission Change] --> B{Is permission 'granted'?}
         B -- Yes --> C[Send Message:<br/>notification_granted]
     end
 
-    subgraph Background Service Worker
+    subgraph background_service_worker ["Background Service Worker"]
         C --> D{Is Guard enabled?}
         D -- No --> E[End Process]
         D -- Yes --> F{Is domain whitelisted?}
@@ -79,13 +79,13 @@ graph TD
         I -- No --> M[Show desktop alert notification]
     end
 
-    subgraph Chrome Storage & API
+    subgraph chrome_storage_api ["Chrome Storage & API"]
         H -.-> |Update setting| API_Block[chrome.contentSettings]
         F -.-> |Read whitelist| Store_WL[chrome.storage.local]
         J -.-> |Update count| Store_Count[chrome.storage.local]
     end
 
-    subgraph User Action (Desktop Notification)
+    subgraph user_action_sub ["User Action (Desktop Notification)"]
         M --> N{User Choice}
         N -- "Dismiss" --> O["Clear notification (Keep Blocked)"]
         N -- "Trust & Allow" --> P[Add domain to whitelist]
