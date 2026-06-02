@@ -340,15 +340,27 @@ async function doScan() {
   const storedBlockedDomains = storageData.blocked_domains;
 
   // Merge domains found by scanning with persisted blocked domains and whitelisted domains
-  const allDomainsToCheck = Array.from(new Set([...domains, ...storedBlockedDomains, ...userWhitelist]));
+  // Ensure all domains are normalized to lowercase during merge
+  const allDomainsToCheck = Array.from(new Set([
+    ...domains.map(d => d.toLowerCase()),
+    ...storedBlockedDomains.map(d => d.toLowerCase()),
+    ...userWhitelist.map(d => d.toLowerCase())
+  ]));
 
   const suspiciousAllowed = [];
   const trustedAllowed = [];
   const blockedSites = [];
   const activeBlockedInChrome = [];
 
-  for (const domain of allDomainsToCheck) {
-    const setting = await getNotificationSetting(domain);
+  // Scan all domains in parallel to improve performance and prevent UI freeze
+  const scanResults = await Promise.all(
+    allDomainsToCheck.map(async (domain) => {
+      const setting = await getNotificationSetting(domain);
+      return { domain, setting };
+    })
+  );
+
+  for (const { domain, setting } of scanResults) {
     if (setting === 'allow') {
       if (globalDefault !== 'allow') {
         if (isDomainTrusted(domain, userWhitelist)) {
@@ -704,7 +716,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (urlStr.startsWith('http:') || urlStr.startsWith('https:')) {
         const url = new URL(urlStr);
         const port = url.port || (url.protocol === 'https:' ? '443' : '80');
-        currentDomain = `${url.hostname}:${port}`;
+        currentDomain = `${url.hostname.toLowerCase()}:${port}`;
         document.getElementById('current-site-card').classList.remove('hidden');
         const currentSiteDomainEl = document.getElementById('current-site-domain');
         currentSiteDomainEl.textContent = currentDomain;

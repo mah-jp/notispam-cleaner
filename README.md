@@ -5,6 +5,9 @@
 
 **NotiSpam Cleaner** is a privacy-first, open-source Google Chrome extension designed to scan, manage, and block website notification permissions to protect against notification spam. By revoking or blocking permission settings for suspicious domains, it prevents fake virus warnings, scam advertisements, and unwanted desktop popups from appearing on your screen.
 
+> [!NOTE]
+> **Compatibility:** This extension is designed specifically for Chromium-based browsers (such as Google Chrome, Microsoft Edge, Brave, Vivaldi, Opera, etc.) due to its reliance on the `chrome.contentSettings` API. It is not compatible with Firefox or Safari.
+
 *Read this document in other languages:*
 * 🇯🇵 [日本語版 (README.ja.md)](README.ja.md)
 
@@ -39,6 +42,68 @@ You can install the extension directly from the [Chrome Web Store](https://chrom
 *   **Manifest V3 Compliant:** Built using modern Chrome Extension API standards.
 *   **Local Processing:** Integrates directly with the `chrome.contentSettings` API to read and write notification states.
 *   **State Management:** Extensively utilizes `chrome.storage.local` for settings persistence and whitelisted domains, ensuring no memory leaks or global state issues during service worker lifecycles.
+
+## How It Works (Real-Time Guard Flow)
+
+The workflow for real-time notification monitoring ("Guard") and "Silent Protection" (Silent Guardian) is visualized in the following diagram:
+
+```mermaid
+graph TD
+    %% Define styles/classes
+    classDef page fill:#f5f5f5,stroke:#333,stroke-width:2px;
+    classDef bg fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    classDef storage fill:#efebe9,stroke:#5d4037,stroke-width:2px;
+    classDef api fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    classDef user fill:#fff3e0,stroke:#ef6c00,stroke-width:2px;
+
+    subgraph web_page ["Web Page / Content Script"]
+        A[Page Load / Permission Change] --> B{Is permission 'granted'?}
+        B -- Yes --> C[Send Message:<br/>notification_granted]
+    end
+
+    subgraph background_service_worker ["Background Service Worker"]
+        C --> D{Is Guard enabled?}
+        D -- No --> E[End Process]
+        D -- Yes --> F{Is domain whitelisted?}
+        F -- Yes --> G["End Process (Keep Allowed)"]
+        F -- No --> H[Immediately set notification setting to 'block']
+
+        H --> I{Is Silent Guardian active?}
+        
+        %% Silent Guard Flow
+        I -- Yes --> J[Increment blocked count]
+        J --> K[Update badge text & color]
+        K --> L[Silent Block Completed]
+        
+        %% Normal Guard Flow
+        I -- No --> M[Show desktop alert notification]
+    end
+
+    subgraph chrome_storage_api ["Chrome Storage & API"]
+        H -.-> |Update setting| API_Block[chrome.contentSettings]
+        F -.-> |Read whitelist| Store_WL[chrome.storage.local]
+        J -.-> |Update count| Store_Count[chrome.storage.local]
+    end
+
+    subgraph user_action_sub ["User Action (Desktop Notification)"]
+        M --> N{User Choice}
+        N -- "Dismiss" --> O["Clear notification (Keep Blocked)"]
+        N -- "Trust & Allow" --> P[Add domain to whitelist]
+        P --> Q[Change setting to 'allow']
+        Q --> R[Clear notification & Update icon]
+    end
+
+    P -.-> |Save whitelist| Store_WL
+    Q -.-> |Update setting| API_Allow[chrome.contentSettings]
+
+    %% Apply classes
+    class A,B,C page;
+    class D,E,F,H,I,J,K,L,M bg;
+    class Store_WL,Store_Count storage;
+    class API_Block,API_Allow api;
+    class N,O,P,Q,R user;
+```
+
 
 ## Supported Languages (Locales)
 

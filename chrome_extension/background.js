@@ -19,7 +19,7 @@ function getDomainFromPattern(pattern) {
     let hostPart = host.split('/')[0];
     let hostOnly = hostPart.split(':')[0];
     let port = hostPart.split(':')[1] || (clean.startsWith('http:') ? '80' : '443');
-    return `${hostOnly}:${port}`;
+    return `${hostOnly.toLowerCase()}:${port}`;
   }
 }
 
@@ -48,6 +48,7 @@ async function blockPattern(pattern) {
 // Async handler for notification permissions granted events
 async function handleNotificationGranted(domain, url) {
   if (!domain) return;
+  domain = domain.toLowerCase();
 
   // Retrieve Guard state, Silent Guardian, and Whitelist from storage
   const data = await chrome.storage.local.get({
