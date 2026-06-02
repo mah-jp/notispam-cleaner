@@ -1,6 +1,6 @@
 # NotiSpam Cleaner — Notification Spam Blocker
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.0.0-blue.svg)](https://chromewebstore.google.com/detail/notispam-cleaner-notifica/dahnhdiabhegihofjijbchegffnkiaap)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.0.1-blue.svg)](https://chromewebstore.google.com/detail/notispam-cleaner-notifica/dahnhdiabhegihofjijbchegffnkiaap)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **NotiSpam Cleaner** is a privacy-first, open-source Google Chrome extension designed to scan, manage, and block website notification permissions to protect against notification spam. By revoking or blocking permission settings for suspicious domains, it prevents fake virus warnings, scam advertisements, and unwanted desktop popups from appearing on your screen.

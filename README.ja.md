@@ -1,6 +1,6 @@
 # NotiSpam Cleaner — 通知スパムクリーナー
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.0.0-blue.svg)](https://chromewebstore.google.com/detail/notispam-cleaner-notifica/dahnhdiabhegihofjijbchegffnkiaap)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.0.1-blue.svg)](https://chromewebstore.google.com/detail/notispam-cleaner-notifica/dahnhdiabhegihofjijbchegffnkiaap)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **NotiSpam Cleaner** は、Google Chrome の「通知許可」設定をスキャン・一括ブロックして整理し、通知スパムからブラウザを保護するためのプライバシー優先のオープンソースな Chrome 拡張機能です。不審なウェブサイトに与えられた通知許可設定を解除・ブロックすることで、偽のウイルス警告や不要な広告通知が画面に届くのを防ぎます。
