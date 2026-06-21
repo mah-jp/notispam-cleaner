@@ -964,9 +964,14 @@ input:checked+.slider:before {
   }
 
   .slider:before {
-    background-color: #e3e3e3;
+    background-color: #c4c7c5; /* Off state knob: light grey */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   }
+
+  input:checked + .slider:before {
+    background-color: #0b57d0; /* On state knob: Chrome standard dark blue */
+  }
+
 
   .site-item:hover {
     background: #2d2f31;
