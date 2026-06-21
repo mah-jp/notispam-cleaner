@@ -27,22 +27,17 @@ function getDomainFromPattern(pattern) {
 async function blockPattern(pattern) {
   const domain = getDomainFromPattern(pattern);
   const cleanPattern = stripPortFromPattern(pattern);
-  return new Promise((resolve) => {
-    try {
-      chrome.contentSettings.notifications.set({
-        primaryPattern: cleanPattern,
-        setting: 'block'
-      }, async () => {
-        if (domain) {
-          await addBlockedDomain(domain); // Keep port in storage
-        }
-        resolve();
-      });
-    } catch (e) {
-      console.error(`Failed to block pattern ${cleanPattern}:`, e);
-      resolve();
+  try {
+    await chrome.contentSettings.notifications.set({
+      primaryPattern: cleanPattern,
+      setting: 'block'
+    });
+    if (domain) {
+      await addBlockedDomain(domain); // Keep port in storage
     }
-  });
+  } catch (e) {
+    console.error(`Failed to block pattern ${cleanPattern}:`, e);
+  }
 }
 
 // Async handler for notification permissions granted events
@@ -124,11 +119,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'notification_granted') {
     handleNotificationGranted(message.domain, message.url);
   } else if (message.action === 'update_active_tab_icon') {
-    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-      if (tabs && tabs.length > 0) {
-        await updateIconForTab(tabs[0]);
+    (async () => {
+      try {
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tabs && tabs.length > 0) {
+          await updateIconForTab(tabs[0]);
+        }
+      } catch (err) {
+        console.error('Failed to update active tab icon on message:', err);
       }
-    });
+    })();
   }
 });
 
@@ -144,7 +144,7 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
   if (buttonIndex === 0) {
     try {
       // 1. Clear alert notification immediately
-      chrome.notifications.clear(notificationId);
+      await chrome.notifications.clear(notificationId);
 
       // 2. Remove from blocked list and add to whitelist in storage first (to avoid race condition with content script)
       await removeBlockedDomain(domain);
@@ -157,17 +157,16 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
       // 3. Set setting to 'allow' only after storage is successfully updated (stripping port for API compatibility)
       const cleanPattern = stripPortFromPattern(pattern);
 
-      chrome.contentSettings.notifications.set({
+      await chrome.contentSettings.notifications.set({
         primaryPattern: cleanPattern,
         setting: 'allow'
-      }, () => {
-        // Update active tab icon immediately if it matches the current window
-        chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
-          if (tabs && tabs.length > 0) {
-            await updateIconForTab(tabs[0]);
-          }
-        });
       });
+
+      // Update active tab icon immediately if it matches the current window
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tabs && tabs.length > 0) {
+        await updateIconForTab(tabs[0]);
+      }
     } catch (e) {
       console.error('Failed to trust domain:', e);
     }
@@ -175,7 +174,9 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
   // Button index 1: Dismiss
   else if (buttonIndex === 1) {
     // Clear alert notification
-    chrome.notifications.clear(notificationId);
+    try {
+      await chrome.notifications.clear(notificationId);
+    } catch (e) { }
   }
 });
 
@@ -185,49 +186,46 @@ async function updateIconForTab(tab) {
 
   // For non-http/https pages (like chrome:// settings, empty tabs), use the default icon
   if (!tab.url.startsWith('http:') && !tab.url.startsWith('https:')) {
-    chrome.action.setIcon({
-      path: {
-        "16": "icons/icon-16.png",
-        "48": "icons/icon-48.png",
-        "128": "icons/icon-128.png"
-      },
-      tabId: tab.id
-    }, () => {
-      // Ignore runtime errors (e.g. tab closed before callback)
-      if (chrome.runtime.lastError) { }
-    });
+    try {
+      await chrome.action.setIcon({
+        path: {
+          "16": "icons/icon-16.png",
+          "48": "icons/icon-48.png",
+          "128": "icons/icon-128.png"
+        },
+        tabId: tab.id
+      });
+    } catch (e) {
+      // Ignore runtime errors (e.g. tab closed before call completes)
+    }
     return;
   }
 
   try {
     // Get notification setting for this specific page URL
-    chrome.contentSettings.notifications.get({
+    const details = await chrome.contentSettings.notifications.get({
       primaryUrl: tab.url
-    }, (details) => {
-      if (chrome.runtime.lastError) return;
+    });
 
-      const setting = details ? details.setting : 'default';
-      let iconPrefix = 'icon'; // Default blue bell
+    const setting = details ? details.setting : 'default';
+    let iconPrefix = 'icon'; // Default blue bell
 
-      if (setting === 'block') {
-        iconPrefix = 'icon-blocked'; // Safe/Blocked bell (green bell with slash)
-      } else if (setting === 'allow') {
-        iconPrefix = 'icon-allowed'; // Warning/Allowed bell (red ringing bell)
-      }
+    if (setting === 'block') {
+      iconPrefix = 'icon-blocked'; // Safe/Blocked bell (green bell with slash)
+    } else if (setting === 'allow') {
+      iconPrefix = 'icon-allowed'; // Warning/Allowed bell (red ringing bell)
+    }
 
-      chrome.action.setIcon({
-        path: {
-          "16": `icons/${iconPrefix}-16.png`,
-          "48": `icons/${iconPrefix}-48.png`,
-          "128": `icons/${iconPrefix}-128.png`
-        },
-        tabId: tab.id
-      }, () => {
-        if (chrome.runtime.lastError) { }
-      });
+    await chrome.action.setIcon({
+      path: {
+        "16": `icons/${iconPrefix}-16.png`,
+        "48": `icons/${iconPrefix}-48.png`,
+        "128": `icons/${iconPrefix}-128.png`
+      },
+      tabId: tab.id
     });
   } catch (err) {
-    console.error('Failed to update tab icon:', err);
+    // Ignore runtime errors (e.g. tab closed/URL changed during async operation)
   }
 }
 

@@ -108,82 +108,58 @@ async function gatherDomains() {
 async function getNotificationSetting(domain) {
   const protocol = domain.endsWith(':80') ? 'http' : 'https';
   const cleanDomain = domain.split(':')[0]; // Strip port for chrome.contentSettings API compatibility
-  return new Promise((resolve) => {
-    try {
-      chrome.contentSettings.notifications.get({
-        primaryUrl: `${protocol}://${cleanDomain}/`
-      }, (details) => {
-        if (chrome.runtime.lastError) {
-          resolve('default');
-        } else {
-          resolve(details ? details.setting : 'default');
-        }
-      });
-    } catch (e) {
-      resolve('default');
-    }
-  });
+  try {
+    const details = await chrome.contentSettings.notifications.get({
+      primaryUrl: `${protocol}://${cleanDomain}/`
+    });
+    return details ? details.setting : 'default';
+  } catch (e) {
+    return 'default';
+  }
 }
 
 // Check the global default notification setting
 async function getGlobalDefaultSetting() {
-  return new Promise((resolve) => {
-    try {
-      // Querying a nonexistent domain with no overrides returns default setting
-      chrome.contentSettings.notifications.get({
-        primaryUrl: 'https://nonexistent-dummy-domain-check-notification-default.com/'
-      }, (details) => {
-        if (chrome.runtime.lastError) {
-          resolve('ask');
-        } else {
-          resolve(details ? details.setting : 'ask');
-        }
-      });
-    } catch (e) {
-      resolve('ask');
-    }
-  });
+  try {
+    // Querying a nonexistent domain with no overrides returns default setting
+    const details = await chrome.contentSettings.notifications.get({
+      primaryUrl: 'https://nonexistent-dummy-domain-check-notification-default.com/'
+    });
+    return details ? details.setting : 'ask';
+  } catch (e) {
+    return 'ask';
+  }
 }
 
 // Block notification permissions for a domain
 async function blockDomain(domain) {
   const protocol = domain.endsWith(':80') ? 'http' : 'https';
   const cleanDomain = domain.split(':')[0]; // Strip port for chrome.contentSettings API compatibility
-  return new Promise((resolve) => {
-    try {
-      chrome.contentSettings.notifications.set({
-        primaryPattern: `${protocol}://${cleanDomain}/*`,
-        setting: 'block'
-      }, async () => {
-        await addBlockedDomain(domain);
-        // Remove from user whitelist since it is blocked
-        const storageData = await chrome.storage.local.get({ user_whitelist: [] });
-        const userWhitelist = storageData.user_whitelist.filter(d => d !== domain);
-        await chrome.storage.local.set({ user_whitelist: userWhitelist });
-        resolve();
-      });
-    } catch (e) {
-      console.error(`Failed to block ${domain}:`, e);
-      resolve();
-    }
-  });
+  try {
+    await chrome.contentSettings.notifications.set({
+      primaryPattern: `${protocol}://${cleanDomain}/*`,
+      setting: 'block'
+    });
+    await addBlockedDomain(domain);
+    // Remove from user whitelist since it is blocked
+    const storageData = await chrome.storage.local.get({ user_whitelist: [] });
+    const userWhitelist = storageData.user_whitelist.filter(d => d !== domain);
+    await chrome.storage.local.set({ user_whitelist: userWhitelist });
+  } catch (e) {
+    console.error(`Failed to block ${domain}:`, e);
+  }
 }
 
 // Change global default setting
 async function setGlobalDefault(setting) {
-  return new Promise((resolve) => {
-    try {
-      chrome.contentSettings.notifications.set({
-        primaryPattern: '<all_urls>',
-        setting: setting
-      }, () => {
-        resolve();
-      });
-    } catch (e) {
-      console.error('Failed to set global notification setting:', e);
-      resolve();
-    }
-  });
+  try {
+    await chrome.contentSettings.notifications.set({
+      primaryPattern: '<all_urls>',
+      setting: setting
+    });
+  } catch (e) {
+    console.error('Failed to set global notification setting:', e);
+  }
 }
 
 // Reset notification settings for a domain to default (clears extension rules for it)
@@ -191,55 +167,51 @@ async function resetDomain(domain) {
   if (!domain) return;
   const cleanDomain = domain.toLowerCase();
 
-  // 1. Remove from local storage lists
-  const data = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [] });
-  const newBlocked = data.blocked_domains.filter(d => d !== cleanDomain);
-  const newWhitelist = data.user_whitelist.filter(d => d !== cleanDomain);
-  await chrome.storage.local.set({
-    blocked_domains: newBlocked,
-    user_whitelist: newWhitelist
-  });
-
-  // 2. Clear all content settings set by this extension and re-apply remaining
-  return new Promise((resolve) => {
-    chrome.contentSettings.notifications.clear({}, () => {
-      // Re-apply remaining blocks (stripping ports for API calls)
-      const blockPromises = newBlocked.map(d => {
-        const protocol = d.endsWith(':80') ? 'http' : 'https';
-        const cleanD = d.split(':')[0];
-        return new Promise((res) => {
-          try {
-            chrome.contentSettings.notifications.set({
-              primaryPattern: `${protocol}://${cleanD}/*`,
-              setting: 'block'
-            }, res);
-          } catch (e) {
-            console.error(`Failed to re-block ${cleanD}:`, e);
-            res();
-          }
-        });
-      });
-
-      // Re-apply remaining whitelisted allows (stripping ports for API calls)
-      const allowPromises = newWhitelist.map(d => {
-        const protocol = d.endsWith(':80') ? 'http' : 'https';
-        const cleanD = d.split(':')[0];
-        return new Promise((res) => {
-          try {
-            chrome.contentSettings.notifications.set({
-              primaryPattern: `${protocol}://${cleanD}/*`,
-              setting: 'allow'
-            }, res);
-          } catch (e) {
-            console.error(`Failed to re-allow ${cleanD}:`, e);
-            res();
-          }
-        });
-      });
-
-      Promise.all([...blockPromises, ...allowPromises]).then(resolve);
+  try {
+    // 1. Remove from local storage lists
+    const data = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [] });
+    const newBlocked = data.blocked_domains.filter(d => d !== cleanDomain);
+    const newWhitelist = data.user_whitelist.filter(d => d !== cleanDomain);
+    await chrome.storage.local.set({
+      blocked_domains: newBlocked,
+      user_whitelist: newWhitelist
     });
-  });
+
+    // 2. Clear all content settings set by this extension
+    await chrome.contentSettings.notifications.clear({});
+
+    // Re-apply remaining blocks (stripping ports for API calls)
+    const blockPromises = newBlocked.map(async (d) => {
+      const protocol = d.endsWith(':80') ? 'http' : 'https';
+      const cleanD = d.split(':')[0];
+      try {
+        await chrome.contentSettings.notifications.set({
+          primaryPattern: `${protocol}://${cleanD}/*`,
+          setting: 'block'
+        });
+      } catch (e) {
+        console.error(`Failed to re-block ${cleanD}:`, e);
+      }
+    });
+
+    // Re-apply remaining whitelisted allows (stripping ports for API calls)
+    const allowPromises = newWhitelist.map(async (d) => {
+      const protocol = d.endsWith(':80') ? 'http' : 'https';
+      const cleanD = d.split(':')[0];
+      try {
+        await chrome.contentSettings.notifications.set({
+          primaryPattern: `${protocol}://${cleanD}/*`,
+          setting: 'allow'
+        });
+      } catch (e) {
+        console.error(`Failed to re-allow ${cleanD}:`, e);
+      }
+    });
+
+    await Promise.all([...blockPromises, ...allowPromises]);
+  } catch (err) {
+    console.error(`Failed to reset domain ${domain}:`, err);
+  }
 }
 
 // Update UI state of global notification setting and health status
@@ -799,25 +771,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     const confirmMsg = chrome.i18n.getMessage('confirmClearAllRules') || 'Reset all blocked sites?';
     if (!confirm(confirmMsg)) return;
 
-    // Clear all custom site settings (blocks and allows) set by this extension
-    chrome.contentSettings.notifications.clear({}, async () => {
+    try {
+      // Clear all custom site settings (blocks and allows) set by this extension
+      await chrome.contentSettings.notifications.clear({});
       await chrome.storage.local.set({ blocked_domains: [] });
 
       // Re-apply remaining whitelist rules to Chrome
       const data = await chrome.storage.local.get({ user_whitelist: [] });
-      const allowPromises = data.user_whitelist.map(d => {
+      const allowPromises = data.user_whitelist.map(async (d) => {
         const protocol = d.endsWith(':80') ? 'http' : 'https';
         const cleanD = d.split(':')[0];
-        return new Promise((res) => {
-          try {
-            chrome.contentSettings.notifications.set({
-              primaryPattern: `${protocol}://${cleanD}/*`,
-              setting: 'allow'
-            }, res);
-          } catch (e) {
-            res();
-          }
-        });
+        try {
+          await chrome.contentSettings.notifications.set({
+            primaryPattern: `${protocol}://${cleanD}/*`,
+            setting: 'allow'
+          });
+        } catch (e) { }
       });
       await Promise.all(allowPromises);
 
@@ -825,7 +794,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         await updateCurrentSiteStatusUI(currentDomain);
       }
       await doScan();
-    });
+    } catch (e) {
+      console.error('Failed to clear rules:', e);
+    }
   });
 
   document.getElementById('default-toggle').addEventListener('change', async (e) => {
