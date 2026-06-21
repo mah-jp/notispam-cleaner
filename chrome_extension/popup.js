@@ -598,8 +598,10 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
           await chrome.storage.local.set({ user_whitelist: userWhitelist });
         }
 
+        const protocol = d.endsWith(':80') ? 'http' : 'https';
+        const cleanD = d.split(':')[0];
         await chrome.contentSettings.notifications.set({
-          primaryPattern: `https://${d}/*`,
+          primaryPattern: `${protocol}://${cleanD}/*`,
           setting: 'allow'
         });
 
@@ -800,6 +802,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Clear all custom site settings (blocks and allows) set by this extension
     chrome.contentSettings.notifications.clear({}, async () => {
       await chrome.storage.local.set({ blocked_domains: [] });
+
+      // Re-apply remaining whitelist rules to Chrome
+      const data = await chrome.storage.local.get({ user_whitelist: [] });
+      const allowPromises = data.user_whitelist.map(d => {
+        const protocol = d.endsWith(':80') ? 'http' : 'https';
+        const cleanD = d.split(':')[0];
+        return new Promise((res) => {
+          try {
+            chrome.contentSettings.notifications.set({
+              primaryPattern: `${protocol}://${cleanD}/*`,
+              setting: 'allow'
+            }, res);
+          } catch (e) {
+            res();
+          }
+        });
+      });
+      await Promise.all(allowPromises);
+
       if (currentDomain) {
         await updateCurrentSiteStatusUI(currentDomain);
       }
