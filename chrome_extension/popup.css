@@ -895,3 +895,97 @@ input:checked+.slider:before {
 .text-link-btn:hover {
   color: var(--accent-hover);
 }
+
+/* Chrome Refresh 2023 / MD3 Dark Mode Styling */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-gradient: linear-gradient(135deg, #131314 0%, #1e1f20 100%);
+    --panel-bg: #28292a;
+    --panel-border: #3c4043;
+    --panel-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 16px -6px rgba(0, 0, 0, 0.3);
+    
+    /* Accent Colors (Chrome Official Settings Dark Blue - CR23 Dark) */
+    --accent-color: #a8c7fa;
+    --accent-glow: rgba(168, 199, 250, 0.15);
+    --accent-hover: #c2e7ff;
+
+    /* Status Colors (Material 3 Dark Theme Colors) */
+    --success-color: #81c995;
+    --success-glow: rgba(129, 201, 149, 0.12);
+    --danger-color: #f28b82;
+    --danger-glow: rgba(242, 139, 130, 0.12);
+    --danger-hover: #ffb4ab;
+    --warning-color: #fdd663;
+    --warning-glow: rgba(253, 214, 99, 0.12);
+
+    /* Text Colors (Chrome Dark Mode standard contrast) */
+    --text-primary: #e3e3e3;
+    --text-secondary: #c4c7c5;
+    --text-muted: #8e918f;
+  }
+
+  /* Specific Component Overrides for Dark Theme */
+  .current-site-card.hero-card {
+    background: linear-gradient(135deg, #1a2333 0%, #121824 100%);
+    border-color: rgba(168, 199, 250, 0.2);
+    box-shadow: 0 4px 15px -3px rgba(168, 199, 250, 0.05), var(--panel-shadow);
+  }
+
+  .tab-control {
+    background: #1e1f20;
+    border-color: #3c4043;
+  }
+
+  .tab-btn.active {
+    background: #28292a;
+    border-color: #3c4043;
+  }
+
+  .btn-secondary {
+    background: #2d2f31;
+    border-color: #3c4043;
+    color: #e3e3e3;
+  }
+
+  .btn-secondary:hover {
+    background: #3c4043;
+    border-color: #8e918f;
+    color: #f1f1f1;
+  }
+
+  .settings-link-card {
+    background: rgba(40, 41, 42, 0.4);
+    border-color: #3c4043;
+  }
+
+  .slider {
+    background-color: #3c4043;
+    border-color: #474747;
+  }
+
+  .slider:before {
+    background-color: #e3e3e3;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .site-item:hover {
+    background: #2d2f31;
+  }
+
+  .overlay {
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(30, 31, 32, 0.3);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(142, 145, 143, 0.4);
+  }
+
+  .scanner-circle {
+    border-color: #2d2f31;
+    border-top-color: var(--accent-color);
+  }
+}
