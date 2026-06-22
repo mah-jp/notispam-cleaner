@@ -43,21 +43,29 @@
   padding: 0;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   width: 420px;
-  height: 580px;
+  height: 600px;
   font-family: var(--font-family);
   background: var(--bg-gradient);
   color: var(--text-primary);
-  overflow: hidden;
+  overflow-y: auto;
   -webkit-font-smoothing: antialiased;
 }
 
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100%;
   padding: 20px;
+}
+
+.app-body {
+  margin-bottom: 12px;
 }
 
 /* Header */
@@ -65,7 +73,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .logo-area {
@@ -134,7 +142,7 @@ body {
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   border-radius: var(--border-radius-lg);
-  padding: 14px 16px;
+  padding: 10px 14px;
   box-shadow: var(--panel-shadow);
   transition: box-shadow var(--transition-speed), transform var(--transition-speed);
 }
@@ -164,18 +172,18 @@ body {
 }
 
 .current-site-section {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .current-site-card.hero-card {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   background: linear-gradient(135deg, hsl(210, 100%, 99%) 0%, hsl(210, 60%, 97%) 100%);
   border: 1px solid hsla(210, 50%, 75%, 0.4);
   border-left: 4px solid var(--accent-color);
   border-radius: var(--border-radius-lg);
-  padding: 14px 16px;
+  padding: 10px 14px;
   box-shadow: 0 4px 15px -3px rgba(11, 87, 208, 0.06), var(--panel-shadow);
 }
 
@@ -220,7 +228,7 @@ body {
   display: flex;
   gap: 8px;
   border-top: 1px dashed hsla(210, 30%, 80%, 0.5);
-  padding-top: 10px;
+  padding-top: 8px;
   margin-top: 2px;
 }
 
@@ -239,14 +247,14 @@ body {
 .global-settings-card {
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .setting-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 0;
+  padding: 6px 0;
   gap: 12px;
 }
 
@@ -258,7 +266,7 @@ body {
   padding-bottom: 2px;
 }
 
-.setting-row + .setting-row {
+.setting-row+.setting-row {
   border-top: 1px solid var(--panel-border);
 }
 
@@ -575,21 +583,14 @@ input:checked+.slider:before {
 
 /* Results section & list */
 .results-section {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-  min-height: 0;
+  margin-bottom: 8px;
 }
 
 .list-container {
-  flex-grow: 1;
   background: var(--panel-bg);
   border: 1px solid var(--panel-border);
   border-radius: var(--border-radius-lg);
-  overflow-y: auto;
   box-shadow: inset 0 2px 5px rgba(15, 23, 42, 0.03);
-  min-height: 0;
 }
 
 .site-list {
@@ -860,8 +861,8 @@ input:checked+.slider:before {
 
 /* Settings Link Card */
 .settings-link-card {
-  margin-bottom: 12px;
-  padding: 10px 12px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
   background: hsla(210, 40%, 96%, 0.6);
   border: 1px dashed var(--panel-border);
 }
@@ -903,7 +904,7 @@ input:checked+.slider:before {
     --panel-bg: #28292a;
     --panel-border: #3c4043;
     --panel-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 16px -6px rgba(0, 0, 0, 0.3);
-    
+
     /* Accent Colors (Chrome Official Settings Dark Blue - CR23 Dark) */
     --accent-color: #a8c7fa;
     --accent-glow: rgba(168, 199, 250, 0.15);
@@ -964,12 +965,14 @@ input:checked+.slider:before {
   }
 
   .slider:before {
-    background-color: #c4c7c5; /* Off state knob: light grey */
+    background-color: #c4c7c5;
+    /* Off state knob: light grey */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   }
 
-  input:checked + .slider:before {
-    background-color: #0b57d0; /* On state knob: Chrome standard dark blue */
+  input:checked+.slider:before {
+    background-color: #0b57d0;
+    /* On state knob: Chrome standard dark blue */
   }
 
 
