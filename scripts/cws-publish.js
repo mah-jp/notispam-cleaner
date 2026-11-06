@@ -139,7 +139,7 @@ function resolveConfig(options = {}, env = process.env) {
   if (missing.length > 0) {
     throw new Error(
       `Missing required Chrome Web Store configuration: ${missing.join(', ')}. ` +
-      `Ensure GitHub Secrets (CWS_PUBLISHER_ID, CWS_EXTENSION_ID, CWS_CLIENT_ID, CWS_CLIENT_SECRET, CWS_REFRESH_TOKEN) and --zip are set.`
+      `Ensure GitHub Secrets (CWS_PUBLISHER_ID, CWS_EXTENSION_ID, CWS_CLIENT_ID, CWS_CLIENT_SECRET, CWS_REFRESH_TOKEN)${checkStatus ? '' : ' and --zip'} are set.`
     );
   }
 
@@ -161,6 +161,22 @@ function resolveConfig(options = {}, env = process.env) {
 }
 
 /**
+ * Parse a raw HTTP response string into a non-null JSON object, or return `{ data: { raw }, isJsonObject: false }`.
+ * @param {string} rawText
+ */
+function parseJsonObject(rawText) {
+  try {
+    const parsed = JSON.parse(rawText);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return { data: parsed, isJsonObject: true };
+    }
+  } catch {
+    // Fall through to raw wrapper
+  }
+  return { data: { raw: rawText }, isJsonObject: false };
+}
+
+/**
  * Exchange an OAuth2 refresh token for a short-lived access token.
  */
 async function fetchAccessToken({ clientId, clientSecret, refreshToken, fetchImpl = fetch }) {
@@ -179,16 +195,11 @@ async function fetchAccessToken({ clientId, clientSecret, refreshToken, fetchImp
     body: body.toString()
   });
 
-  let data;
   const rawText = await res.text();
-  try {
-    data = JSON.parse(rawText);
-  } catch {
-    data = { raw: rawText };
-  }
+  const { data } = parseJsonObject(rawText);
 
-  if (!res.ok || !data || typeof data.access_token !== 'string' || !data.access_token) {
-    const errDetail = data && (data.error_description || data.error)
+  if (!res.ok || typeof data.access_token !== 'string' || !data.access_token) {
+    const errDetail = data.error_description || data.error
       ? `${data.error}${data.error_description ? `: ${data.error_description}` : ''}`
       : `HTTP ${res.status}`;
     throw new Error(`Failed to obtain OAuth2 access token (${errDetail})`);
@@ -230,16 +241,15 @@ async function uploadPackage({
   });
 
   const rawText = await res.text();
-  let data;
-  try {
-    data = JSON.parse(rawText);
-  } catch {
-    data = { raw: rawText };
-  }
+  const { data, isJsonObject } = parseJsonObject(rawText);
 
   if (!res.ok) {
     const errMsg = data?.error?.message || rawText || `HTTP ${res.status}`;
     throw new Error(`Chrome Web Store upload failed (HTTP ${res.status}): ${errMsg}`);
+  }
+
+  if (!isJsonObject) {
+    throw new Error(`Invalid JSON response from Chrome Web Store upload endpoint: ${rawText}`);
   }
 
   return data;
@@ -264,16 +274,15 @@ async function fetchItemStatus({
   });
 
   const rawText = await res.text();
-  let data;
-  try {
-    data = JSON.parse(rawText);
-  } catch {
-    data = { raw: rawText };
-  }
+  const { data, isJsonObject } = parseJsonObject(rawText);
 
   if (!res.ok) {
     const errMsg = data?.error?.message || rawText || `HTTP ${res.status}`;
     throw new Error(`Failed to fetch upload status (HTTP ${res.status}): ${errMsg}`);
+  }
+
+  if (!isJsonObject) {
+    throw new Error(`Invalid JSON response from Chrome Web Store fetchStatus endpoint: ${rawText}`);
   }
 
   return data;
@@ -338,6 +347,16 @@ async function verifyChromeWebStoreStatus(options = {}, env = process.env, deps 
     fetchImpl
   });
 
+  if (
+    !statusResult.itemId &&
+    !statusResult.name &&
+    !statusResult.publishedItemRevisionStatus &&
+    !statusResult.submittedItemRevisionStatus &&
+    !statusResult.lastAsyncUploadState
+  ) {
+    throw new Error(`Unexpected empty status response from Chrome Web Store API v2: ${JSON.stringify(statusResult)}`);
+  }
+
   const itemId = statusResult.itemId || config.extensionId;
   const publishedState = statusResult.publishedItemRevisionStatus?.state || 'NONE';
   const publishedVersion = statusResult.publishedItemRevisionStatus?.distributionChannels?.[0]?.crxVersion || 'N/A';
@@ -383,16 +402,15 @@ async function publishItem({
   });
 
   const rawText = await res.text();
-  let data;
-  try {
-    data = JSON.parse(rawText);
-  } catch {
-    data = { raw: rawText };
-  }
+  const { data, isJsonObject } = parseJsonObject(rawText);
 
   if (!res.ok) {
     const errMsg = data?.error?.message || rawText || `HTTP ${res.status}`;
     throw new Error(`Chrome Web Store publish failed (HTTP ${res.status}): ${errMsg}`);
+  }
+
+  if (!isJsonObject) {
+    throw new Error(`Invalid JSON response from Chrome Web Store publish endpoint: ${rawText}`);
   }
 
   return data;
@@ -447,6 +465,12 @@ async function deployToChromeWebStore(options = {}, env = process.env, deps = {}
 
   if (config.uploadOnly) {
     logger.log(`[CWS] --upload-only specified. Skipping publish step (saved as draft).`);
+    if (env.GITHUB_ACTIONS === 'true') {
+      logger.log(
+        `::notice title=Chrome Web Store Draft Uploaded::` +
+        `item=${config.extensionId}, crxVersion=${uploadResult.crxVersion || 'unknown'}, uploadState=${state}`
+      );
+    }
     return { uploadResult, publishResult: null };
   }
 
@@ -459,7 +483,17 @@ async function deployToChromeWebStore(options = {}, env = process.env, deps = {}
     fetchImpl
   });
 
+  if (publishResult.state === 'REJECTED' || publishResult.state === 'CANCELLED') {
+    throw new Error(`Chrome Web Store publish did not succeed (state: ${publishResult.state}): ${JSON.stringify(publishResult)}`);
+  }
+
   logger.log(`[CWS] Publish submission complete (state: ${publishResult.state || 'SUBMITTED'}).`);
+  if (env.GITHUB_ACTIONS === 'true') {
+    logger.log(
+      `::notice title=Chrome Web Store Publish Submitted::` +
+      `item=${config.extensionId}, crxVersion=${uploadResult.crxVersion || 'unknown'}, state=${publishResult.state || 'SUBMITTED'}`
+    );
+  }
   return { uploadResult, publishResult };
 }
 
@@ -490,14 +524,9 @@ async function exchangeAuthCodeForRefreshToken({
   });
 
   const rawText = await res.text();
-  let data;
-  try {
-    data = JSON.parse(rawText);
-  } catch {
-    data = { raw: rawText };
-  }
+  const { data } = parseJsonObject(rawText);
 
-  if (!res.ok || !data.refresh_token) {
+  if (!res.ok || typeof data.refresh_token !== 'string' || !data.refresh_token) {
     const detail = data?.error_description || data?.error || rawText || `HTTP ${res.status}`;
     throw new Error(
       `Failed to obtain refresh_token (${detail}). ` +

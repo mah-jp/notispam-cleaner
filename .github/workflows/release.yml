@@ -87,7 +87,7 @@ jobs:
           fi
 
       - name: Verify Chrome Web Store API v2 credentials and item status
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        if: github.repository == 'mah-jp/notispam-cleaner' && github.actor != 'dependabot[bot]' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         env:
           CWS_PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
           CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID || 'dahnhdiabhegihofjijbchegffnkiaap' }}

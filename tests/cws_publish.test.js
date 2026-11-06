@@ -81,6 +81,15 @@ describe('scripts/cws-publish.js — Chrome Web Store API v2 Automation', () => 
         () => cws.resolveConfig({ extensionId: '   ' }, {}),
         /Missing required Chrome Web Store configuration: CWS_PUBLISHER_ID, CWS_EXTENSION_ID, CWS_CLIENT_ID, CWS_CLIENT_SECRET, CWS_REFRESH_TOKEN, --zip <path>/
       );
+
+      assert.throws(
+        () => cws.resolveConfig({ checkStatus: true }, {}),
+        (err) => {
+          assert.match(err.message, /Missing required Chrome Web Store configuration: CWS_PUBLISHER_ID/);
+          assert.ok(!err.message.includes('--zip'), 'Should not mention --zip when checkStatus is true');
+          return true;
+        }
+      );
     });
 
     it('rejects invalid publishType values', () => {
@@ -362,6 +371,93 @@ describe('scripts/cws-publish.js — Chrome Web Store API v2 Automation', () => 
       assert.equal(status.itemId, 'dahnhdiabhegihofjijbchegffnkiaap');
       assert.ok(logs.some((l) => l.includes('::notice title=Chrome Web Store API v2 Verified::')));
       assert.ok(logs.some((l) => l.includes('publishedVersion=1.0.3')));
+    });
+
+    it('rejects null/non-JSON responses on HTTP 200 and rejected/cancelled publish states', async () => {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cws-test-'));
+      const zipPath = path.join(tmpDir, 'ext.zip');
+      fs.writeFileSync(zipPath, Buffer.from('PK\x03\x04dummy-zip-content'));
+
+      const baseEnv = {
+        CWS_PUBLISHER_ID: 'pub-1',
+        CWS_EXTENSION_ID: 'ext-1',
+        CWS_CLIENT_ID: 'cid',
+        CWS_CLIENT_SECRET: 'csec',
+        CWS_REFRESH_TOKEN: 'rtok'
+      };
+
+      try {
+        // 1. fetchItemStatus returning JSON "null" or HTML on HTTP 200
+        await assert.rejects(
+          () => cws.fetchItemStatus({
+            publisherId: 'pub-1',
+            extensionId: 'ext-1',
+            accessToken: 'tok',
+            fetchImpl: async () => createJsonResponse(200, 'null')
+          }),
+          /Invalid JSON response from Chrome Web Store fetchStatus endpoint/
+        );
+
+        // 2. verifyChromeWebStoreStatus receiving empty {} JSON object
+        await assert.rejects(
+          () => cws.verifyChromeWebStoreStatus(
+            {},
+            baseEnv,
+            {
+              logger: silentLogger,
+              fetchImpl: async (url) => {
+                if (url === cws.OAUTH_TOKEN_URL) return createJsonResponse(200, { access_token: 'tok' });
+                return createJsonResponse(200, {});
+              }
+            }
+          ),
+          /Unexpected empty status response from Chrome Web Store API v2/
+        );
+
+        // 3. uploadPackage returning HTML on HTTP 200
+        await assert.rejects(
+          () => cws.uploadPackage({
+            publisherId: 'pub-1',
+            extensionId: 'ext-1',
+            accessToken: 'tok',
+            zipPath,
+            fetchImpl: async () => createJsonResponse(200, '<html>Proxy</html>')
+          }),
+          /Invalid JSON response from Chrome Web Store upload endpoint/
+        );
+
+        // 4. deployToChromeWebStore when publishItem returns REJECTED state
+        await assert.rejects(
+          () => cws.deployToChromeWebStore(
+            { zipPath },
+            baseEnv,
+            {
+              logger: silentLogger,
+              fetchImpl: async (url) => {
+                if (url === cws.OAUTH_TOKEN_URL) return createJsonResponse(200, { access_token: 'tok' });
+                if (url.endsWith(':upload')) return createJsonResponse(200, { uploadState: 'SUCCEEDED', crxVersion: '1.0.4' });
+                if (url.endsWith(':publish')) return createJsonResponse(200, { state: 'REJECTED' });
+                throw new Error(`Unexpected URL: ${url}`);
+              }
+            }
+          ),
+          /Chrome Web Store publish did not succeed \(state: REJECTED\)/
+        );
+
+        // 5. exchangeAuthCodeForRefreshToken returning JSON "null"
+        await assert.rejects(
+          () => cws.exchangeAuthCodeForRefreshToken({
+            clientId: 'cid',
+            clientSecret: 'csec',
+            code: 'code',
+            redirectUri: 'http://127.0.0.1:8818',
+            fetchImpl: async () => createJsonResponse(200, 'null')
+          }),
+          /Failed to obtain refresh_token/
+        );
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
     });
   });
 
