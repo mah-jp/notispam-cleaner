@@ -20,6 +20,7 @@ function parseArgs(argv = process.argv.slice(2)) {
   const opts = {
     zipPath: null,
     uploadOnly: false,
+    checkStatus: false,
     publishType: 'DEFAULT_PUBLISH',
     getToken: false,
     authCode: null,
@@ -59,6 +60,8 @@ function parseArgs(argv = process.argv.slice(2)) {
       opts.help = true;
     } else if (arg === '--upload-only') {
       opts.uploadOnly = true;
+    } else if (arg === '--check-status') {
+      opts.checkStatus = true;
     } else if (arg === '--get-token') {
       opts.getToken = true;
     } else if (arg === '--zip') {
@@ -122,6 +125,7 @@ function resolveConfig(options = {}, env = process.env) {
   const refreshToken = (options.refreshToken ?? env.CWS_REFRESH_TOKEN ?? '').trim();
   const zipPath = (options.zipPath ?? env.CWS_ZIP_PATH ?? '').trim();
   const uploadOnly = Boolean(options.uploadOnly);
+  const checkStatus = Boolean(options.checkStatus);
   const publishType = (options.publishType || 'DEFAULT_PUBLISH').trim();
 
   const missing = [];
@@ -130,7 +134,7 @@ function resolveConfig(options = {}, env = process.env) {
   if (!clientId) missing.push('CWS_CLIENT_ID');
   if (!clientSecret) missing.push('CWS_CLIENT_SECRET');
   if (!refreshToken) missing.push('CWS_REFRESH_TOKEN');
-  if (!zipPath) missing.push('--zip <path>');
+  if (!checkStatus && !zipPath) missing.push('--zip <path>');
 
   if (missing.length > 0) {
     throw new Error(
@@ -151,6 +155,7 @@ function resolveConfig(options = {}, env = process.env) {
     refreshToken,
     zipPath,
     uploadOnly,
+    checkStatus,
     publishType
   };
 }
@@ -241,6 +246,40 @@ async function uploadPackage({
 }
 
 /**
+ * Fetch the current status of the extension item from Chrome Web Store API v2 (`:fetchStatus`).
+ */
+async function fetchItemStatus({
+  publisherId,
+  extensionId,
+  accessToken,
+  fetchImpl = fetch
+}) {
+  const url = `${CWS_API_BASE}/publishers/${encodeURIComponent(publisherId)}/items/${encodeURIComponent(extensionId)}:fetchStatus`;
+
+  const res = await fetchImpl(url, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+
+  const rawText = await res.text();
+  let data;
+  try {
+    data = JSON.parse(rawText);
+  } catch {
+    data = { raw: rawText };
+  }
+
+  if (!res.ok) {
+    const errMsg = data?.error?.message || rawText || `HTTP ${res.status}`;
+    throw new Error(`Failed to fetch upload status (HTTP ${res.status}): ${errMsg}`);
+  }
+
+  return data;
+}
+
+/**
  * Poll `:fetchStatus` when an upload returns `IN_PROGRESS` until it resolves to `SUCCEEDED`.
  */
 async function waitForUploadCompletion({
@@ -252,30 +291,15 @@ async function waitForUploadCompletion({
   maxAttempts = 20,
   sleepImpl = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 }) {
-  const url = `${CWS_API_BASE}/publishers/${encodeURIComponent(publisherId)}/items/${encodeURIComponent(extensionId)}:fetchStatus`;
-
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     await sleepImpl(pollIntervalMs);
 
-    const res = await fetchImpl(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+    const data = await fetchItemStatus({
+      publisherId,
+      extensionId,
+      accessToken,
+      fetchImpl
     });
-
-    const rawText = await res.text();
-    let data;
-    try {
-      data = JSON.parse(rawText);
-    } catch {
-      data = { raw: rawText };
-    }
-
-    if (!res.ok) {
-      const errMsg = data?.error?.message || rawText || `HTTP ${res.status}`;
-      throw new Error(`Failed to fetch upload status (HTTP ${res.status}): ${errMsg}`);
-    }
 
     const state = data.lastAsyncUploadState;
     if (state === 'SUCCEEDED') {
@@ -288,6 +312,53 @@ async function waitForUploadCompletion({
   }
 
   throw new Error(`Timed out waiting for Chrome Web Store package processing after ${maxAttempts} attempts.`);
+}
+
+/**
+ * Read-only verification flow: authenticate via OAuth2 and query item status via `:fetchStatus`.
+ */
+async function verifyChromeWebStoreStatus(options = {}, env = process.env, deps = {}) {
+  const config = resolveConfig({ ...options, checkStatus: true }, env);
+  const fetchImpl = deps.fetchImpl || fetch;
+  const logger = deps.logger || console;
+
+  logger.log(`[CWS] Authenticating with Google OAuth2...`);
+  const accessToken = await fetchAccessToken({
+    clientId: config.clientId,
+    clientSecret: config.clientSecret,
+    refreshToken: config.refreshToken,
+    fetchImpl
+  });
+
+  logger.log(`[CWS] Fetching item status for extension ${config.extensionId}...`);
+  const statusResult = await fetchItemStatus({
+    publisherId: config.publisherId,
+    extensionId: config.extensionId,
+    accessToken,
+    fetchImpl
+  });
+
+  const itemId = statusResult.itemId || config.extensionId;
+  const publishedState = statusResult.publishedItemRevisionStatus?.state || 'NONE';
+  const publishedVersion = statusResult.publishedItemRevisionStatus?.distributionChannels?.[0]?.crxVersion || 'N/A';
+  const submittedState = statusResult.submittedItemRevisionStatus?.state || 'NONE';
+  const lastAsyncUploadState = statusResult.lastAsyncUploadState || 'N/A';
+
+  logger.log(
+    `[CWS] Status check succeeded for item ${itemId} ` +
+    `(publishedState: ${publishedState}, publishedVersion: ${publishedVersion}, ` +
+    `submittedState: ${submittedState}, lastAsyncUploadState: ${lastAsyncUploadState}).`
+  );
+
+  if (env.GITHUB_ACTIONS === 'true') {
+    logger.log(
+      `::notice title=Chrome Web Store API v2 Verified::` +
+      `item=${itemId}, publishedState=${publishedState}, publishedVersion=${publishedVersion}, ` +
+      `submittedState=${submittedState}, lastAsyncUploadState=${lastAsyncUploadState}`
+    );
+  }
+
+  return statusResult;
 }
 
 /**
@@ -588,6 +659,7 @@ async function runInteractiveTokenHelper({
 function printHelp(logger = console) {
   logger.log(`Usage:
   node scripts/cws-publish.js --zip <path-to-zip> [--upload-only] [--publish-type DEFAULT_PUBLISH|STAGED_PUBLISH]
+  node scripts/cws-publish.js --check-status
   node scripts/cws-publish.js --get-token [--port 8818] [--auth-code <code>]
 
 Required Environment Variables for Publishing:
@@ -617,11 +689,19 @@ async function main(argv = process.argv.slice(2), env = process.env) {
     return;
   }
 
+  if (opts.checkStatus) {
+    await verifyChromeWebStoreStatus(opts, env);
+    return;
+  }
+
   await deployToChromeWebStore(opts, env);
 }
 
 if (require.main === module) {
   main().catch((err) => {
+    if (process.env.GITHUB_ACTIONS === 'true') {
+      console.error(`::error title=Chrome Web Store API v2 Error::${String(err.message).replace(/\r?\n/g, ' ')}`);
+    }
     console.error(`[CWS Error] ${err.message}`);
     process.exitCode = 1;
   });
@@ -637,8 +717,10 @@ module.exports = {
   parseArgs,
   resolveConfig,
   fetchAccessToken,
+  fetchItemStatus,
   uploadPackage,
   waitForUploadCompletion,
+  verifyChromeWebStoreStatus,
   publishItem,
   deployToChromeWebStore,
   exchangeAuthCodeForRefreshToken,

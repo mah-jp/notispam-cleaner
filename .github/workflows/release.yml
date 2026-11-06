@@ -86,6 +86,16 @@ jobs:
             exit 1
           fi
 
+      - name: Verify Chrome Web Store API v2 credentials and item status
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          CWS_PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID || 'dahnhdiabhegihofjijbchegffnkiaap' }}
+          CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        run: node scripts/cws-publish.js --check-status
+
   release:
     name: Release & Publish to Chrome Web Store
     needs: test

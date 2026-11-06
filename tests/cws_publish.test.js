@@ -318,6 +318,51 @@ describe('scripts/cws-publish.js — Chrome Web Store API v2 Automation', () => 
         /Timed out waiting for Chrome Web Store package processing after 2 attempts/
       );
     });
+
+    it('verifies OAuth2 credentials and queries item status via --check-status without requiring --zip', async () => {
+      const parsed = cws.parseArgs(['--check-status']);
+      assert.equal(parsed.checkStatus, true);
+
+      const logs = [];
+      const mockFetch = async (url) => {
+        if (url === cws.OAUTH_TOKEN_URL) {
+          return createJsonResponse(200, { access_token: 'ya29.status-token' });
+        }
+        if (url.endsWith(':fetchStatus')) {
+          return createJsonResponse(200, {
+            itemId: 'dahnhdiabhegihofjijbchegffnkiaap',
+            lastAsyncUploadState: 'SUCCEEDED',
+            publishedItemRevisionStatus: {
+              state: 'PUBLISHED',
+              distributionChannels: [{ crxVersion: '1.0.3', deployPercentage: 100 }]
+            },
+            submittedItemRevisionStatus: {
+              state: 'PUBLISHED'
+            }
+          });
+        }
+        throw new Error(`Unexpected URL: ${url}`);
+      };
+
+      const status = await cws.verifyChromeWebStoreStatus(
+        {},
+        {
+          CWS_PUBLISHER_ID: 'pub-1',
+          CWS_CLIENT_ID: 'cid',
+          CWS_CLIENT_SECRET: 'csec',
+          CWS_REFRESH_TOKEN: 'rtok',
+          GITHUB_ACTIONS: 'true'
+        },
+        {
+          fetchImpl: mockFetch,
+          logger: { log: (m) => logs.push(m), error: () => {} }
+        }
+      );
+
+      assert.equal(status.itemId, 'dahnhdiabhegihofjijbchegffnkiaap');
+      assert.ok(logs.some((l) => l.includes('::notice title=Chrome Web Store API v2 Verified::')));
+      assert.ok(logs.some((l) => l.includes('publishedVersion=1.0.3')));
+    });
   });
 
   describe('OAuth2 Refresh Token Helper & Workflow File Integrity', () => {
