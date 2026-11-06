@@ -1,6 +1,7 @@
 // Simple HTML escaping helper to prevent XSS
 function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;')
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
@@ -18,15 +19,13 @@ function localizeUI() {
     const tag = el.getAttribute('data-i18n');
     const msg = chrome.i18n.getMessage(tag);
     if (msg) {
-      if (el.tagName === 'INPUT' && el.getAttribute('type') === 'placeholder') {
+      if (el.tagName === 'INPUT' && (el.getAttribute('type') === 'placeholder' || el.hasAttribute('placeholder'))) {
         el.placeholder = msg;
+      } else if (tag === 'safeStateMsg' || msg.includes('\n')) {
+        // Keep HTML line-break formatting for multi-line messages (e.g. safeStateMsg, helpDesc)
+        el.innerHTML = escapeHtmlAndPreserveLineBreaks(msg);
       } else {
-        // Keep HTML formatting for the reassuring safe state message
-        if (tag === 'safeStateMsg') {
-          el.innerHTML = escapeHtmlAndPreserveLineBreaks(msg);
-        } else {
-          el.textContent = msg;
-        }
+        el.textContent = msg;
       }
     }
   });
@@ -40,8 +39,8 @@ function updateListHeaders(allowedCount, blockedCount) {
   const allowMsg = chrome.i18n.getMessage('allowedLabel') || 'Allowed ({count})';
   const blockMsg = chrome.i18n.getMessage('blockedLabel') || 'Blocked ({count})';
 
-  allowEl.textContent = allowMsg.replace('{count}', allowedCount);
-  blockEl.textContent = blockMsg.replace('{count}', blockedCount);
+  if (allowEl) allowEl.textContent = allowMsg.replace('{count}', allowedCount);
+  if (blockEl) blockEl.textContent = blockMsg.replace('{count}', blockedCount);
 }
 
 // Gather domains from History, Bookmarks, and Open Tabs
@@ -106,11 +105,11 @@ async function gatherDomains() {
 
 // Check notification setting for a specific domain
 async function getNotificationSetting(domain) {
-  const protocol = domain.endsWith(':80') ? 'http' : 'https';
-  const cleanDomain = domain.split(':')[0]; // Strip port for chrome.contentSettings API compatibility
+  const primaryUrl = getPrimaryUrlForDomain(domain);
+  if (!primaryUrl) return 'default';
   try {
     const details = await chrome.contentSettings.notifications.get({
-      primaryUrl: `${protocol}://${cleanDomain}/`
+      primaryUrl
     });
     return details ? details.setting : 'default';
   } catch (e) {
@@ -133,20 +132,18 @@ async function getGlobalDefaultSetting() {
 
 // Block notification permissions for a domain
 async function blockDomain(domain) {
-  const protocol = domain.endsWith(':80') ? 'http' : 'https';
-  const cleanDomain = domain.split(':')[0]; // Strip port for chrome.contentSettings API compatibility
+  const cleanDomain = normalizeDomain(domain);
+  const primaryPattern = getPrimaryPatternForDomain(cleanDomain);
+  if (!cleanDomain || !primaryPattern) return;
   try {
     await chrome.contentSettings.notifications.set({
-      primaryPattern: `${protocol}://${cleanDomain}/*`,
+      primaryPattern,
       setting: 'block'
     });
-    await addBlockedDomain(domain);
-    // Remove from user whitelist since it is blocked
-    const storageData = await chrome.storage.local.get({ user_whitelist: [] });
-    const userWhitelist = storageData.user_whitelist.filter(d => d !== domain);
-    await chrome.storage.local.set({ user_whitelist: userWhitelist });
+    await addBlockedDomain(cleanDomain);
+    await removeWhitelistedDomain(cleanDomain);
   } catch (e) {
-    console.error(`Failed to block ${domain}:`, e);
+    console.error(`Failed to block ${cleanDomain}:`, e);
   }
 }
 
@@ -162,55 +159,106 @@ async function setGlobalDefault(setting) {
   }
 }
 
+// Re-apply extension rules after clearing chrome.contentSettings.notifications
+async function reapplyExtensionRules(blockedDomains, whitelistedDomains, previousGlobalDefault) {
+  // Restore global default if clearing extension rules altered it
+  if (previousGlobalDefault) {
+    const currentGlobalDefault = await getGlobalDefaultSetting();
+    if (currentGlobalDefault !== previousGlobalDefault) {
+      await setGlobalDefault(previousGlobalDefault);
+    }
+  }
+
+  // Re-apply remaining blocks (stripping ports for API calls)
+  const blockPromises = blockedDomains.map(async (d) => {
+    const primaryPattern = getPrimaryPatternForDomain(d);
+    if (!primaryPattern) return;
+    try {
+      await chrome.contentSettings.notifications.set({
+        primaryPattern,
+        setting: 'block'
+      });
+    } catch (e) {
+      console.error(`Failed to re-block ${d}:`, e);
+    }
+  });
+
+  // Re-apply remaining whitelisted allows (stripping ports for API calls)
+  const allowPromises = whitelistedDomains.map(async (d) => {
+    const primaryPattern = getPrimaryPatternForDomain(d);
+    if (!primaryPattern) return;
+    try {
+      await chrome.contentSettings.notifications.set({
+        primaryPattern,
+        setting: 'allow'
+      });
+    } catch (e) {
+      console.error(`Failed to re-allow ${d}:`, e);
+    }
+  });
+
+  await Promise.all([...blockPromises, ...allowPromises]);
+}
+
 // Reset notification settings for a domain to default (clears extension rules for it)
 async function resetDomain(domain) {
-  if (!domain) return;
-  const cleanDomain = domain.toLowerCase();
+  const cleanDomain = normalizeDomain(domain);
+  if (!cleanDomain) return;
 
   try {
-    // 1. Remove from local storage lists
-    const data = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [] });
-    const newBlocked = data.blocked_domains.filter(d => d !== cleanDomain);
-    const newWhitelist = data.user_whitelist.filter(d => d !== cleanDomain);
-    await chrome.storage.local.set({
-      blocked_domains: newBlocked,
-      user_whitelist: newWhitelist
+    const previousGlobalDefault = await getGlobalDefaultSetting();
+
+    // 1. Remove from local storage lists (serialized with other storage operations)
+    let newBlocked = [];
+    let newWhitelist = [];
+    await enqueueStorageOp(async () => {
+      const data = await chrome.storage.local.get({
+        blocked_domains: [],
+        user_whitelist: [],
+        domain_protocols: {}
+      });
+      syncDomainProtocols(data.domain_protocols);
+      newBlocked = (data.blocked_domains || []).map(d => normalizeDomain(d)).filter(d => d && d !== cleanDomain);
+      newWhitelist = (data.user_whitelist || []).map(d => normalizeDomain(d)).filter(d => d && d !== cleanDomain);
+      await chrome.storage.local.set({
+        blocked_domains: newBlocked,
+        user_whitelist: newWhitelist
+      });
     });
 
-    // 2. Clear all content settings set by this extension
+    // 2. Clear all content settings set by this extension and re-apply remaining rules
     await chrome.contentSettings.notifications.clear({});
-
-    // Re-apply remaining blocks (stripping ports for API calls)
-    const blockPromises = newBlocked.map(async (d) => {
-      const protocol = d.endsWith(':80') ? 'http' : 'https';
-      const cleanD = d.split(':')[0];
-      try {
-        await chrome.contentSettings.notifications.set({
-          primaryPattern: `${protocol}://${cleanD}/*`,
-          setting: 'block'
-        });
-      } catch (e) {
-        console.error(`Failed to re-block ${cleanD}:`, e);
-      }
-    });
-
-    // Re-apply remaining whitelisted allows (stripping ports for API calls)
-    const allowPromises = newWhitelist.map(async (d) => {
-      const protocol = d.endsWith(':80') ? 'http' : 'https';
-      const cleanD = d.split(':')[0];
-      try {
-        await chrome.contentSettings.notifications.set({
-          primaryPattern: `${protocol}://${cleanD}/*`,
-          setting: 'allow'
-        });
-      } catch (e) {
-        console.error(`Failed to re-allow ${cleanD}:`, e);
-      }
-    });
-
-    await Promise.all([...blockPromises, ...allowPromises]);
+    await reapplyExtensionRules(newBlocked, newWhitelist, previousGlobalDefault);
   } catch (err) {
     console.error(`Failed to reset domain ${domain}:`, err);
+  }
+}
+
+// Clear all blocked site rules created by the extension while preserving user whitelist and global default
+async function clearAllBlockedRules() {
+  try {
+    const previousGlobalDefault = await getGlobalDefaultSetting();
+
+    await chrome.contentSettings.notifications.clear({});
+    let whitelist = [];
+    await enqueueStorageOp(async () => {
+      const data = await chrome.storage.local.get({
+        user_whitelist: [],
+        domain_protocols: {}
+      });
+      syncDomainProtocols(data.domain_protocols);
+      whitelist = (data.user_whitelist || []).map(d => normalizeDomain(d)).filter(Boolean);
+      await chrome.storage.local.set({ blocked_domains: [] });
+    });
+
+    await reapplyExtensionRules([], whitelist, previousGlobalDefault);
+
+    if (currentDomain) {
+      await updateCurrentSiteStatusUI(currentDomain);
+    }
+    await doScan();
+  } catch (e) {
+    console.error('Failed to clear rules:', e);
   }
 }
 
@@ -219,6 +267,7 @@ async function updateGlobalStatusUI(suspiciousCount = 0) {
   const globalSetting = await getGlobalDefaultSetting();
   const statusEl = document.getElementById('global-status');
   const toggleEl = document.getElementById('default-toggle');
+  if (!statusEl || !toggleEl) return;
 
   if (globalSetting === 'block') {
     statusEl.textContent = chrome.i18n.getMessage('statusBlocked') || 'Blocked (Safe)';
@@ -242,19 +291,24 @@ async function updateGlobalStatusUI(suspiciousCount = 0) {
 
 // Update UI state for the current active website
 async function updateCurrentSiteStatusUI(domain) {
-  const setting = await getNotificationSetting(domain);
+  const normalizedDomain = normalizeDomain(domain);
+  if (!normalizedDomain) return;
   const statusEl = document.getElementById('current-site-status');
+  if (!statusEl) return;
 
-  // Fetch lists from storage to check setting sources
+  // Fetch lists and known protocols from storage before querying notification setting
   const storageData = await chrome.storage.local.get({
     user_whitelist: [],
-    blocked_domains: []
+    blocked_domains: [],
+    domain_protocols: {}
   });
-  const userWhitelist = storageData.user_whitelist;
-  const blockedDomains = storageData.blocked_domains;
+  syncDomainProtocols(storageData.domain_protocols);
+  const setting = await getNotificationSetting(normalizedDomain);
+  const userWhitelist = (storageData.user_whitelist || []).map(d => normalizeDomain(d)).filter(Boolean);
+  const blockedDomains = (storageData.blocked_domains || []).map(d => normalizeDomain(d)).filter(Boolean);
 
   if (setting === 'allow') {
-    if (isDomainTrusted(domain, userWhitelist)) {
+    if (isDomainTrusted(normalizedDomain, userWhitelist)) {
       statusEl.textContent = chrome.i18n.getMessage('statusActiveAllowedTrusted') || 'Allowed (Trusted)';
       statusEl.className = 'status-value normal'; // Green styling for trusted allow
     } else {
@@ -262,7 +316,7 @@ async function updateCurrentSiteStatusUI(domain) {
       statusEl.className = 'status-value allowed'; // Red styling for unverified allow
     }
   } else if (setting === 'block') {
-    const isAppBlocked = blockedDomains.includes(domain.toLowerCase());
+    const isAppBlocked = blockedDomains.includes(normalizedDomain);
     if (isAppBlocked) {
       statusEl.textContent = chrome.i18n.getMessage('statusActiveBlockedApp') || 'Blocked (By App)';
       statusEl.className = 'status-value blocked';
@@ -285,44 +339,69 @@ let currentDomain = null;
 // Global reference for current suspicious domains list (for one-click clean)
 let currentSuspiciousSites = [];
 
-// Execute scanning and populate UI
-async function doScan() {
+// Serialization queue and timer for scanning
+let scanQueue = Promise.resolve();
+let delayedScanTimer = null;
+
+function scheduleDelayedScan(delayMs = 200) {
+  if (delayedScanTimer !== null) {
+    clearTimeout(delayedScanTimer);
+  }
+  delayedScanTimer = setTimeout(() => {
+    delayedScanTimer = null;
+    doScan();
+  }, delayMs);
+}
+
+// Core scanning implementation
+async function performScan() {
   const loader = document.getElementById('scan-loader');
   const allowedList = document.getElementById('allowed-list');
   const blockedList = document.getElementById('blocked-list');
   const cleanBtn = document.getElementById('reset-all-btn');
 
   // Show loader, clear lists
-  loader.classList.remove('hidden');
-  allowedList.classList.add('hidden');
-  blockedList.classList.add('hidden');
-  cleanBtn.classList.add('hidden');
+  if (loader) loader.classList.remove('hidden');
+  if (allowedList) allowedList.classList.add('hidden');
+  if (blockedList) blockedList.classList.add('hidden');
+  if (cleanBtn) cleanBtn.classList.add('hidden');
 
   updateListHeaders('...', '...');
+
+  // Wait for any in-flight storage updates before reading storage
+  await enqueueStorageOp(async () => { });
 
   const domains = await gatherDomains();
   const globalDefault = await getGlobalDefaultSetting();
 
-  // Retrieve whitelist and stored blocked domains from storage
+  // Retrieve whitelist, stored blocked domains, and custom port protocols from storage
   const storageData = await chrome.storage.local.get({
     user_whitelist: [],
-    blocked_domains: []
+    blocked_domains: [],
+    domain_protocols: {}
   });
-  const userWhitelist = storageData.user_whitelist;
-  const storedBlockedDomains = storageData.blocked_domains;
+  syncDomainProtocols(storageData.domain_protocols);
+
+  const userWhitelist = Array.from(new Set(
+    (storageData.user_whitelist || []).map(d => normalizeDomain(d)).filter(Boolean)
+  ));
+  const storedBlockedDomains = Array.from(new Set(
+    (storageData.blocked_domains || []).map(d => normalizeDomain(d)).filter(Boolean)
+  ));
 
   // Merge domains found by scanning with persisted blocked domains and whitelisted domains
   // Ensure all domains are normalized to lowercase during merge
   const allDomainsToCheck = Array.from(new Set([
-    ...domains.map(d => d.toLowerCase()),
-    ...storedBlockedDomains.map(d => d.toLowerCase()),
-    ...userWhitelist.map(d => d.toLowerCase())
+    ...domains.map(d => normalizeDomain(d)).filter(Boolean),
+    ...storedBlockedDomains,
+    ...userWhitelist
   ]));
 
   const suspiciousAllowed = [];
   const trustedAllowed = [];
   const blockedSites = [];
   const activeBlockedInChrome = [];
+  const activeWhitelistInChrome = [];
 
   // Scan all domains in parallel to improve performance and prevent UI freeze
   const scanResults = await Promise.all(
@@ -334,7 +413,10 @@ async function doScan() {
 
   for (const { domain, setting } of scanResults) {
     if (setting === 'allow') {
-      if (globalDefault !== 'allow') {
+      if (userWhitelist.includes(domain)) {
+        activeWhitelistInChrome.push(domain);
+      }
+      if (globalDefault !== 'allow' || userWhitelist.includes(domain)) {
         if (isDomainTrusted(domain, userWhitelist)) {
           trustedAllowed.push(domain);
         } else {
@@ -342,18 +424,27 @@ async function doScan() {
         }
       }
     } else if (setting === 'block') {
-      blockedSites.push(domain);
-      if (storedBlockedDomains.includes(domain)) {
+      const isAppBlocked = storedBlockedDomains.includes(domain);
+      if (isAppBlocked) {
         activeBlockedInChrome.push(domain);
+      }
+      // When globalDefault is 'block', avoid listing every history item as an individual browser block
+      if (globalDefault !== 'block' || isAppBlocked) {
+        blockedSites.push(domain);
       }
     }
   }
 
-  // Self-healing storage sync: remove domains from blocked_domains if no longer blocked in Chrome
+  // Self-healing storage sync: remove domains from blocked_domains / user_whitelist if no longer active in Chrome
   const staleBlocked = storedBlockedDomains.filter(d => !activeBlockedInChrome.includes(d));
-  if (staleBlocked.length > 0) {
-    const updatedBlocked = storedBlockedDomains.filter(d => activeBlockedInChrome.includes(d));
-    await chrome.storage.local.set({ blocked_domains: updatedBlocked });
+  const staleWhitelisted = userWhitelist.filter(d => !activeWhitelistInChrome.includes(d));
+  if (staleBlocked.length > 0 || staleWhitelisted.length > 0) {
+    await enqueueStorageOp(async () => {
+      const updates = {};
+      if (staleBlocked.length > 0) updates.blocked_domains = activeBlockedInChrome;
+      if (staleWhitelisted.length > 0) updates.user_whitelist = activeWhitelistInChrome;
+      await chrome.storage.local.set(updates);
+    });
   }
 
   currentSuspiciousSites = suspiciousAllowed;
@@ -361,40 +452,60 @@ async function doScan() {
   const allowedSites = [...suspiciousAllowed, ...trustedAllowed];
 
   // Hide loader
-  loader.classList.add('hidden');
+  if (loader) loader.classList.add('hidden');
   updateListHeaders(allowedSites.length, blockedSites.length);
 
   // Update Health Status
   await updateGlobalStatusUI(suspiciousAllowed.length);
 
   // Show/Hide Clean All button
-  if (suspiciousAllowed.length > 0) {
+  if (cleanBtn && suspiciousAllowed.length > 0) {
     cleanBtn.classList.remove('hidden');
   }
 
   // Determine active tab list to render
-  const isAllowedTabActive = document.getElementById('tab-allowed').classList.contains('active');
-  const isBlockedTabActive = document.getElementById('tab-blocked').classList.contains('active');
+  const tabAllowedEl = document.getElementById('tab-allowed');
+  const tabBlockedEl = document.getElementById('tab-blocked');
+  const isAllowedTabActive = tabAllowedEl ? tabAllowedEl.classList.contains('active') : true;
+  const isBlockedTabActive = tabBlockedEl ? tabBlockedEl.classList.contains('active') : false;
 
-  if (isAllowedTabActive) {
+  if (isAllowedTabActive && allowedList) {
     allowedList.classList.remove('hidden');
-  } else if (isBlockedTabActive) {
+  } else if (isBlockedTabActive && blockedList) {
     blockedList.classList.remove('hidden');
   }
 
   // Populate Lists
-  renderList(allowedList, allowedSites, 'allowed', userWhitelist, storedBlockedDomains);
-  renderList(blockedList, blockedSites, 'blocked', userWhitelist, storedBlockedDomains);
+  if (allowedList) {
+    renderList(allowedList, allowedSites, 'allowed', activeWhitelistInChrome, activeBlockedInChrome);
+  }
+  if (blockedList) {
+    renderList(blockedList, blockedSites, 'blocked', activeWhitelistInChrome, activeBlockedInChrome);
+  }
 
   // Trigger active tab icon update to sync popup actions
-  if (chrome.runtime && chrome.runtime.id) {
-    chrome.runtime.sendMessage({ action: 'update_active_tab_icon' });
+  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+    try {
+      const res = chrome.runtime.sendMessage({ action: 'update_active_tab_icon' });
+      if (res && typeof res.catch === 'function') {
+        res.catch(() => { });
+      }
+    } catch (e) { }
   }
 
   // Update current site card status if active tab domain is known
   if (currentDomain) {
     await updateCurrentSiteStatusUI(currentDomain);
   }
+}
+
+// Execute scanning and populate UI (serialized to prevent overlapping scans)
+function doScan() {
+  const next = scanQueue.then(() => performScan());
+  scanQueue = next.catch((err) => {
+    console.error('Scan failed:', err);
+  });
+  return next;
 }
 
 // Render list helper
@@ -478,7 +589,7 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
         `;
       }
     } else if (type === 'blocked') {
-      const isAppBlocked = storedBlockedDomains.includes(domain.toLowerCase());
+      const isAppBlocked = storedBlockedDomains.includes(normalizeDomain(domain));
       if (isAppBlocked) {
         statusText = '✖ ' + (chrome.i18n.getMessage('labelBlockedApp') || 'Blocked by App');
       } else {
@@ -525,10 +636,14 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
       domainEl.addEventListener('click', (e) => {
         const d = e.currentTarget.getAttribute('data-domain');
         chrome.tabs.create({
-          url: `chrome://settings/content/siteDetails?site=https%3A%2F%2F${encodeURIComponent(d)}`
+          url: getSiteDetailsUrl(d)
         });
       });
     }
+
+    const disableRowButtons = () => {
+      li.querySelectorAll('button').forEach(b => { b.disabled = true; });
+    };
 
     // Bind block action
     const blockBtn = li.querySelector('.block-btn');
@@ -536,16 +651,14 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
       blockBtn.addEventListener('click', async (e) => {
         const btn = e.currentTarget;
         const d = btn.getAttribute('data-domain');
-        btn.disabled = true;
+        disableRowButtons();
 
         li.style.transform = 'translateX(50px)';
         li.style.opacity = '0';
         li.style.transition = 'all 0.3s ease';
 
-        setTimeout(async () => {
-          await blockDomain(d);
-          await doScan();
-        }, 200);
+        await blockDomain(d);
+        scheduleDelayedScan(200);
       });
     }
 
@@ -555,31 +668,14 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
       trustBtn.addEventListener('click', async (e) => {
         const btn = e.currentTarget;
         const d = btn.getAttribute('data-domain');
-        btn.disabled = true;
+        disableRowButtons();
 
         li.style.transform = 'scale(0.95)';
         li.style.opacity = '0.5';
         li.style.transition = 'all 0.2s ease';
 
-        await removeBlockedDomain(d);
-
-        const storageData = await chrome.storage.local.get({ user_whitelist: [] });
-        const userWhitelist = storageData.user_whitelist;
-        if (!userWhitelist.includes(d)) {
-          userWhitelist.push(d);
-          await chrome.storage.local.set({ user_whitelist: userWhitelist });
-        }
-
-        const protocol = d.endsWith(':80') ? 'http' : 'https';
-        const cleanD = d.split(':')[0];
-        await chrome.contentSettings.notifications.set({
-          primaryPattern: `${protocol}://${cleanD}/*`,
-          setting: 'allow'
-        });
-
-        setTimeout(async () => {
-          await doScan();
-        }, 200);
+        await allowAndTrustDomain(d);
+        scheduleDelayedScan(200);
       });
     }
 
@@ -591,22 +687,20 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
         const d = btn.getAttribute('data-domain');
 
         // If the domain is the active open tab, show a warning before resetting
-        if (currentDomain && d.toLowerCase() === currentDomain.toLowerCase()) {
+        if (currentDomain && normalizeDomain(d) === normalizeDomain(currentDomain)) {
           const confirmMsg = chrome.i18n.getMessage('confirmResetActiveDomain') ||
             `This website is currently open in your browser. Resetting its notification settings in this state may cause the automatic block warning to reappear immediately. Please close the website's tab first, then perform the reset operation. Do you want to continue?`;
           if (!confirm(confirmMsg)) return;
         }
 
-        btn.disabled = true;
+        disableRowButtons();
 
         li.style.transform = 'translateX(-50px)';
         li.style.opacity = '0';
         li.style.transition = 'all 0.3s ease';
 
-        setTimeout(async () => {
-          await resetDomain(d);
-          await doScan();
-        }, 200);
+        await resetDomain(d);
+        scheduleDelayedScan(200);
       });
     }
 
@@ -616,18 +710,21 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
 
 // Clean all suspicious allowed sites
 async function cleanAllSuspicious() {
+  if (!currentSuspiciousSites || currentSuspiciousSites.length === 0) return;
+
   const confirmMsg = chrome.i18n.getMessage('confirmResetAll') || 'Revoke all suspicious permissions?';
   if (!confirm(confirmMsg)) return;
 
-  for (const domain of currentSuspiciousSites) {
+  const sitesToBlock = [...currentSuspiciousSites];
+  for (const domain of sitesToBlock) {
     await blockDomain(domain);
   }
 
   await doScan();
 }
 
-// Initial Setup
-document.addEventListener('DOMContentLoaded', async () => {
+// Initialize Popup UI
+async function initPopup() {
   // 1. Localize UI
   localizeUI();
 
@@ -642,14 +739,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   const storageData = await chrome.storage.local.get({
     guard_enabled: true,
     silent_guardian_enabled: false,
+    domain_protocols: {},
     blocked_count: 0
   });
+  syncDomainProtocols(storageData.domain_protocols);
 
   const guardToggle = document.getElementById('guard-toggle');
-  guardToggle.checked = storageData.guard_enabled;
+  if (guardToggle) guardToggle.checked = storageData.guard_enabled;
 
   const silentToggle = document.getElementById('silent-toggle');
-  silentToggle.checked = storageData.silent_guardian_enabled;
+  if (silentToggle) silentToggle.checked = storageData.silent_guardian_enabled;
 
   // Background Block Log UI Bindings
   const blockLogRow = document.getElementById('block-log-row');
@@ -657,6 +756,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const clearLogBtn = document.getElementById('clear-log-btn');
 
   function updateBlockLogUI(count) {
+    if (!blockLogRow || !blockLogText) return;
     if (count > 0) {
       blockLogRow.classList.remove('hidden');
       const label = chrome.i18n.getMessage('backgroundBlockedLabel') || 'Quietly blocked: {count} sites';
@@ -668,37 +768,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   updateBlockLogUI(storageData.blocked_count);
 
-  // Clear log event handler
-  clearLogBtn.addEventListener('click', async () => {
-    await chrome.storage.local.set({ blocked_count: 0 });
-    updateBlockLogUI(0);
-    chrome.action.setBadgeText({ text: '' });
-  });
-
   // Reset the extension icon badge count since user opened the popup to check settings
-  chrome.action.setBadgeText({ text: '' });
+  await chrome.action.setBadgeText({ text: '' });
 
   // 3. Initialize global status UI
   await updateGlobalStatusUI();
 
   // 4. Query active tab and initialize current site card
   currentDomain = null;
+  const currentSiteCard = document.getElementById('current-site-card');
+  const currentSiteDomainEl = document.getElementById('current-site-domain');
+  if (currentSiteCard) currentSiteCard.classList.add('hidden');
+
   try {
     const activeTabs = await chrome.tabs.query({ active: true, currentWindow: true });
     if (activeTabs.length > 0 && activeTabs[0].url) {
-      const urlStr = activeTabs[0].url;
-      if (urlStr.startsWith('http:') || urlStr.startsWith('https:')) {
-        const url = new URL(urlStr);
-        const port = url.port || (url.protocol === 'https:' ? '443' : '80');
-        currentDomain = `${url.hostname.toLowerCase()}:${port}`;
-        document.getElementById('current-site-card').classList.remove('hidden');
-        const currentSiteDomainEl = document.getElementById('current-site-domain');
-        currentSiteDomainEl.textContent = currentDomain;
-        currentSiteDomainEl.addEventListener('click', () => {
-          chrome.tabs.create({
-            url: `chrome://settings/content/siteDetails?site=${encodeURIComponent(`${url.protocol}//${currentDomain}`)}`
-          });
-        });
+      const domainAndPort = getHostAndPortFromUrl(activeTabs[0].url);
+      if (domainAndPort) {
+        currentDomain = domainAndPort;
+        if (currentSiteCard) currentSiteCard.classList.remove('hidden');
+        if (currentSiteDomainEl) {
+          currentSiteDomainEl.textContent = currentDomain;
+        }
         await updateCurrentSiteStatusUI(currentDomain);
       }
     }
@@ -709,115 +800,105 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 5. Initial Scan
   await doScan();
 
-  // 6. Event Listeners
-  if (currentDomain) {
-    document.getElementById('current-site-allow').addEventListener('click', async () => {
-      // 1. Remove from blocked domains and add to user whitelist in storage first (to avoid race condition)
-      await removeBlockedDomain(currentDomain);
-      const storageData = await chrome.storage.local.get({ user_whitelist: [] });
-      const userWhitelist = storageData.user_whitelist;
-      if (!userWhitelist.includes(currentDomain)) {
-        userWhitelist.push(currentDomain);
-        await chrome.storage.local.set({ user_whitelist: userWhitelist });
-      }
+  // 6. Event Listeners (guard against duplicate bindings on the same document)
+  if (document.body && document.body.getAttribute('data-listeners-bound') === 'true') {
+    return;
+  }
+  if (document.body) {
+    document.body.setAttribute('data-listeners-bound', 'true');
+  }
 
-      // 2. Set chrome setting to 'allow' only after storage is updated (stripping port for API call)
-      const protocol = currentDomain.endsWith(':80') ? 'http' : 'https';
-      const cleanCurrentDomain = currentDomain.split(':')[0];
-      await chrome.contentSettings.notifications.set({
-        primaryPattern: `${protocol}://${cleanCurrentDomain}/*`,
-        setting: 'allow'
-      });
-
-      await updateCurrentSiteStatusUI(currentDomain);
-      await doScan();
+  if (clearLogBtn) {
+    clearLogBtn.addEventListener('click', async () => {
+      await chrome.storage.local.set({ blocked_count: 0 });
+      updateBlockLogUI(0);
+      await chrome.action.setBadgeText({ text: '' });
     });
+  }
 
-    document.getElementById('current-site-block').addEventListener('click', async () => {
-      const protocol = currentDomain.endsWith(':80') ? 'http' : 'https';
-      const cleanCurrentDomain = currentDomain.split(':')[0];
-      await chrome.contentSettings.notifications.set({
-        primaryPattern: `${protocol}://${cleanCurrentDomain}/*`,
-        setting: 'block'
+  if (currentSiteDomainEl) {
+    currentSiteDomainEl.addEventListener('click', () => {
+      if (!currentDomain) return;
+      chrome.tabs.create({
+        url: getSiteDetailsUrl(currentDomain)
       });
-      await addBlockedDomain(currentDomain);
-
-      // Remove from user whitelist since it is blocked
-      const storageData = await chrome.storage.local.get({ user_whitelist: [] });
-      const userWhitelist = storageData.user_whitelist.filter(d => d !== currentDomain);
-      await chrome.storage.local.set({ user_whitelist: userWhitelist });
-
-      await updateCurrentSiteStatusUI(currentDomain);
-      await doScan();
     });
+  }
 
-    document.getElementById('current-site-reset').addEventListener('click', async () => {
-      if (currentDomain) {
-        const confirmMsg = chrome.i18n.getMessage('confirmResetActiveDomain') ||
-          `This website is currently open in your browser. Resetting its notification settings in this state may cause the automatic block warning to reappear immediately. Please close the website's tab first, then perform the reset operation. Do you want to continue?`;
-        if (!confirm(confirmMsg)) return;
-      }
-      await resetDomain(currentDomain);
-      await updateCurrentSiteStatusUI(currentDomain);
+  const allowBtn = document.getElementById('current-site-allow');
+  if (allowBtn) {
+    allowBtn.addEventListener('click', async () => {
+      if (!currentDomain) return;
+      await allowAndTrustDomain(currentDomain);
       await doScan();
     });
   }
 
-  document.getElementById('scan-btn').addEventListener('click', doScan);
-
-  document.getElementById('reset-all-btn').addEventListener('click', cleanAllSuspicious);
-
-  document.getElementById('clear-all-rules-btn').addEventListener('click', async () => {
-    const confirmMsg = chrome.i18n.getMessage('confirmClearAllRules') || 'Reset all blocked sites?';
-    if (!confirm(confirmMsg)) return;
-
-    try {
-      // Clear all custom site settings (blocks and allows) set by this extension
-      await chrome.contentSettings.notifications.clear({});
-      await chrome.storage.local.set({ blocked_domains: [] });
-
-      // Re-apply remaining whitelist rules to Chrome
-      const data = await chrome.storage.local.get({ user_whitelist: [] });
-      const allowPromises = data.user_whitelist.map(async (d) => {
-        const protocol = d.endsWith(':80') ? 'http' : 'https';
-        const cleanD = d.split(':')[0];
-        try {
-          await chrome.contentSettings.notifications.set({
-            primaryPattern: `${protocol}://${cleanD}/*`,
-            setting: 'allow'
-          });
-        } catch (e) { }
-      });
-      await Promise.all(allowPromises);
-
-      if (currentDomain) {
-        await updateCurrentSiteStatusUI(currentDomain);
-      }
+  const blockBtn = document.getElementById('current-site-block');
+  if (blockBtn) {
+    blockBtn.addEventListener('click', async () => {
+      if (!currentDomain) return;
+      await blockDomain(currentDomain);
       await doScan();
-    } catch (e) {
-      console.error('Failed to clear rules:', e);
-    }
-  });
+    });
+  }
 
-  document.getElementById('default-toggle').addEventListener('change', async (e) => {
-    const isChecked = e.target.checked;
-    const newSetting = isChecked ? 'ask' : 'block';
-    await setGlobalDefault(newSetting);
-    await updateGlobalStatusUI(currentSuspiciousSites.length);
-  });
+  const resetBtn = document.getElementById('current-site-reset');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', async () => {
+      if (!currentDomain) return;
+      const confirmMsg = chrome.i18n.getMessage('confirmResetActiveDomain') ||
+        `This website is currently open in your browser. Resetting its notification settings in this state may cause the automatic block warning to reappear immediately. Please close the website's tab first, then perform the reset operation. Do you want to continue?`;
+      if (!confirm(confirmMsg)) return;
+      await resetDomain(currentDomain);
+      await doScan();
+    });
+  }
 
-  guardToggle.addEventListener('change', async (e) => {
-    await chrome.storage.local.set({ guard_enabled: e.target.checked });
-  });
+  const scanBtn = document.getElementById('scan-btn');
+  if (scanBtn) scanBtn.addEventListener('click', doScan);
 
-  silentToggle.addEventListener('change', async (e) => {
-    await chrome.storage.local.set({ silent_guardian_enabled: e.target.checked });
-  });
+  const resetAllBtn = document.getElementById('reset-all-btn');
+  if (resetAllBtn) resetAllBtn.addEventListener('click', cleanAllSuspicious);
+
+  const clearAllRulesBtn = document.getElementById('clear-all-rules-btn');
+  if (clearAllRulesBtn) {
+    clearAllRulesBtn.addEventListener('click', async () => {
+      const confirmMsg = chrome.i18n.getMessage('confirmClearAllRules') || 'Reset all blocked sites?';
+      if (!confirm(confirmMsg)) return;
+      await clearAllBlockedRules();
+    });
+  }
+
+  const defaultToggle = document.getElementById('default-toggle');
+  if (defaultToggle) {
+    defaultToggle.addEventListener('change', async (e) => {
+      const isChecked = e.target.checked;
+      const newSetting = isChecked ? 'ask' : 'block';
+      await setGlobalDefault(newSetting);
+      await doScan();
+    });
+  }
+
+  if (guardToggle) {
+    guardToggle.addEventListener('change', async (e) => {
+      await chrome.storage.local.set({ guard_enabled: e.target.checked });
+    });
+  }
+
+  if (silentToggle) {
+    silentToggle.addEventListener('change', async (e) => {
+      await chrome.storage.local.set({ silent_guardian_enabled: e.target.checked });
+    });
+  }
 
   // Open browser native notifications settings page when button is clicked
-  document.getElementById('open-settings-btn').addEventListener('click', () => {
-    chrome.tabs.create({ url: 'chrome://settings/content/notifications' });
-  });
+  const openSettingsBtn = document.getElementById('open-settings-btn');
+  if (openSettingsBtn) {
+    openSettingsBtn.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'chrome://settings/content/notifications' });
+    });
+  }
 
   // Tab control switching
   const tabAllowed = document.getElementById('tab-allowed');
@@ -827,37 +908,75 @@ document.addEventListener('DOMContentLoaded', async () => {
   const listBlocked = document.getElementById('blocked-list');
 
   function switchTab(activeTab, tabs, activeList, lists) {
-    tabs.forEach(t => t.classList.remove('active'));
-    activeTab.classList.add('active');
+    tabs.forEach(t => t && t.classList.remove('active'));
+    if (activeTab) activeTab.classList.add('active');
 
-    lists.forEach(l => l.classList.add('hidden'));
-    activeList.classList.remove('hidden');
+    lists.forEach(l => l && l.classList.add('hidden'));
+    if (activeList) activeList.classList.remove('hidden');
   }
 
-  tabAllowed.addEventListener('click', () => {
-    switchTab(tabAllowed, [tabAllowed, tabBlocked], listAllowed, [listAllowed, listBlocked]);
-  });
+  if (tabAllowed && tabBlocked && listAllowed && listBlocked) {
+    tabAllowed.addEventListener('click', () => {
+      switchTab(tabAllowed, [tabAllowed, tabBlocked], listAllowed, [listAllowed, listBlocked]);
+    });
 
-  tabBlocked.addEventListener('click', () => {
-    switchTab(tabBlocked, [tabAllowed, tabBlocked], listBlocked, [listAllowed, listBlocked]);
-  });
+    tabBlocked.addEventListener('click', () => {
+      switchTab(tabBlocked, [tabAllowed, tabBlocked], listBlocked, [listAllowed, listBlocked]);
+    });
+  }
 
   // Help Panel Drawer Overlay Triggering
   const helpOverlay = document.getElementById('help-overlay');
   const helpBtn = document.getElementById('help-btn');
   const closeHelpBtn = document.getElementById('close-help-btn');
 
-  helpBtn.addEventListener('click', () => {
-    helpOverlay.classList.remove('hidden');
-  });
+  if (helpBtn && helpOverlay) {
+    helpBtn.addEventListener('click', () => {
+      helpOverlay.classList.remove('hidden');
+    });
+  }
 
-  closeHelpBtn.addEventListener('click', () => {
-    helpOverlay.classList.add('hidden');
-  });
-
-  helpOverlay.addEventListener('click', (e) => {
-    if (e.target === helpOverlay) {
+  if (closeHelpBtn && helpOverlay) {
+    closeHelpBtn.addEventListener('click', () => {
       helpOverlay.classList.add('hidden');
-    }
-  });
-});
+    });
+  }
+
+  if (helpOverlay) {
+    helpOverlay.addEventListener('click', (e) => {
+      if (e.target === helpOverlay) {
+        helpOverlay.classList.add('hidden');
+      }
+    });
+  }
+}
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', initPopup);
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    escapeHtml,
+    escapeHtmlAndPreserveLineBreaks,
+    localizeUI,
+    updateListHeaders,
+    gatherDomains,
+    getNotificationSetting,
+    getGlobalDefaultSetting,
+    blockDomain,
+    setGlobalDefault,
+    reapplyExtensionRules,
+    resetDomain,
+    clearAllBlockedRules,
+    updateGlobalStatusUI,
+    updateCurrentSiteStatusUI,
+    doScan,
+    renderList,
+    cleanAllSuspicious,
+    initPopup,
+    getCurrentDomain: () => currentDomain,
+    setCurrentDomain: (d) => { currentDomain = d; },
+    getCurrentSuspiciousSites: () => currentSuspiciousSites
+  };
+}

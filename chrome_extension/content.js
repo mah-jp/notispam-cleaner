@@ -1,18 +1,25 @@
 // Monitor notification permission changes on the page
-if (navigator.permissions) {
-  navigator.permissions.query({ name: 'notifications' })
+function initContentPermissionMonitor() {
+  if (typeof navigator === 'undefined' || !navigator.permissions) return null;
+
+  return navigator.permissions.query({ name: 'notifications' })
     .then((permissionStatus) => {
       // Helper to send message if notifications are granted
       function checkAndSendPermission() {
         if (permissionStatus.state === 'granted') {
-          if (chrome.runtime && chrome.runtime.id) {
+          if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
             try {
+              const hostname = window.location.hostname ? window.location.hostname.toLowerCase().replace(/\.+$/, '') : '';
+              if (!hostname) return;
               const port = window.location.port || (window.location.protocol === 'https:' ? '443' : '80');
-              chrome.runtime.sendMessage({
+              const result = chrome.runtime.sendMessage({
                 action: 'notification_granted',
-                domain: `${window.location.hostname}:${port}`,
+                domain: `${hostname}:${port}`,
                 url: window.location.href
               });
+              if (result && typeof result.catch === 'function') {
+                result.catch(() => { });
+              }
             } catch (e) {
               // Ignore extension context invalidation errors
             }
@@ -27,8 +34,19 @@ if (navigator.permissions) {
       permissionStatus.onchange = () => {
         checkAndSendPermission();
       };
+
+      return permissionStatus;
     })
     .catch((err) => {
       console.warn('Failed to query notification permissions:', err);
+      return null;
     });
+}
+
+initContentPermissionMonitor();
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    initContentPermissionMonitor
+  };
 }
