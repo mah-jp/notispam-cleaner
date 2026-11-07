@@ -22,6 +22,8 @@ describe('Extension Package & Localization Integrity', () => {
     const readmeJa = fs.readFileSync(path.join(ROOT_DIR, 'README.ja.md'), 'utf8');
     assert.ok(readmeEn.includes(expectedBadge), `README.md missing badge ${expectedBadge}`);
     assert.ok(readmeJa.includes(expectedBadge), `README.ja.md missing badge ${expectedBadge}`);
+    assert.ok(!readmeEn.includes('images/'), 'README.md must not reference gitignored images/ files');
+    assert.ok(!readmeJa.includes('images/'), 'README.ja.md must not reference gitignored images/ files');
 
     assert.ok(fs.existsSync(path.join(EXT_DIR, manifest.background.service_worker)));
     assert.ok(fs.existsSync(path.join(EXT_DIR, manifest.action.default_popup)));

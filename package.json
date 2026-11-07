@@ -1,6 +1,6 @@
 {
   "name": "notispam-cleaner",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "description": "NotiSpam Cleaner Chrome Extension",
   "scripts": {

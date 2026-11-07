@@ -251,7 +251,7 @@ describe('popup.js — UI Localization, Scanning, Classification, Self-Healing, 
       await popup.initPopup();
 
       // Version tag updated from manifest.json
-      assert.equal(document.querySelector('.version-tag').textContent, 'v1.0.4');
+      assert.equal(document.querySelector('.version-tag').textContent, 'v1.0.5');
 
       // Badge cleared on popup open, and background block log shown with count 5
       assert.equal(chrome._state.getBadgeText(), '');
