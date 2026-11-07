@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Kéretlen értesítések blokkolója"
+  },
+  "extDesc": {
+    "message": "Átvizsgálja és megtisztítja a gyanús webhelyek értesítési engedélyeit. Valós időben véd a spamek és csaló hirdetések ellen."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Értesítési spamblokkoló"
+  },
+  "globalStatusLabel": {
+    "message": "Alapértelmezett működés:"
+  },
+  "statusBlocked": {
+    "message": "Blokkolva (Legmagasabb biztonság)"
+  },
+  "statusAsk": {
+    "message": "Rákérdezés küldés előtt (Normál)"
+  },
+  "statusAllowed": {
+    "message": "Összes engedélyezése (Nagyon veszélyes!)"
+  },
+  "togglePromptLabel": {
+    "message": "Webhelyek értesítési kérelmeinek engedélyezése"
+  },
+  "realtimeGuardLabel": {
+    "message": "Valós idejű védelem"
+  },
+  "realtimeGuardDesc": {
+    "message": "Azonnal blokkolja az értesítési hozzáférést, ha egy nem ellenőrzött webhely engedélyt kap."
+  },
+  "silentGuardianLabel": {
+    "message": "Csendes őrszem (Családi mód)"
+  },
+  "silentGuardianDesc": {
+    "message": "A háttérben, figyelmeztető ablakok nélkül blokkolja a nem ellenőrzött webhelyek értesítéseit. Ideális családtagok számítógépére."
+  },
+  "backgroundBlockedLabel": {
+    "message": "A háttérben automatikusan blokkolva: {count} webhely"
+  },
+  "clearLogBtn": {
+    "message": "Visszaállítás"
+  },
+  "scanBtn": {
+    "message": "Engedélyezett webhelyek vizsgálata (Előzmények/Lapok)"
+  },
+  "scanningMessage": {
+    "message": "Böngészési előzmények, könyvjelzők és nyitott lapok vizsgálata..."
+  },
+  "allowedSectionTitle": {
+    "message": "Engedélyezett értesítésű webhelyek"
+  },
+  "suspiciousLabel": {
+    "message": "Nem ellenőrzött / Ismeretlen ({count})"
+  },
+  "trustedLabel": {
+    "message": "Megbízható webhelyek ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Kattintson a Vizsgálat gombra, hogy ellenőrizze, van-e értesítési engedélye nem ellenőrzött webhelyeknek."
+  },
+  "safeStateMsg": {
+    "message": "Nem található nem ellenőrzött értesítési engedély.\n\nHa gyanús figyelmeztetéseket vagy kéretlen hirdetéseket látott, azok a böngésző értesítéseit kihasználó spamek lehettek.\n\nA forrásdomainek blokkolása után ezek az értesítések nem jelennek meg többé."
+  },
+  "cleanAllBtn": {
+    "message": "Összes nem ellenőrzött webhely blokkolása"
+  },
+  "clearAllRulesBtn": {
+    "message": "Blokkolt webhelyek visszaállítása"
+  },
+  "confirmClearAllRules": {
+    "message": "Ez törli a NotiSpam Cleaner által létrehozott összes értesítési blokkolást és beállítást, visszaállítva a böngésző alapértelmezéseit. Biztos benne?"
+  },
+  "blockBtnTooltip": {
+    "message": "Webhely blokkolása"
+  },
+  "trustBtnTooltip": {
+    "message": "Hozzáadás a megbízható listához"
+  },
+  "confirmResetAll": {
+    "message": "Biztosan visszavonja az összes nem ellenőrzött webhely értesítési engedélyét?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Ez a webhely jelenleg meg van nyitva. A beállítások visszaállítása miatt az automatikus blokkolási figyelmeztetés azonnal újra megjelenhet. Előbb zárja be a webhely lapját. Folytatja?"
+  },
+  "guardNotificationTitle": {
+    "message": "Biztonsági figyelmeztetés — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "A nem ellenőrzött \"$domain$\" webhely értesítési engedélyei automatikusan blokkolva lettek. Kattintson alább a megbízhatóvá tételhez, ha tévedés történt.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "A(z) \"$domain$\" értesítései blokkolva.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Megbízom a webhelyben (Engedélyezés)"
+  },
+  "guardNotificationKeep": {
+    "message": "Maradjon blokkolva"
+  },
+  "currentSiteLabel": {
+    "message": "Jelenlegi webhely:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Értesítési engedély:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Engedélyezés"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Blokkolás"
+  },
+  "currentSiteResetBtn": {
+    "message": "Alapértelmezés visszaállítása"
+  },
+  "statusActiveBlocked": {
+    "message": "Blokkolva (Biztonságos)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Blokkolva (Alkalmazás által)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Blokkolva (Böngésző által)"
+  },
+  "statusActiveAllowed": {
+    "message": "Engedélyezve (Figyelem)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Engedélyezve (Alkalmazás által megbízható)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Engedélyezve (Böngésző által - Nem ellenőrzött)"
+  },
+  "statusActiveAsk": {
+    "message": "Rákérdezés küldés előtt (Normál)"
+  },
+  "statusActiveDefault": {
+    "message": "Böngésző alapértelmezése"
+  },
+  "labelAllowedBrowser": {
+    "message": "Böngésző által engedélyezve"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Ez az engedély a böngészőben van mentve. Eltűnik a vizsgálatból, ha a webhelyet bezárják vagy törlik az előzményekből, de a böngésző beállításaiban bármikor kezelheti."
+  },
+  "labelAllowedTrusted": {
+    "message": "Alkalmazás által megbízható"
+  },
+  "labelBlockedApp": {
+    "message": "Alkalmazás által blokkolva"
+  },
+  "labelBlockedBrowser": {
+    "message": "Böngésző által blokkolva"
+  },
+  "allowedLabel": {
+    "message": "Engedélyezve ({count})"
+  },
+  "blockedLabel": {
+    "message": "Blokkolva ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Jelenleg nincs a NotiSpam Cleaner által blokkolt webhely."
+  },
+  "unblockBtnTooltip": {
+    "message": "Blokkolás feloldása (Alapértelmezés visszaállítása)"
+  },
+  "helpTitle": {
+    "message": "Mi az értesítésekkel való visszaélés?"
+  },
+  "helpDesc": {
+    "message": "A rosszindulatú webhelyek gyakran hamis Captcha-ellenőrzésekkel („Kattintson az Engedélyezés gombra annak igazolásához, hogy nem robot”) vagy ál-biztonsági riasztásokkal veszik rá az „Engedélyezés” megnyomására. Engedélyezés után kéretlen reklámokat és hamis vírusirtó-üzeneteket küldenek a képernyőre. A NotiSpam Cleaner azonnal felismeri ezeket, egy kattintással megtisztítja, és valós időben védi Önt.\n\n*Megjegyzés: A NotiSpam Cleaner beállításai (Blokkolás/Megbízhatóság) közvetlenül szinkronizálódnak a böngésző saját értesítési adatbázisával."
+  },
+  "settingsLinkNotice": {
+    "message": "A böngésző korlátai miatt a nyitott lapok között vagy a legutóbbi előzményekben már nem szereplő engedélyezett webhelyek nem vizsgálhatók. A teljes lista kezeléséhez nyissa meg a böngésző beállításait."
+  },
+  "openSettingsBtn": {
+    "message": "Böngésző értesítési beállításainak megnyitása"
+  },
+  "sectionCurrentSite": {
+    "message": "Aktív webhely"
+  },
+  "sectionGlobalSettings": {
+    "message": "Globális védelmi beállítások"
+  }
+}

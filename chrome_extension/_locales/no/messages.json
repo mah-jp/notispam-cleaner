@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Blokkering av søppelvarsler"
+  },
+  "extDesc": {
+    "message": "Skanner og rydder varslingstillatelser fra mistenkelige nettsteder. Beskytter i sanntid mot spam og svindelannonser."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Spam-blokkering"
+  },
+  "globalStatusLabel": {
+    "message": "Standardatferd:"
+  },
+  "statusBlocked": {
+    "message": "Blokkert (Høyeste sikkerhet)"
+  },
+  "statusAsk": {
+    "message": "Spør før sending (Standard)"
+  },
+  "statusAllowed": {
+    "message": "Tillat alle (Svært farlig!)"
+  },
+  "togglePromptLabel": {
+    "message": "Tillat at nettsteder ber om å sende varsler"
+  },
+  "realtimeGuardLabel": {
+    "message": "Sanntidsbeskyttelse"
+  },
+  "realtimeGuardDesc": {
+    "message": "Blokkerer umiddelbart varslingstilgang hvis et uverifisert nettsted får tillatelse."
+  },
+  "silentGuardianLabel": {
+    "message": "Stille vokter (Familiemodus)"
+  },
+  "silentGuardianDesc": {
+    "message": "Blokkerer varsler fra uverifiserte nettsteder stille i bakgrunnen uten å vise advarsler. Ideelt for familiens PC-er."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Automatisk blokkert i bakgrunnen: {count} nettsteder"
+  },
+  "clearLogBtn": {
+    "message": "Tilbakestill"
+  },
+  "scanBtn": {
+    "message": "Skann tillatte nettsteder (Logg/Faner)"
+  },
+  "scanningMessage": {
+    "message": "Skanner nettleserlogg, bokmerker og åpne faner..."
+  },
+  "allowedSectionTitle": {
+    "message": "Nettsteder med tillatte varsler"
+  },
+  "suspiciousLabel": {
+    "message": "Uverifiserte / Ukjente ({count})"
+  },
+  "trustedLabel": {
+    "message": "Klarerte nettsteder ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Klikk på Skann for å sjekke om uverifiserte nettsteder har tillatelse til å sende varsler."
+  },
+  "safeStateMsg": {
+    "message": "Ingen uverifiserte varslingstillatelser ble funnet.\n\nHvis du så mistenkelige advarsler eller uønskede annonser, kan det ha vært søppelpost som misbrukte nettleserens varslingsinnstillinger.\n\nNår kildedomener er blokkert, vil disse varslene slutte å vises."
+  },
+  "cleanAllBtn": {
+    "message": "Blokker alle uverifiserte nettsteder"
+  },
+  "clearAllRulesBtn": {
+    "message": "Tilbakestill blokkerte nettsteder"
+  },
+  "confirmClearAllRules": {
+    "message": "Dette vil fjerne alle varslingsblokkeringer og innstillinger opprettet av NotiSpam Cleaner, og tilbakestille dem til nettleserens standard. Er du sikker?"
+  },
+  "blockBtnTooltip": {
+    "message": "Blokker dette nettstedet"
+  },
+  "trustBtnTooltip": {
+    "message": "Legg til i klarert liste"
+  },
+  "confirmResetAll": {
+    "message": "Er du sikker på at du vil tilbakekalle varslingstillatelser for alle uverifiserte nettsteder?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Dette nettstedet er åpent akkurat nå. Hvis du tilbakestiller innstillingene nå, kan advarselen om automatisk blokkering dukke opp igjen umiddelbart. Lukk fanen først. Fortsette?"
+  },
+  "guardNotificationTitle": {
+    "message": "Sikkerhetsvarsel — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Blokkerte automatisk varslingstillatelser for det uverifiserte nettstedet \"$domain$\". Klikk nedenfor for å stole på nettstedet hvis det var en feil.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Varsler fra \"$domain$\" ble blokkert.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Stol på nettstedet (Tillat)"
+  },
+  "guardNotificationKeep": {
+    "message": "Behold blokkert"
+  },
+  "currentSiteLabel": {
+    "message": "Nåværende nettsted:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Varslingstillatelse:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Tillat"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Blokker"
+  },
+  "currentSiteResetBtn": {
+    "message": "Tilbakestill til standard"
+  },
+  "statusActiveBlocked": {
+    "message": "Blokkert (Sikker)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Blokkert (Av appen)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Blokkert (Av nettleseren)"
+  },
+  "statusActiveAllowed": {
+    "message": "Tillatt (Obs)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Tillatt (Klarert av appen)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Tillatt (Av nettleseren - Uverifisert)"
+  },
+  "statusActiveAsk": {
+    "message": "Spør før sending (Standard)"
+  },
+  "statusActiveDefault": {
+    "message": "Nettleserstandard"
+  },
+  "labelAllowedBrowser": {
+    "message": "Tillatt av nettleseren"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Denne tillatelsen er lagret i nettleseren. Den forsvinner fra skanningen hvis nettstedet lukkes eller slettes fra loggen, men du kan alltid administrere den i nettleserinnstillingene."
+  },
+  "labelAllowedTrusted": {
+    "message": "Klarert av appen"
+  },
+  "labelBlockedApp": {
+    "message": "Blokkert av appen"
+  },
+  "labelBlockedBrowser": {
+    "message": "Blokkert av nettleseren"
+  },
+  "allowedLabel": {
+    "message": "Tillatte ({count})"
+  },
+  "blockedLabel": {
+    "message": "Blokkerte ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Ingen nettsteder er for øyeblikket blokkert av NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Opphev blokkering (Tilbakestill til standard)"
+  },
+  "helpTitle": {
+    "message": "Hva er misbruk av varsler?"
+  },
+  "helpDesc": {
+    "message": "Ondsinnete nettsteder lurer deg ofte til å klikke på «Tillat» ved å vise falske Captcha-tester («Klikk Tillat for å bekrefte at du ikke er en robot») eller falske sikkerhetsvarsler. Når de først får tillatelse, sender de uønskede annonser og falske antivirusvarsler rett til skjermen din. NotiSpam Cleaner oppdager dette, lar deg rydde opp med ett klikk og beskytter deg i sanntid.\n\n*Merk: Innstillinger i NotiSpam Cleaner (Blokker/Stol på) synkroniseres direkte med nettleserens innebygde varslingsdatabase."
+  },
+  "settingsLinkNotice": {
+    "message": "På grunn av begrensninger i nettleseren kan tillatte nettsteder som ikke lenger er i åpne faner eller nylig logg, ikke skannes. Åpne nettleserinnstillingene for å administrere hele listen."
+  },
+  "openSettingsBtn": {
+    "message": "Åpne varslingsinnstillinger i nettleseren"
+  },
+  "sectionCurrentSite": {
+    "message": "Aktivt nettsted"
+  },
+  "sectionGlobalSettings": {
+    "message": "Globale beskyttelsesinnstillinger"
+  }
+}

@@ -3,7 +3,7 @@
     "message": "NotiSpam Cleaner: 通知垃圾广告清理器"
   },
   "extDesc": {
-    "message": "扫描并清理可疑网站的通知权限。实时拦截通知垃圾邮件和诈骗广告。"
+    "message": "扫描并清理可疑网站的通知权限。实时拦截垃圾通知和诈骗弹窗广告。"
   },
   "appTitle": {
     "message": "NotiSpam Cleaner"

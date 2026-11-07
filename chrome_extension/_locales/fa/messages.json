@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: مسدودکننده هرزنامه اعلان‌ها"
+  },
+  "extDesc": {
+    "message": "مجوزهای اعلان وب‌سایت‌های مشکوک را بررسی و پاک‌سازی می‌کند. محافظت بلادرنگ در برابر هرزنامه و تبلیغات جعلی."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "مسدودکننده هرزنامه اعلان"
+  },
+  "globalStatusLabel": {
+    "message": "رفتار پیش‌فرض مجوز:"
+  },
+  "statusBlocked": {
+    "message": "مسدود شده (بالاترین امنیت)"
+  },
+  "statusAsk": {
+    "message": "پرسش پیش از ارسال (استاندارد)"
+  },
+  "statusAllowed": {
+    "message": "اجازه به همه (بسیار خطرناک!)"
+  },
+  "togglePromptLabel": {
+    "message": "اجازه به سایت‌ها برای درخواست ارسال اعلان"
+  },
+  "realtimeGuardLabel": {
+    "message": "محافظت در زمان واقعی"
+  },
+  "realtimeGuardDesc": {
+    "message": "در صورت دریافت مجوز توسط سایت تاییدنشده، دسترسی اعلان را فوراً مسدود می‌کند."
+  },
+  "silentGuardianLabel": {
+    "message": "محافظ خاموش (حالت خانواده)"
+  },
+  "silentGuardianDesc": {
+    "message": "اعلان‌های سایت‌های تاییدنشده را بدون نمایش هشدار در پس‌زمینه مسدود می‌کند. ایده‌آل برای رایانه اعضای خانواده."
+  },
+  "backgroundBlockedLabel": {
+    "message": "مسدود شده خودکار در پس‌زمینه: {count} سایت"
+  },
+  "clearLogBtn": {
+    "message": "بازنشانی"
+  },
+  "scanBtn": {
+    "message": "بررسی سایت‌های مجاز (تاریخچه/تب‌ها)"
+  },
+  "scanningMessage": {
+    "message": "در حال بررسی تاریخچه مرور، نشانک‌ها و تب‌های باز..."
+  },
+  "allowedSectionTitle": {
+    "message": "سایت‌های دارای مجوز اعلان"
+  },
+  "suspiciousLabel": {
+    "message": "تاییدنشده / ناشناس ({count})"
+  },
+  "trustedLabel": {
+    "message": "سایت‌های مورد اعتماد ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "برای بررسی اینکه آیا سایت‌های تاییدنشده مجوز ارسال اعلان دارند، روی بررسی کلیک کنید."
+  },
+  "safeStateMsg": {
+    "message": "هیچ مجوز اعلان تاییدنشده‌ای یافت نشد.\n\nاگر هشدارهای مشکوک یا تبلیغات ناخواسته مشاهده می‌کردید، احتمالاً پیام‌های هرزنامه‌ای بوده‌اند که از تنظیمات اعلان مرورگر سوءاستفاده کرده‌اند.\n\nبا مسدود شدن دامنه‌های مبدا، این اعلان‌ها دیگر نمایش داده نمی‌شوند."
+  },
+  "cleanAllBtn": {
+    "message": "مسدود کردن همه سایت‌های تاییدنشده"
+  },
+  "clearAllRulesBtn": {
+    "message": "بازنشانی سایت‌های مسدود شده"
+  },
+  "confirmClearAllRules": {
+    "message": "این کار تمام مسدودسازی‌ها و تنظیمات اعلان ایجاد شده توسط NotiSpam Cleaner را پاک کرده و به پیش‌فرض مرورگر بازمی‌گرداند. آیا مطمئن هستید؟"
+  },
+  "blockBtnTooltip": {
+    "message": "مسدود کردن این سایت"
+  },
+  "trustBtnTooltip": {
+    "message": "افزودن به فهرست مورد اعتماد"
+  },
+  "confirmResetAll": {
+    "message": "آیا مطمئن هستید که می‌خواهید مجوز اعلان تمام سایت‌های تاییدنشده را لغو کنید؟"
+  },
+  "confirmResetActiveDomain": {
+    "message": "این وب‌سایت در حال حاضر باز است. بازنشانی تنظیمات در این حالت ممکن است باعث نمایش مجدد هشدار مسدودسازی خودکار شود. لطفاً ابتدا تب سایت را ببندید. ادامه می‌دهید؟"
+  },
+  "guardNotificationTitle": {
+    "message": "هشدار امنیتی — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "مجوزهای اعلان برای سایت تاییدنشده \"$domain$\" به طور خودکار مسدود شد. اگر اشتباهی رخ داده است، برای اعتماد به این سایت در پایین کلیک کنید.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "اعلان‌های \"$domain$\" مسدود شد.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "اعتماد به سایت (اجازه دادن)"
+  },
+  "guardNotificationKeep": {
+    "message": "مسدود بماند"
+  },
+  "currentSiteLabel": {
+    "message": "وب‌سایت فعلی:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "مجوز اعلان:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "اجازه"
+  },
+  "currentSiteBlockBtn": {
+    "message": "مسدود"
+  },
+  "currentSiteResetBtn": {
+    "message": "بازگشت به پیش‌فرض"
+  },
+  "statusActiveBlocked": {
+    "message": "مسدود شده (امن)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "مسدود شده (توسط افزونه)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "مسدود شده (توسط مرورگر)"
+  },
+  "statusActiveAllowed": {
+    "message": "مجاز (احتیاط)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "مجاز (مورد اعتماد افزونه)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "مجاز (توسط مرورگر - تاییدنشده)"
+  },
+  "statusActiveAsk": {
+    "message": "پرسش پیش از ارسال (استاندارد)"
+  },
+  "statusActiveDefault": {
+    "message": "پیش‌فرض مرورگر"
+  },
+  "labelAllowedBrowser": {
+    "message": "مجاز توسط مرورگر"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "این مجوز در مرورگر ذخیره شده است. در صورت بستن سایت یا پاک کردن تاریخچه از نتایج بررسی پنهان می‌شود، اما همیشه از تنظیمات مرورگر قابل مدیریت است."
+  },
+  "labelAllowedTrusted": {
+    "message": "مورد اعتماد افزونه"
+  },
+  "labelBlockedApp": {
+    "message": "مسدود شده توسط افزونه"
+  },
+  "labelBlockedBrowser": {
+    "message": "مسدود شده توسط مرورگر"
+  },
+  "allowedLabel": {
+    "message": "مجاز ({count})"
+  },
+  "blockedLabel": {
+    "message": "مسدود ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "در حال حاضر هیچ سایتی توسط NotiSpam Cleaner مسدود نشده است."
+  },
+  "unblockBtnTooltip": {
+    "message": "رفع مسدودی این سایت (بازگشت به پیش‌فرض)"
+  },
+  "helpTitle": {
+    "message": "سوءاستفاده از اعلان چیست؟"
+  },
+  "helpDesc": {
+    "message": "سایت‌های مخرب اغلب با نمایش کپچاهای جعلی («برای تایید اینکه ربات نیستید روی اجازه کلیک کنید») یا هشدارهای امنیتی ساختگی، شما را فریب می‌دهند. پس از دریافت مجوز، تبلیغات مزاحم و هشدارهای ویروس جعلی را مستقیماً روی صفحه نمایش می‌فرستند. NotiSpam Cleaner آن‌ها را شناسایی کرده، با یک کلیک پاک‌سازی می‌کند و در زمان واقعی از شما محافظت می‌کند.\n\n*توجه: تنظیمات NotiSpam Cleaner مستقیماً با پایگاه داده اعلان‌های مرورگر شما همگام‌سازی می‌شود."
+  },
+  "settingsLinkNotice": {
+    "message": "به دلیل محدودیت‌های مرورگر، سایت‌های مجازی که دیگر در تب‌های باز یا تاریخچه اخیر نیستند قابل بررسی نمی‌باشند. برای مدیریت فهرست کامل، تنظیمات مرورگر را باز کنید."
+  },
+  "openSettingsBtn": {
+    "message": "باز کردن تنظیمات اعلان مرورگر"
+  },
+  "sectionCurrentSite": {
+    "message": "وب‌سایت فعال"
+  },
+  "sectionGlobalSettings": {
+    "message": "تنظیمات محافظت سراسری"
+  }
+}

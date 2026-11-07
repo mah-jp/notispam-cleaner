@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Blokada spamu powiadomień"
+  },
+  "extDesc": {
+    "message": "Skanuje i czyści uprawnienia powiadomień podejrzanych stron. Chroni w czasie rzeczywistym przed spamem i oszustwami."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Blokada spamu powiadomień"
+  },
+  "globalStatusLabel": {
+    "message": "Domyślne zachowanie:"
+  },
+  "statusBlocked": {
+    "message": "Zablokowane (Najwyższe bezpieczeństwo)"
+  },
+  "statusAsk": {
+    "message": "Pytaj przed wysłaniem (Standardowe)"
+  },
+  "statusAllowed": {
+    "message": "Zezwalaj wszystkim (Bardzo niebezpieczne!)"
+  },
+  "togglePromptLabel": {
+    "message": "Zezwalaj witrynom na pytania o wysyłanie powiadomień"
+  },
+  "realtimeGuardLabel": {
+    "message": "Ochrona w czasie rzeczywistym"
+  },
+  "realtimeGuardDesc": {
+    "message": "Natychmiast blokuje dostęp do powiadomień, gdy niezweryfikowana witryna uzyska uprawnienia."
+  },
+  "silentGuardianLabel": {
+    "message": "Cichy strażnik (Tryb rodzinny)"
+  },
+  "silentGuardianDesc": {
+    "message": "Po cichu blokuje w tle powiadomienia z niezweryfikowanych witryn bez wyświetlania alertów. Idealny na komputery bliskich."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Automatycznie zablokowano w tle: {count} witryn"
+  },
+  "clearLogBtn": {
+    "message": "Resetuj"
+  },
+  "scanBtn": {
+    "message": "Skanuj dozwolone witryny (Historia/Karty)"
+  },
+  "scanningMessage": {
+    "message": "Skanowanie historii przeglądania, zakładek i otwartych kart..."
+  },
+  "allowedSectionTitle": {
+    "message": "Witryny z dozwolonymi powiadomieniami"
+  },
+  "suspiciousLabel": {
+    "message": "Niezweryfikowane / Nieznane ({count})"
+  },
+  "trustedLabel": {
+    "message": "Zaufane witryny ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Kliknij Skanuj, aby sprawdzić, czy niezweryfikowane witryny mają uprawnienia do wysyłania powiadomień."
+  },
+  "safeStateMsg": {
+    "message": "Nie wykryto niezweryfikowanych uprawnień do powiadomień.\n\nJeśli pojawiały się podejrzane ostrzeżenia lub niechciane reklamy, mógł to być spam wykorzystujący powiadomienia przeglądarki.\n\nPo zablokowaniu domen źródłowych powiadomienia przestaną się pojawiać."
+  },
+  "cleanAllBtn": {
+    "message": "Zablokuj wszystkie niezweryfikowane witryny"
+  },
+  "clearAllRulesBtn": {
+    "message": "Resetuj zablokowane witryny"
+  },
+  "confirmClearAllRules": {
+    "message": "Spowoduje to usunięcie wszystkich blokad i ustawień powiadomień utworzonych przez NotiSpam Cleaner oraz przywrócenie ustawień domyślnych przeglądarki. Czy na pewno?"
+  },
+  "blockBtnTooltip": {
+    "message": "Zablokuj tę witrynę"
+  },
+  "trustBtnTooltip": {
+    "message": "Dodaj do listy zaufanych"
+  },
+  "confirmResetAll": {
+    "message": "Czy na pewno chcesz cofnąć uprawnienia do powiadomień dla wszystkich niezweryfikowanych witryn?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Ta witryna jest obecnie otwarta. Zresetowanie jej ustawień teraz może spowodować natychmiastowe ponowne wyświetlenie ostrzeżenia o blokadzie. Najpierw zamknij kartę witryny. Kontynuować?"
+  },
+  "guardNotificationTitle": {
+    "message": "Alert bezpieczeństwa — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Automatycznie zablokowano powiadomienia dla niezweryfikowanej witryny \"$domain$\". Kliknij poniżej, aby zaufać tej witrynie, jeśli to pomyłka.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Zablokowano powiadomienia z \"$domain$\".",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Zaufaj witrynie (Zezwól)"
+  },
+  "guardNotificationKeep": {
+    "message": "Pozostaw zablokowane"
+  },
+  "currentSiteLabel": {
+    "message": "Bieżąca witryna:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Uprawnienia powiadomień:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Zezwól"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Zablokuj"
+  },
+  "currentSiteResetBtn": {
+    "message": "Przywróć domyślne"
+  },
+  "statusActiveBlocked": {
+    "message": "Zablokowane (Bezpieczne)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Zablokowane (Przez aplikację)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Zablokowane (Przez przeglądarkę)"
+  },
+  "statusActiveAllowed": {
+    "message": "Dozwolone (Ostrożnie)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Dozwolone (Zaufane przez aplikację)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Dozwolone (Przez przeglądarkę - Niezweryfikowane)"
+  },
+  "statusActiveAsk": {
+    "message": "Pytaj przed wysłaniem (Standardowe)"
+  },
+  "statusActiveDefault": {
+    "message": "Domyślne przeglądarki"
+  },
+  "labelAllowedBrowser": {
+    "message": "Dozwolone przez przeglądarkę"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "To uprawnienie jest zapisane w przeglądarce. Zniknie ze skanowania po zamknięciu witryny lub wyczyszczeniu historii, ale zawsze możesz nim zarządzać w ustawieniach przeglądarki."
+  },
+  "labelAllowedTrusted": {
+    "message": "Zaufane przez aplikację"
+  },
+  "labelBlockedApp": {
+    "message": "Zablokowane przez aplikację"
+  },
+  "labelBlockedBrowser": {
+    "message": "Zablokowane przez przeglądarkę"
+  },
+  "allowedLabel": {
+    "message": "Dozwolone ({count})"
+  },
+  "blockedLabel": {
+    "message": "Zablokowane ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Obecnie żadna witryna nie jest zablokowana przez NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Odblokuj tę witrynę (Przywróć domyślne)"
+  },
+  "helpTitle": {
+    "message": "Czym jest nadużywanie powiadomień?"
+  },
+  "helpDesc": {
+    "message": "Złośliwe witryny często nakłaniają do kliknięcia „Zezwól”, wyświetlając fałszywe testy Captcha („Kliknij Zezwól, aby potwierdzić, że nie jesteś robotem”) lub fałszywe alerty bezpieczeństwa. Po uzyskaniu zgody wysyłają niechciane reklamy i fałszywe ostrzeżenia antywirusowe prosto na ekran. NotiSpam Cleaner wykrywa je, pozwala wyczyścić jednym kliknięciem i chroni w czasie rzeczywistym.\n\n*Uwaga: Ustawienia NotiSpam Cleaner (Zablokuj/Zaufaj) synchronizują się bezpośrednio z bazą powiadomień przeglądarki."
+  },
+  "settingsLinkNotice": {
+    "message": "Ze względu na ograniczenia przeglądarki dozwolone witryny, których nie ma już w otwartych kartach ani ostatniej historii, nie mogą zostać przeskanowane. Otwórz ustawienia przeglądarki, aby zarządzać pełną listą."
+  },
+  "openSettingsBtn": {
+    "message": "Otwórz ustawienia powiadomień przeglądarki"
+  },
+  "sectionCurrentSite": {
+    "message": "Aktywna witryna"
+  },
+  "sectionGlobalSettings": {
+    "message": "Globalne ustawienia ochrony"
+  }
+}

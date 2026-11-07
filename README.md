@@ -1,6 +1,6 @@
 # NotiSpam Cleaner — Notification Spam Blocker
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.0.3-blue.svg)](https://chromewebstore.google.com/detail/notispam-cleaner-notifica/dahnhdiabhegihofjijbchegffnkiaap)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.0.4-blue.svg)](https://chromewebstore.google.com/detail/notispam-cleaner-notifica/dahnhdiabhegihofjijbchegffnkiaap)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **NotiSpam Cleaner** is a privacy-first, open-source Google Chrome extension designed to scan, manage, and block website notification permissions to protect against notification spam. By revoking or blocking permission settings for suspicious domains, it prevents fake virus warnings, scam advertisements, and unwanted desktop popups from appearing on your screen.
@@ -105,11 +105,12 @@ graph TD
 ```
 
 
-## Supported Languages (Locales)
+## Supported Languages (35 Locales)
 
-This extension is fully localized and supports the following languages out of the box:
+This extension is fully localized (including RTL layout support for Arabic, Hebrew, and Persian) and supports **35 languages** out of the box, with localized Chrome Web Store screenshots (`images/notispam-cleaner_screen-1_<lang>.png` & `images/notispam-cleaner_screen-2_<lang>.png`) for every locale:
 *   English (`en`) - Default
 *   Japanese (`ja`)
+*   Romanian (`ro`)
 *   Spanish (`es`)
 *   Russian (`ru`)
 *   Chinese (Simplified: `zh_CN` / Traditional: `zh_TW`)
@@ -117,9 +118,17 @@ This extension is fully localized and supports the following languages out of th
 *   Korean (`ko`)
 *   French (`fr`)
 *   German (`de`)
-*   Portuguese (`pt`)
-*   Arabic (`ar`)
-*   Hebrew (`he`)
+*   Portuguese (Brazil: `pt_BR` / Portugal: `pt_PT`)
+*   Italian (`it`)
+*   Polish (`pl`)
+*   Dutch (`nl`)
+*   Turkish (`tr`)
+*   Vietnamese (`vi`)
+*   Indonesian (`id`)
+*   Malay (`ms`)
+*   Czech (`cs`), Slovak (`sk`), Hungarian (`hu`), Bulgarian (`bg`), Croatian (`hr`), Slovenian (`sl`), Lithuanian (`lt`), Greek (`el`)
+*   Swedish (`sv`), Danish (`da`), Finnish (`fi`), Norwegian (`no`)
+*   Arabic (`ar`), Hebrew (`he`), Persian (`fa`) — Full RTL UI support
 
 ## Author
 *   **Masahiko OHKUBO** (GitHub: [@mah-jp](https://github.com/mah-jp))

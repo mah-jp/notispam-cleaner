@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Zaviralnik neželenih obvestil"
+  },
+  "extDesc": {
+    "message": "Pregleda in počisti dovoljenja za obvestila sumljivih spletnih mest. V realnem času ščiti pred vsiljeno pošto in prevarami."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Zaviralnik vsiljenih obvestil"
+  },
+  "globalStatusLabel": {
+    "message": "Privzeto vedenje:"
+  },
+  "statusBlocked": {
+    "message": "Blokirano (Najvišja varnost)"
+  },
+  "statusAsk": {
+    "message": "Vprašaj pred pošiljanjem (Standardno)"
+  },
+  "statusAllowed": {
+    "message": "Dovoli vse (Zelo nevarno!)"
+  },
+  "togglePromptLabel": {
+    "message": "Dovoli spletnim mestom, da zaprosijo za pošiljanje obvestil"
+  },
+  "realtimeGuardLabel": {
+    "message": "Zaščita v realnem času"
+  },
+  "realtimeGuardDesc": {
+    "message": "Takoj blokira dostop do obvestil, če nepreverjeno spletno mesto pridobi dovoljenje."
+  },
+  "silentGuardianLabel": {
+    "message": "Tihi varuh (Družinski način)"
+  },
+  "silentGuardianDesc": {
+    "message": "Tiho v ozadju blokira obvestila nepreverjenih spletnih mest brez prikazovanja opozoril. Idealno za družinske računalnike."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Samodejno blokirano v ozadju: {count} mest"
+  },
+  "clearLogBtn": {
+    "message": "Ponastavi"
+  },
+  "scanBtn": {
+    "message": "Preglej dovoljena mesta (Zgodovina/Zavihki)"
+  },
+  "scanningMessage": {
+    "message": "Pregledovanje zgodovine brskanja, zaznamkov in odprtih zavihkov..."
+  },
+  "allowedSectionTitle": {
+    "message": "Spletna mesta z dovoljenimi obvestili"
+  },
+  "suspiciousLabel": {
+    "message": "Nepreverjena / Neznana ({count})"
+  },
+  "trustedLabel": {
+    "message": "Zaupanja vredna mesta ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Kliknite Preglej, da preverite, ali imajo nepreverjena spletna mesta dovoljenje za pošiljanje obvestil."
+  },
+  "safeStateMsg": {
+    "message": "Nepreverjenih dovoljenj za obvestila ni bilo zaznanih.\n\nČe ste videvali sumljiva opozorila ali neželene oglase, so bila to morda vsiljena sporočila prek nastavitev obvestil.\n\nKo so izvorne domene blokirane, se ta obvestila ne bodo več prikazovala."
+  },
+  "cleanAllBtn": {
+    "message": "Blokiraj vsa nepreverjena spletna mesta"
+  },
+  "clearAllRulesBtn": {
+    "message": "Ponastavi blokirana mesta"
+  },
+  "confirmClearAllRules": {
+    "message": "S tem boste počistili vse blokade in nastavitve obvestil, ki jih je ustvaril NotiSpam Cleaner, ter jih povrnili na privzete nastavitve brskalnika. Ali ste prepričani?"
+  },
+  "blockBtnTooltip": {
+    "message": "Blokiraj to spletno mesto"
+  },
+  "trustBtnTooltip": {
+    "message": "Dodaj na seznam zaupanja vrednih"
+  },
+  "confirmResetAll": {
+    "message": "Ali ste prepričani, da želite preklicati dovoljenja za obvestila za vsa nepreverjena spletna mesta?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "To spletno mesto je trenutno odprto. Če nastavitve ponastavite zdaj, se lahko opozorilo o samodejnem blokiranju takoj znova prikaže. Najprej zaprite zavihek mesta. Nadaljujem?"
+  },
+  "guardNotificationTitle": {
+    "message": "Varnostno opozorilo — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Samodejno so bila blokirana obvestila za nepreverjeno spletno mesto \"$domain$\". Kliknite spodaj, če mu želite zaupati.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Obvestila z mesta \"$domain$\" so blokirana.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Zaupaj mestu (Dovoli)"
+  },
+  "guardNotificationKeep": {
+    "message": "Ohrani blokirano"
+  },
+  "currentSiteLabel": {
+    "message": "Trenutno spletno mesto:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Dovoljenje za obvestila:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Dovoli"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Blokiraj"
+  },
+  "currentSiteResetBtn": {
+    "message": "Ponastavi na privzeto"
+  },
+  "statusActiveBlocked": {
+    "message": "Blokirano (Varno)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Blokirano (Z aplikacijo)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Blokirano (Z brskalnikom)"
+  },
+  "statusActiveAllowed": {
+    "message": "Dovoljeno (Pozor)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Dovoljeno (Zaupanja vredno v aplikaciji)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Dovoljeno (Z brskalnikom - Nepreverjeno)"
+  },
+  "statusActiveAsk": {
+    "message": "Vprašaj pred pošiljanjem (Standardno)"
+  },
+  "statusActiveDefault": {
+    "message": "Privzeto v brskalniku"
+  },
+  "labelAllowedBrowser": {
+    "message": "Dovoljeno v brskalniku"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "To dovoljenje je shranjeno v brskalniku. Iz pregleda bo izginilo, če spletno mesto zaprete ali izbrišete iz zgodovine, vendar ga lahko vedno upravljate v nastavitvah brskalnika."
+  },
+  "labelAllowedTrusted": {
+    "message": "Zaupanja vredno v aplikaciji"
+  },
+  "labelBlockedApp": {
+    "message": "Blokirano z aplikacijo"
+  },
+  "labelBlockedBrowser": {
+    "message": "Blokirano z brskalnikom"
+  },
+  "allowedLabel": {
+    "message": "Dovoljena ({count})"
+  },
+  "blockedLabel": {
+    "message": "Blokirana ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Trenutno nobeno spletno mesto ni blokirano z NotiSpam Cleanerjem."
+  },
+  "unblockBtnTooltip": {
+    "message": "Odblokiraj to mesto (Ponastavi na privzeto)"
+  },
+  "helpTitle": {
+    "message": "Kaj je zloraba obvestil?"
+  },
+  "helpDesc": {
+    "message": "Zlonamerna spletna mesta vas pogosto zavedejo h kliku na »Dovoli« z lažnimi preverjanji Captcha (»Kliknite Dovoli, da potrdite, da niste robot«) ali lažnimi varnostnimi opozorili. Ko jim dovolite, pošiljajo vsiljene oglase in lažna protivirusna opozorila neposredno na zaslon. NotiSpam Cleaner jih zazna, počisti z enim klikom in vas ščiti v realnem času.\n\n*Opomba: Nastavitve v NotiSpam Cleanerju se neposredno sinhronizirajo z zbirko obvestil brskalnika."
+  },
+  "settingsLinkNotice": {
+    "message": "Zaradi omejitev brskalnika dovoljenih mest, ki niso več v odprtih zavihkih ali nedavni zgodovini, ni mogoče pregledati. Odprite nastavitve brskalnika za upravljanje celotnega seznama."
+  },
+  "openSettingsBtn": {
+    "message": "Odpri nastavitve obvestil brskalnika"
+  },
+  "sectionCurrentSite": {
+    "message": "Aktivno spletno mesto"
+  },
+  "sectionGlobalSettings": {
+    "message": "Globalne nastavitve zaščite"
+  }
+}

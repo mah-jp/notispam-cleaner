@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Roskaposti-ilmoitusten esto"
+  },
+  "extDesc": {
+    "message": "Tarkistaa ja puhdistaa epäilyttävien sivustojen ilmoitusluvat. Suojaa reaaliaikaisesti roskapostilta ja huijausmainoksilta."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Roskaposti-ilmoitusten esto"
+  },
+  "globalStatusLabel": {
+    "message": "Oletustoiminta:"
+  },
+  "statusBlocked": {
+    "message": "Estetty (Korkein suojaus)"
+  },
+  "statusAsk": {
+    "message": "Kysy ennen lähettämistä (Vakio)"
+  },
+  "statusAllowed": {
+    "message": "Salli kaikki (Erittäin vaarallinen!)"
+  },
+  "togglePromptLabel": {
+    "message": "Salli sivustojen pyytää lupaa lähettää ilmoituksia"
+  },
+  "realtimeGuardLabel": {
+    "message": "Reaaliaikainen suojaus"
+  },
+  "realtimeGuardDesc": {
+    "message": "Estää välittömästi ilmoitusoikeudet, jos vahvistamaton sivusto saa luvan."
+  },
+  "silentGuardianLabel": {
+    "message": "Hiljainen vartija (Perhetila)"
+  },
+  "silentGuardianDesc": {
+    "message": "Estää vahvistamattomien sivustojen ilmoitukset hiljaisesti taustalla ilman ponnahdusikkunoita. Ihanteellinen perheenjäsenten tietokoneille."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Automaattisesti taustalla estetyt: {count} sivustoa"
+  },
+  "clearLogBtn": {
+    "message": "Nollaa"
+  },
+  "scanBtn": {
+    "message": "Tarkista sallitut sivustot (Historia/Välilehdet)"
+  },
+  "scanningMessage": {
+    "message": "Tarkistetaan selaushistoriaa, kirjanmerkkejä ja avoimia välilehtiä..."
+  },
+  "allowedSectionTitle": {
+    "message": "Sivustot, joilla on ilmoituslupa"
+  },
+  "suspiciousLabel": {
+    "message": "Vahvistamattomat / Tuntemattomat ({count})"
+  },
+  "trustedLabel": {
+    "message": "Luotetut sivustot ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Napsauta Tarkista nähdäksesi, onko vahvistamattomilla sivustoilla lupa lähettää ilmoituksia."
+  },
+  "safeStateMsg": {
+    "message": "Vahvistamattomia ilmoituslupia ei havaittu.\n\nJos näit epäilyttäviä varoituksia tai ei-toivottuja mainoksia, ne saattoivat olla selaimen ilmoitusasetuksia hyväksikäyttävää roskapostia.\n\nKun lähdeverkkotunnukset on estetty, ilmoitukset lakkaavat näkymästä."
+  },
+  "cleanAllBtn": {
+    "message": "Estä kaikki vahvistamattomat sivustot"
+  },
+  "clearAllRulesBtn": {
+    "message": "Nollaa estetyt sivustot"
+  },
+  "confirmClearAllRules": {
+    "message": "Tämä poistaa kaikki NotiSpam Cleanerin luomat ilmoitusestot ja asetukset sekä palauttaa selaimen oletusarvot. Oletko varma?"
+  },
+  "blockBtnTooltip": {
+    "message": "Estä tämä sivusto"
+  },
+  "trustBtnTooltip": {
+    "message": "Lisää luotettujen listalle"
+  },
+  "confirmResetAll": {
+    "message": "Haluatko varmasti poistaa ilmoitusluvat kaikilta vahvistamattomilta sivustoilta?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Tämä sivusto on parhaillaan avoinna. Asetusten nollaaminen nyt voi aiheuttaa automaattisen estovaroituksen välittömän uudelleenilmoituksen. Sulje ensin sivuston välilehti. Jatketaanko?"
+  },
+  "guardNotificationTitle": {
+    "message": "Tietoturvavaroitus — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Vahvistamattoman sivuston \"$domain$\" ilmoitusluvat estettiin automaattisesti. Napsauta alta luottaaksesi sivustoon, jos kyseessä oli virhe.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Sivuston \"$domain$\" ilmoitukset estettiin.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Luota sivustoon (Salli)"
+  },
+  "guardNotificationKeep": {
+    "message": "Pidä estettynä"
+  },
+  "currentSiteLabel": {
+    "message": "Nykyinen sivusto:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Ilmoituslupa:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Salli"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Estä"
+  },
+  "currentSiteResetBtn": {
+    "message": "Palauta oletus"
+  },
+  "statusActiveBlocked": {
+    "message": "Estetty (Turvallinen)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Estetty (Sovelluksen toimesta)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Estetty (Selaimen toimesta)"
+  },
+  "statusActiveAllowed": {
+    "message": "Sallittu (Varoitus)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Sallittu (Sovelluksen luottama)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Sallittu (Selaimen toimesta - Vahvistamaton)"
+  },
+  "statusActiveAsk": {
+    "message": "Kysy ennen lähettämistä (Vakio)"
+  },
+  "statusActiveDefault": {
+    "message": "Selaimen oletus"
+  },
+  "labelAllowedBrowser": {
+    "message": "Selaimen sallima"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Tämä lupa on tallennettu selaimeen. Se katoaa tarkistuksesta, jos sivusto suljetaan tai poistetaan historiasta, mutta voit aina hallita sitä selaimen asetuksista."
+  },
+  "labelAllowedTrusted": {
+    "message": "Sovelluksen luottama"
+  },
+  "labelBlockedApp": {
+    "message": "Sovelluksen estämä"
+  },
+  "labelBlockedBrowser": {
+    "message": "Selaimen estämä"
+  },
+  "allowedLabel": {
+    "message": "Sallitut ({count})"
+  },
+  "blockedLabel": {
+    "message": "Estetyt ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "NotiSpam Cleaner ei ole tällä hetkellä estänyt yhtään sivustoa."
+  },
+  "unblockBtnTooltip": {
+    "message": "Poista esto (Palauta oletus)"
+  },
+  "helpTitle": {
+    "message": "Mitä on ilmoitusten väärinkäyttö?"
+  },
+  "helpDesc": {
+    "message": "Haitalliset sivustot huijaavat usein napsauttamaan \"Salli\" näyttämällä väärennettyjä Captcha-testejä (\"Napsauta Salli vahvistaaksesi, ettet ole robotti\") tai tekaistuja tietoturvavaroituksia. Luvan saatuaan ne lähettävät roskapostimainoksia ja väärennettyjä virustorjuntavaroituksia suoraan näytöllesi. NotiSpam Cleaner havaitsee ne, puhdistaa ne yhdellä napsautuksella ja suojaa reaaliaikaisesti.\n\n*Huomautus: NotiSpam Cleanerin asetukset (Estä/Luota) synkronoituvat suoraan selaimen oman ilmoitustietokannan kanssa."
+  },
+  "settingsLinkNotice": {
+    "message": "Selaimen rajoitusten vuoksi sallittuja sivustoja, jotka eivät enää ole avoimissa välilehdissä tai viimeisimmässä historiassa, ei voida tarkistaa. Hallitse koko listaa avaamalla selaimen asetukset."
+  },
+  "openSettingsBtn": {
+    "message": "Avaa selaimen ilmoitusasetukset"
+  },
+  "sectionCurrentSite": {
+    "message": "Aktiivinen sivusto"
+  },
+  "sectionGlobalSettings": {
+    "message": "Yleiset suojausasetukset"
+  }
+}

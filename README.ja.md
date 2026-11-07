@@ -1,6 +1,6 @@
 # NotiSpam Cleaner — 通知スパムクリーナー
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.0.3-blue.svg)](https://chromewebstore.google.com/detail/notispam-cleaner-notifica/dahnhdiabhegihofjijbchegffnkiaap)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-v1.0.4-blue.svg)](https://chromewebstore.google.com/detail/notispam-cleaner-notifica/dahnhdiabhegihofjijbchegffnkiaap)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **NotiSpam Cleaner** は、Google Chrome の「通知許可」設定をスキャン・一括ブロックして整理し、通知スパムからブラウザを保護するためのプライバシー優先のオープンソースな Chrome 拡張機能です。不審なウェブサイトに与えられた通知許可設定を解除・ブロックすることで、偽のウイルス警告や不要な広告通知が画面に届くのを防ぎます。
@@ -105,11 +105,12 @@ graph TD
 ```
 
 
-## サポート言語 (ロケール)
+## サポート言語 (全35言語・RTL完全対応)
 
-世界中のあらゆる地域で利用できるよう、以下の言語に完全対応 (ローカライズ) しています。
+世界中のあらゆる地域で利用できるよう、以下の**全35言語**に完全対応（アラビア語・ヘブライ語・ペルシア語の右から左へ記述するRTLレイアウト対応、および全35言語分のストア用スクリーンショット `images/notispam-cleaner_screen-1_<lang>.png` / `screen-2_<lang>.png` 完備）しています。
 *   英語 (`en`) - デフォルト
 *   日本語 (`ja`)
+*   ルーマニア語 (`ro`)
 *   スペイン語 (`es`)
 *   ロシア語 (`ru`)
 *   中国語 (簡体字: `zh_CN` / 繁体字: `zh_TW`)
@@ -117,9 +118,12 @@ graph TD
 *   韓国語 (`ko`)
 *   フランス語 (`fr`)
 *   ドイツ語 (`de`)
-*   ポルトガル語 (`pt`)
-*   アラビア語 (`ar`)
-*   Hebrew (ヘブライ語: `he`)
+*   ポルトガル語 (ブラジル: `pt_BR` / ポルトガル: `pt_PT`)
+*   イタリア語 (`it`)、ポーランド語 (`pl`)、オランダ語 (`nl`)、トルコ語 (`tr`)
+*   ベトナム語 (`vi`)、インドネシア語 (`id`)、マレー語 (`ms`)
+*   チェコ語 (`cs`)、スロバキア語 (`sk`)、ハンガリー語 (`hu`)、ブルガリア語 (`bg`)、クロアチア語 (`hr`)、スロベニア語 (`sl`)、リトアニア語 (`lt`)、ギリシャ語 (`el`)
+*   スウェーデン語 (`sv`)、デンマーク語 (`da`)、フィンランド語 (`fi`)、ノルウェー語 (`no`)
+*   アラビア語 (`ar`)、ヘブライ語 (`he`)、ペルシア語 (`fa`) — RTL（右横書き）UI完全対応
 
 ## 作者
 *   **Masahiko OHKUBO** (GitHub: [@mah-jp](https://github.com/mah-jp))

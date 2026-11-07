@@ -1,32 +1,13 @@
 // Import shared configuration and whitelisting helpers
-importScripts('config.js');
-
-// Helper to extract clean domain/host from a pattern string
-function getDomainFromPattern(pattern) {
-  if (!pattern) return '';
-  // Clean up pattern parts like [*.] or wildcards
-  let clean = pattern.replace('[*.]', '');
-  if (!clean.includes('://')) {
-    clean = 'https://' + clean;
-  }
-  try {
-    const url = new URL(clean);
-    const port = url.port || (url.protocol === 'https:' ? '443' : '80');
-    return `${url.hostname}:${port}`;
-  } catch (e) {
-    let parts = clean.split('://');
-    let host = parts[1] || parts[0];
-    let hostPart = host.split('/')[0];
-    let hostOnly = hostPart.split(':')[0];
-    let port = hostPart.split(':')[1] || (clean.startsWith('http:') ? '80' : '443');
-    return `${hostOnly.toLowerCase()}:${port}`;
-  }
+if (typeof importScripts === 'function') {
+  importScripts('config.js');
 }
 
 // Function to block a specific pattern
 async function blockPattern(pattern) {
   const domain = getDomainFromPattern(pattern);
   const cleanPattern = stripPortFromPattern(pattern);
+  if (!cleanPattern) return;
   try {
     await chrome.contentSettings.notifications.set({
       primaryPattern: cleanPattern,
@@ -34,56 +15,83 @@ async function blockPattern(pattern) {
     });
     if (domain) {
       await addBlockedDomain(domain); // Keep port in storage
+      await removeWhitelistedDomain(domain);
     }
   } catch (e) {
     console.error(`Failed to block pattern ${cleanPattern}:`, e);
   }
 }
 
-// Async handler for notification permissions granted events
-async function handleNotificationGranted(domain, url) {
-  if (!domain) return;
-  domain = domain.toLowerCase();
+// Serialization queue to prevent concurrent race conditions on storage & duplicate alerts
+let guardQueue = Promise.resolve();
 
-  // Retrieve Guard state, Silent Guardian, and Whitelist from storage
+// Core handler for notification permissions granted events
+async function processNotificationGranted(domain, url) {
+  const normalizedDomain = normalizeDomain(domain);
+  if (!normalizedDomain) return;
+
+  // Retrieve Guard state, Silent Guardian, Whitelist, and Blocked list from storage
   const data = await chrome.storage.local.get({
     guard_enabled: true,
     silent_guardian_enabled: false,
     user_whitelist: [],
+    blocked_domains: [],
+    domain_protocols: {},
     blocked_count: 0
   });
+
+  syncDomainProtocols(data.domain_protocols);
 
   // Exit if Guard is disabled
   if (!data.guard_enabled) return;
 
   // Check if the domain is trusted. If yes, do nothing.
-  if (isDomainTrusted(domain, data.user_whitelist)) return;
+  if (isDomainTrusted(normalizedDomain, data.user_whitelist)) return;
 
   // Format primaryPattern from domain (which has port) or url
-  const protocol = domain.endsWith(':80') ? 'http' : 'https';
-  let primaryPattern = `${protocol}://${domain}/*`;
+  let protocol = getProtocolForDomain(normalizedDomain);
+  let primaryPattern = `${protocol}://${normalizedDomain}/*`;
+  let checkUrl = getPrimaryUrlForDomain(normalizedDomain);
   if (url) {
     try {
       const urlObj = new URL(url);
       const port = urlObj.port || (urlObj.protocol === 'https:' ? '443' : '80');
-      primaryPattern = `${urlObj.protocol}//${urlObj.hostname}:${port}/*`;
+      const cleanHost = urlObj.hostname.toLowerCase().replace(/\.+$/, '');
+      rememberDomainProtocol(`${cleanHost}:${port}`, urlObj.protocol);
+      primaryPattern = `${urlObj.protocol}//${cleanHost}:${port}/*`;
+      checkUrl = `${urlObj.protocol}//${cleanHost}/`;
+    } catch (e) { }
+  }
+
+  // Deduplicate concurrent messages from multiple tabs of the same domain if already blocked
+  const storedBlocked = Array.isArray(data.blocked_domains)
+    ? data.blocked_domains.map(d => normalizeDomain(d))
+    : [];
+  if (storedBlocked.includes(normalizedDomain) && checkUrl) {
+    try {
+      const existing = await chrome.contentSettings.notifications.get({ primaryUrl: checkUrl });
+      if (existing && existing.setting === 'block') {
+        return;
+      }
     } catch (e) { }
   }
 
   // If Silent Guardian Mode is active, block silently and update badge count
   if (data.silent_guardian_enabled) {
     await blockPattern(primaryPattern);
-    const newCount = data.blocked_count + 1;
+    await updateActiveTabIcons();
+    const newCount = (Number(data.blocked_count) || 0) + 1;
     await chrome.storage.local.set({ blocked_count: newCount });
 
     // Set red badge with the number of quietly blocked sites
-    chrome.action.setBadgeText({ text: String(newCount) });
-    chrome.action.setBadgeBackgroundColor({ color: '#ef4444' }); // High-visibility red
+    await chrome.action.setBadgeText({ text: String(newCount) });
+    await chrome.action.setBadgeBackgroundColor({ color: '#ef4444' }); // High-visibility red
     return;
   }
 
-  // Otherwise, block the site immediately and raise a desktop notification.
+  // Otherwise, block the site immediately, update active tab icon, and raise a desktop notification.
   await blockPattern(primaryPattern);
+  await updateActiveTabIcons();
 
   const notificationId = `guard-alert:${Date.now()}:${encodeURIComponent(primaryPattern)}`;
 
@@ -91,7 +99,7 @@ async function handleNotificationGranted(domain, url) {
   const title = chrome.i18n.getMessage('guardNotificationTitle') || 'NotiSpam Cleaner';
 
   // Fetch localized string with substitution
-  const message = chrome.i18n.getMessage('guardNotificationMessage', domain) || `Automatically blocked suspicious notifications from "${domain}".`;
+  const message = chrome.i18n.getMessage('guardNotificationMessage', normalizedDomain) || `Automatically blocked suspicious notifications from "${normalizedDomain}".`;
 
   const trustBtnText = chrome.i18n.getMessage('guardNotificationAction') || 'Trust & Allow';
   const dismissBtnText = chrome.i18n.getMessage('guardNotificationKeep') || 'Dismiss';
@@ -114,30 +122,52 @@ async function handleNotificationGranted(domain, url) {
   }
 }
 
-// Listen for messages from content scripts or popup UI (Fire-and-forget, no response needed)
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'notification_granted') {
-    handleNotificationGranted(message.domain, message.url);
-  } else if (message.action === 'update_active_tab_icon') {
-    (async () => {
-      try {
-        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-        if (tabs && tabs.length > 0) {
-          await updateIconForTab(tabs[0]);
-        }
-      } catch (err) {
-        console.error('Failed to update active tab icon on message:', err);
+function handleNotificationGranted(domain, url) {
+  guardQueue = guardQueue
+    .then(() => processNotificationGranted(domain, url))
+    .catch((err) => {
+      console.error('Error in handleNotificationGranted:', err);
+    });
+  return guardQueue;
+}
+
+// Helper to update icons for all active tabs in the current window
+async function updateActiveTabIcons() {
+  try {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tabs && tabs.length > 0) {
+      for (const tab of tabs) {
+        await updateIconForTab(tab);
       }
-    })();
+    }
+  } catch (err) {
+    console.error('Failed to update active tab icon:', err);
   }
-});
+}
+
+// Handle incoming runtime messages
+async function handleRuntimeMessage(message) {
+  if (!message || typeof message !== 'object') return;
+  if (message.action === 'notification_granted') {
+    await handleNotificationGranted(message.domain, message.url);
+  } else if (message.action === 'update_active_tab_icon') {
+    await updateActiveTabIcons();
+  }
+}
 
 // Handle notification button clicks
-chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIndex) => {
-  if (!notificationId.startsWith('guard-alert:')) return;
+async function handleNotificationButtonClicked(notificationId, buttonIndex) {
+  if (!notificationId || typeof notificationId !== 'string' || !notificationId.startsWith('guard-alert:')) return;
 
   const parts = notificationId.split(':');
-  const pattern = decodeURIComponent(parts.slice(2).join(':'));
+  if (parts.length < 3) return;
+
+  let pattern = '';
+  try {
+    pattern = decodeURIComponent(parts.slice(2).join(':'));
+  } catch (e) {
+    return;
+  }
   const domain = getDomainFromPattern(pattern);
 
   // Button index 0: Trust Site (Allow)
@@ -146,27 +176,13 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
       // 1. Clear alert notification immediately
       await chrome.notifications.clear(notificationId);
 
-      // 2. Remove from blocked list and add to whitelist in storage first (to avoid race condition with content script)
-      await removeBlockedDomain(domain);
-      const data = await chrome.storage.local.get({ user_whitelist: [] });
-      if (!data.user_whitelist.includes(domain)) {
-        data.user_whitelist.push(domain);
-        await chrome.storage.local.set({ user_whitelist: data.user_whitelist });
+      // 2. Trust and allow domain (storage updated before contentSettings to avoid race condition)
+      if (domain) {
+        await allowAndTrustDomain(domain, pattern);
       }
 
-      // 3. Set setting to 'allow' only after storage is successfully updated (stripping port for API compatibility)
-      const cleanPattern = stripPortFromPattern(pattern);
-
-      await chrome.contentSettings.notifications.set({
-        primaryPattern: cleanPattern,
-        setting: 'allow'
-      });
-
-      // Update active tab icon immediately if it matches the current window
-      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (tabs && tabs.length > 0) {
-        await updateIconForTab(tabs[0]);
-      }
+      // 3. Update active tab icon immediately if it matches the current window
+      await updateActiveTabIcons();
     } catch (e) {
       console.error('Failed to trust domain:', e);
     }
@@ -178,7 +194,7 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
       await chrome.notifications.clear(notificationId);
     } catch (e) { }
   }
-});
+}
 
 // Function to update the extension icon dynamically based on notification settings for a tab
 async function updateIconForTab(tab) {
@@ -229,19 +245,50 @@ async function updateIconForTab(tab) {
   }
 }
 
-// Listen to tab activation changes (when user switches tabs)
-chrome.tabs.onActivated.addListener(async (activeInfo) => {
-  try {
-    const tab = await chrome.tabs.get(activeInfo.tabId);
-    await updateIconForTab(tab);
-  } catch (err) {
-    // Tab might be closed or not loaded yet
-  }
-});
+// Register Chrome event listeners for the background service worker
+function registerBackgroundListeners() {
+  if (typeof chrome === 'undefined') return;
 
-// Listen to tab updates (when a page loads or URL changes)
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' || changeInfo.url) {
-    await updateIconForTab(tab);
+  if (chrome.runtime && chrome.runtime.onMessage) {
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      handleRuntimeMessage(message);
+    });
   }
-});
+
+  if (chrome.notifications && chrome.notifications.onButtonClicked) {
+    chrome.notifications.onButtonClicked.addListener(handleNotificationButtonClicked);
+  }
+
+  if (chrome.tabs && chrome.tabs.onActivated) {
+    chrome.tabs.onActivated.addListener(async (activeInfo) => {
+      try {
+        const tab = await chrome.tabs.get(activeInfo.tabId);
+        await updateIconForTab(tab);
+      } catch (err) {
+        // Tab might be closed or not loaded yet
+      }
+    });
+  }
+
+  if (chrome.tabs && chrome.tabs.onUpdated) {
+    chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+      if (changeInfo.status === 'complete' || changeInfo.url) {
+        await updateIconForTab(tab);
+      }
+    });
+  }
+}
+
+registerBackgroundListeners();
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    blockPattern,
+    handleNotificationGranted,
+    handleRuntimeMessage,
+    handleNotificationButtonClicked,
+    updateIconForTab,
+    updateActiveTabIcons,
+    registerBackgroundListeners
+  };
+}

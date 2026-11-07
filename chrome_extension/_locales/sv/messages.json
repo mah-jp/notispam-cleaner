@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Blockerare för skräppostaviseringar"
+  },
+  "extDesc": {
+    "message": "Skannar och rensar aviseringsbehörigheter från misstänkta webbplatser. Skyddar i realtid mot spam och bluffannonser."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Skräppostblockerare"
+  },
+  "globalStatusLabel": {
+    "message": "Standardbeteende:"
+  },
+  "statusBlocked": {
+    "message": "Blockerad (Högsta säkerhet)"
+  },
+  "statusAsk": {
+    "message": "Fråga innan sändning (Standard)"
+  },
+  "statusAllowed": {
+    "message": "Tillåt alla (Mycket farligt!)"
+  },
+  "togglePromptLabel": {
+    "message": "Tillåt webbplatser att be om att få skicka aviseringar"
+  },
+  "realtimeGuardLabel": {
+    "message": "Realtidsskydd"
+  },
+  "realtimeGuardDesc": {
+    "message": "Blockerar omedelbart aviseringsåtkomst om en overifierad webbplats får behörighet."
+  },
+  "silentGuardianLabel": {
+    "message": "Tyst väktare (Familjeläge)"
+  },
+  "silentGuardianDesc": {
+    "message": "Blockerar tyst aviseringar från overifierade webbplatser i bakgrunden utan att visa varningar. Perfekt för familjens datorer."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Automatiskt blockerade i bakgrunden: {count} webbplatser"
+  },
+  "clearLogBtn": {
+    "message": "Återställ"
+  },
+  "scanBtn": {
+    "message": "Skanna tillåtna webbplatser (Historik/Flikar)"
+  },
+  "scanningMessage": {
+    "message": "Skannar webbhistorik, bokmärken och öppna flikar..."
+  },
+  "allowedSectionTitle": {
+    "message": "Webbplatser med tillåtna aviseringar"
+  },
+  "suspiciousLabel": {
+    "message": "Overifierade / Okända ({count})"
+  },
+  "trustedLabel": {
+    "message": "Betrodda webbplatser ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Klicka på Skanna för att kontrollera om några overifierade webbplatser har behörighet att skicka aviseringar."
+  },
+  "safeStateMsg": {
+    "message": "Inga overifierade aviseringsbehörigheter hittades.\n\nOm du såg misstänkta varningar eller oönskade annonser kan det ha varit skräppost som utnyttjade webbläsarens aviseringsinställningar.\n\nNär källdomänerna har blockerats slutar dessa aviseringar att visas."
+  },
+  "cleanAllBtn": {
+    "message": "Blockera alla overifierade webbplatser"
+  },
+  "clearAllRulesBtn": {
+    "message": "Återställ blockerade webbplatser"
+  },
+  "confirmClearAllRules": {
+    "message": "Detta rensar alla aviseringsblockeringar och inställningar som skapats av NotiSpam Cleaner och återställer dem till webbläsarens standard. Är du säker?"
+  },
+  "blockBtnTooltip": {
+    "message": "Blockera denna webbplats"
+  },
+  "trustBtnTooltip": {
+    "message": "Lägg till i betrodd lista"
+  },
+  "confirmResetAll": {
+    "message": "Är du säker på att du vill återkalla aviseringsbehörigheter för alla overifierade webbplatser?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Denna webbplats är för närvarande öppen. Om du återställer dess inställningar nu kan varningen för automatisk blockering visas direkt igen. Stäng webbplatsens flik först. Fortsätta?"
+  },
+  "guardNotificationTitle": {
+    "message": "Säkerhetsvarning — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Blockerade automatiskt aviseringsbehörigheter för den overifierade webbplatsen \"$domain$\". Klicka nedan för att lita på webbplatsen om det var ett misstag.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Blockerade aviseringar från \"$domain$\".",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Lita på webbplatsen (Tillåt)"
+  },
+  "guardNotificationKeep": {
+    "message": "Behåll blockerad"
+  },
+  "currentSiteLabel": {
+    "message": "Aktuell webbplats:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Aviseringsbehörighet:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Tillåt"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Blockera"
+  },
+  "currentSiteResetBtn": {
+    "message": "Återställ till standard"
+  },
+  "statusActiveBlocked": {
+    "message": "Blockerad (Säker)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Blockerad (Av appen)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Blockerad (Av webbläsaren)"
+  },
+  "statusActiveAllowed": {
+    "message": "Tillåten (Varning)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Tillåten (Betrodd av appen)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Tillåten (Av webbläsaren - Overifierad)"
+  },
+  "statusActiveAsk": {
+    "message": "Fråga innan sändning (Standard)"
+  },
+  "statusActiveDefault": {
+    "message": "Webbläsarstandard"
+  },
+  "labelAllowedBrowser": {
+    "message": "Tillåten av webbläsaren"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Denna behörighet är sparad i webbläsaren. Den försvinner från skanningen om webbplatsen stängs eller rensas från historiken, men du kan alltid hantera den i webbläsarinställningarna."
+  },
+  "labelAllowedTrusted": {
+    "message": "Betrodd av appen"
+  },
+  "labelBlockedApp": {
+    "message": "Blockerad av appen"
+  },
+  "labelBlockedBrowser": {
+    "message": "Blockerad av webbläsaren"
+  },
+  "allowedLabel": {
+    "message": "Tillåtna ({count})"
+  },
+  "blockedLabel": {
+    "message": "Blockerade ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Inga webbplatser är för närvarande blockerade av NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Avblockera webbplatsen (Återställ till standard)"
+  },
+  "helpTitle": {
+    "message": "Vad är aviseringsmissbruk?"
+  },
+  "helpDesc": {
+    "message": "Skadliga webbplatser lurar dig ofta att klicka på \"Tillåt\" genom att visa falska Captchas (\"Klicka på Tillåt för att bekräfta att du inte är en robot\") eller falska säkerhetsvarningar. När de väl tillåtits skickar de oönskade annonser och falska antivirusvarningar direkt till din skärm. NotiSpam Cleaner upptäcker detta, låter dig rensa med ett klick och skyddar dig i realtid.\n\n*Obs: Inställningar i NotiSpam Cleaner (Blockera/Lita på) synkroniseras direkt med webbläsarens inbyggda aviseringsdatabas."
+  },
+  "settingsLinkNotice": {
+    "message": "På grund av begränsningar i webbläsaren kan tillåtna webbplatser som inte längre finns i öppna flikar eller nylig historik inte skannas. Öppna webbläsarinställningarna för att hantera hela listan."
+  },
+  "openSettingsBtn": {
+    "message": "Öppna webbläsarens aviseringsinställningar"
+  },
+  "sectionCurrentSite": {
+    "message": "Aktiv webbplats"
+  },
+  "sectionGlobalSettings": {
+    "message": "Globala skyddsinställningar"
+  }
+}

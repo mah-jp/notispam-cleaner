@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Blokering af spam-notifikationer"
+  },
+  "extDesc": {
+    "message": "Scanner og rydder notifikationstilladelser fra mistænkelige websteder. Beskytter i realtid mod spam og falske annoncer."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Spam-blokering"
+  },
+  "globalStatusLabel": {
+    "message": "Standardadfærd:"
+  },
+  "statusBlocked": {
+    "message": "Blokeret (Højeste sikkerhed)"
+  },
+  "statusAsk": {
+    "message": "Spørg før afsendelse (Standard)"
+  },
+  "statusAllowed": {
+    "message": "Tillad alle (Meget farligt!)"
+  },
+  "togglePromptLabel": {
+    "message": "Tillad websteder at anmode om at sende notifikationer"
+  },
+  "realtimeGuardLabel": {
+    "message": "Realtidsbeskyttelse"
+  },
+  "realtimeGuardDesc": {
+    "message": "Blokerer øjeblikkeligt adgang til notifikationer, hvis et uverificeret websted får tilladelse."
+  },
+  "silentGuardianLabel": {
+    "message": "Stille vogter (Familietilstand)"
+  },
+  "silentGuardianDesc": {
+    "message": "Blokerer lydløst notifikationer fra uverificerede websteder i baggrunden uden advarsler. Ideel til familiens computere."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Automatisk blokeret i baggrunden: {count} websteder"
+  },
+  "clearLogBtn": {
+    "message": "Nulstil"
+  },
+  "scanBtn": {
+    "message": "Scan tilladte websteder (Historik/Faner)"
+  },
+  "scanningMessage": {
+    "message": "Scanner browserhistorik, bogmærker og åbne faner..."
+  },
+  "allowedSectionTitle": {
+    "message": "Websteder med tilladte notifikationer"
+  },
+  "suspiciousLabel": {
+    "message": "Uverificerede / Ukendte ({count})"
+  },
+  "trustedLabel": {
+    "message": "Betroede websteder ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Klik på Scan for at tjekke, om uverificerede websteder har tilladelse til at sende notifikationer."
+  },
+  "safeStateMsg": {
+    "message": "Ingen uverificerede notifikationstilladelser fundet.\n\nHvis du så mistænkelige advarsler eller uønskede reklamer, kan det have været spam, der misbrugte browserens notifikationsindstillinger.\n\nNår kildedomænerne er blokeret, stopper disse notifikationer med at vises."
+  },
+  "cleanAllBtn": {
+    "message": "Bloker alle uverificerede websteder"
+  },
+  "clearAllRulesBtn": {
+    "message": "Nulstil blokerede websteder"
+  },
+  "confirmClearAllRules": {
+    "message": "Dette vil rydde alle notifikationsblokeringer og indstillinger oprettet af NotiSpam Cleaner og gendanne browserens standarder. Er du sikker?"
+  },
+  "blockBtnTooltip": {
+    "message": "Bloker dette websted"
+  },
+  "trustBtnTooltip": {
+    "message": "Tilføj til betroet liste"
+  },
+  "confirmResetAll": {
+    "message": "Er du sikker på, at du vil tilbagekalde notifikationstilladelser for alle uverificerede websteder?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Dette websted er i øjeblikket åbent. Nulstilling af dets indstillinger nu kan få den automatiske blokeringsadvarsel til at vises igen med det samme. Luk fanen først. Fortsæt?"
+  },
+  "guardNotificationTitle": {
+    "message": "Sikkerhedsadvarsel — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Blokerede automatisk notifikationstilladelser for det uverificerede websted \"$domain$\". Klik nedenfor for at stole på webstedet, hvis det var en fejl.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Notifikationer fra \"$domain$\" blev blokeret.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Stol på webstedet (Tillad)"
+  },
+  "guardNotificationKeep": {
+    "message": "Behold blokeret"
+  },
+  "currentSiteLabel": {
+    "message": "Aktuelt websted:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Notifikationstilladelse:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Tillad"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Bloker"
+  },
+  "currentSiteResetBtn": {
+    "message": "Nulstil til standard"
+  },
+  "statusActiveBlocked": {
+    "message": "Blokeret (Sikker)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Blokeret (Af appen)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Blokeret (Af browseren)"
+  },
+  "statusActiveAllowed": {
+    "message": "Tilladt (Advarsel)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Tilladt (Betroet af appen)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Tilladt (Af browseren - Uverificeret)"
+  },
+  "statusActiveAsk": {
+    "message": "Spørg før afsendelse (Standard)"
+  },
+  "statusActiveDefault": {
+    "message": "Browserstandard"
+  },
+  "labelAllowedBrowser": {
+    "message": "Tilladt af browseren"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Denne tilladelse er gemt i browseren. Den forsvinder fra scanningen, hvis webstedet lukkes eller slettes fra historikken, men du kan altid administrere den i browserindstillingerne."
+  },
+  "labelAllowedTrusted": {
+    "message": "Betroet af appen"
+  },
+  "labelBlockedApp": {
+    "message": "Blokeret af appen"
+  },
+  "labelBlockedBrowser": {
+    "message": "Blokeret af browseren"
+  },
+  "allowedLabel": {
+    "message": "Tilladte ({count})"
+  },
+  "blockedLabel": {
+    "message": "Blokerede ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Ingen websteder er i øjeblikket blokeret af NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Fjern blokering (Nulstil til standard)"
+  },
+  "helpTitle": {
+    "message": "Hvad er misbrug af notifikationer?"
+  },
+  "helpDesc": {
+    "message": "Ondsindede websteder narrer dig ofte til at klikke på \"Tillad\" ved at vise falske Captchas (\"Klik på Tillad for at bekræfte, at du ikke er en robot\") eller falske sikkerhedsadvarsler. Når de først er tilladt, sender de uønskede reklamer og falske antivirusadvarsler direkte til din skærm. NotiSpam Cleaner opdager dette, lader dig rydde op med ét klik og beskytter dig i realtid.\n\n*Bemærk: Indstillinger i NotiSpam Cleaner (Bloker/Stol på) synkroniseres direkte med browserens indbyggede notifikationsdatabase."
+  },
+  "settingsLinkNotice": {
+    "message": "På grund af browserbegrænsninger kan tilladte websteder, der ikke længere er i åbne faner eller nyere historik, ikke scannes. Åbn browserindstillingerne for at administrere hele listen."
+  },
+  "openSettingsBtn": {
+    "message": "Åbn browserens notifikationsindstillinger"
+  },
+  "sectionCurrentSite": {
+    "message": "Aktivt websted"
+  },
+  "sectionGlobalSettings": {
+    "message": "Globale beskyttelsesindstillinger"
+  }
+}

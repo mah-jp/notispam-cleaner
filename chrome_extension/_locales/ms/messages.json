@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Penyekat Spam Pemberitahuan"
+  },
+  "extDesc": {
+    "message": "Mengimbas dan membersihkan kebenaran pemberitahuan laman web mencurigakan. Melindungi daripada spam dan iklan penipuan."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Penyekat Spam Pemberitahuan"
+  },
+  "globalStatusLabel": {
+    "message": "Tingkah laku lalai:"
+  },
+  "statusBlocked": {
+    "message": "Disekat (Keselamatan tertinggi)"
+  },
+  "statusAsk": {
+    "message": "Tanya sebelum menghantar (Standard)"
+  },
+  "statusAllowed": {
+    "message": "Benarkan semua (Sangat berbahaya!)"
+  },
+  "togglePromptLabel": {
+    "message": "Benarkan laman web meminta untuk menghantar pemberitahuan"
+  },
+  "realtimeGuardLabel": {
+    "message": "Perlindungan masa nyata"
+  },
+  "realtimeGuardDesc": {
+    "message": "Menyekat akses pemberitahuan serta-merta jika laman web tidak disahkan mendapat kebenaran."
+  },
+  "silentGuardianLabel": {
+    "message": "Penjaga Senyap (Mod Keluarga)"
+  },
+  "silentGuardianDesc": {
+    "message": "Menyekat pemberitahuan daripada laman tidak disahkan secara senyap di latar belakang tanpa amaran. Sesuai untuk PC ahli keluarga."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Disekat secara automatik di latar belakang: {count} laman"
+  },
+  "clearLogBtn": {
+    "message": "Tetapkan semula"
+  },
+  "scanBtn": {
+    "message": "Imbas laman dibenarkan (Sejarah/Tab)"
+  },
+  "scanningMessage": {
+    "message": "Mengimbas sejarah pelayaran, penanda buku dan tab terbuka..."
+  },
+  "allowedSectionTitle": {
+    "message": "Laman dengan pemberitahuan dibenarkan"
+  },
+  "suspiciousLabel": {
+    "message": "Tidak disahkan / Tidak diketahui ({count})"
+  },
+  "trustedLabel": {
+    "message": "Laman dipercayai ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Klik Imbas untuk menyemak sama ada laman web tidak disahkan mempunyai kebenaran menghantar pemberitahuan."
+  },
+  "safeStateMsg": {
+    "message": "Tiada kebenaran pemberitahuan tidak disahkan dikesan.\n\nJika anda melihat amaran mencurigakan atau iklan tidak diingini, ia mungkin mesej spam yang menyalahgunakan tetapan pemberitahuan.\n\nSebaik sahaja domain sumber disekat, pemberitahuan tersebut akan berhenti muncul."
+  },
+  "cleanAllBtn": {
+    "message": "Sekat semua laman tidak disahkan"
+  },
+  "clearAllRulesBtn": {
+    "message": "Tetapkan semula laman disekat"
+  },
+  "confirmClearAllRules": {
+    "message": "Ini akan memadamkan semua sekatan dan tetapan pemberitahuan yang dicipta oleh NotiSpam Cleaner, mengembalikannya kepada lalai pelayar. Adakah anda pasti?"
+  },
+  "blockBtnTooltip": {
+    "message": "Sekat laman ini"
+  },
+  "trustBtnTooltip": {
+    "message": "Tambah ke senarai dipercayai"
+  },
+  "confirmResetAll": {
+    "message": "Adakah anda pasti mahu membatalkan kebenaran pemberitahuan untuk semua laman web tidak disahkan?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Laman web ini sedang dibuka. Menetapkan semula tetapannya sekarang mungkin menyebabkan amaran sekatan automatik muncul semula serta-merta. Sila tutup tab laman dahulu. Teruskan?"
+  },
+  "guardNotificationTitle": {
+    "message": "Amaran Keselamatan — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Kebenaran pemberitahuan untuk laman tidak disahkan \"$domain$\" telah disekat secara automatik. Klik di bawah untuk mempercayai laman ini jika ia satu kesilapan.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Pemberitahuan daripada \"$domain$\" telah disekat.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Percayai laman (Benarkan)"
+  },
+  "guardNotificationKeep": {
+    "message": "Kekalkan sekatan"
+  },
+  "currentSiteLabel": {
+    "message": "Laman web semasa:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Kebenaran pemberitahuan:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Benarkan"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Sekat"
+  },
+  "currentSiteResetBtn": {
+    "message": "Kembalikan kepada lalai"
+  },
+  "statusActiveBlocked": {
+    "message": "Disekat (Selamat)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Disekat (Oleh aplikasi)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Disekat (Oleh pelayar)"
+  },
+  "statusActiveAllowed": {
+    "message": "Dibenarkan (Perhatian)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Dibenarkan (Dipercayai oleh aplikasi)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Dibenarkan (Oleh pelayar - Tidak disahkan)"
+  },
+  "statusActiveAsk": {
+    "message": "Tanya sebelum menghantar (Standard)"
+  },
+  "statusActiveDefault": {
+    "message": "Lalai pelayar"
+  },
+  "labelAllowedBrowser": {
+    "message": "Dibenarkan oleh pelayar"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Kebenaran ini disimpan dalam pelayar. Ia akan hilang daripada imbasan jika laman ditutup atau dipadamkan daripada sejarah, tetapi anda sentiasa boleh mengurusnya dalam tetapan pelayar."
+  },
+  "labelAllowedTrusted": {
+    "message": "Dipercayai oleh aplikasi"
+  },
+  "labelBlockedApp": {
+    "message": "Disekat oleh aplikasi"
+  },
+  "labelBlockedBrowser": {
+    "message": "Disekat oleh pelayar"
+  },
+  "allowedLabel": {
+    "message": "Dibenarkan ({count})"
+  },
+  "blockedLabel": {
+    "message": "Disekat ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Tiada laman web yang disekat oleh NotiSpam Cleaner buat masa ini."
+  },
+  "unblockBtnTooltip": {
+    "message": "Nyahsekat laman ini (Kembalikan kepada lalai)"
+  },
+  "helpTitle": {
+    "message": "Apakah itu penyalahgunaan pemberitahuan?"
+  },
+  "helpDesc": {
+    "message": "Laman web berniat jahat sering memperdaya anda mengklik \"Benarkan\" dengan memaparkan Captcha palsu (\"Klik Benarkan untuk mengesahkan anda bukan robot\") atau amaran keselamatan palsu. Apabila dibenarkan, mereka menghantar iklan spam dan amaran antivirus palsu terus ke skrin anda. NotiSpam Cleaner mengesan ini, membolehkan pembersihan satu klik dan melindungi anda secara aktif.\n\n*Nota: Tetapan dalam NotiSpam Cleaner (Sekat/Percaya) disegerakkan terus dengan pangkalan data pemberitahuan asal pelayar anda."
+  },
+  "settingsLinkNotice": {
+    "message": "Disebabkan had pelayar, laman dibenarkan yang tiada lagi dalam tab aktif atau sejarah terkini tidak dapat diimbas. Buka tetapan pelayar untuk mengurus senarai penuh."
+  },
+  "openSettingsBtn": {
+    "message": "Buka tetapan pemberitahuan pelayar"
+  },
+  "sectionCurrentSite": {
+    "message": "Laman web aktif"
+  },
+  "sectionGlobalSettings": {
+    "message": "Tetapan perlindungan global"
+  }
+}

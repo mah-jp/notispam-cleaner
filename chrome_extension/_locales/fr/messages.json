@@ -3,7 +3,7 @@
     "message": "NotiSpam Cleaner: Bloqueur de spam de notifications"
   },
   "extDesc": {
-    "message": "Scanne et nettoie les autorisations de notification des sites suspectés. Protège en temps réel contre le spam et les publicités frauduleuses."
+    "message": "Scanne et nettoie les notifications des sites suspects. Protège en temps réel contre le spam et les publicités frauduleuses."
   },
   "appTitle": {
     "message": "NotiSpam Cleaner"
