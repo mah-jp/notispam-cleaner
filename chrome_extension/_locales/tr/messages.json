@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Bildirim Spam Engelleyici"
+  },
+  "extDesc": {
+    "message": "Şüpheli web sitelerinin bildirim izinlerini tarar ve temizler. Spam ve dolandırıcı reklamlara karşı gerçek zamanlı korur."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Bildirim Spam Engelleyici"
+  },
+  "globalStatusLabel": {
+    "message": "Varsayılan izin davranışı:"
+  },
+  "statusBlocked": {
+    "message": "Engellendi (En yüksek güvenlik)"
+  },
+  "statusAsk": {
+    "message": "Göndermeden önce sor (Standart)"
+  },
+  "statusAllowed": {
+    "message": "Tümüne izin ver (Çok tehlikeli!)"
+  },
+  "togglePromptLabel": {
+    "message": "Sitelerin bildirim göndermek için izin istemesine olanak tanı"
+  },
+  "realtimeGuardLabel": {
+    "message": "Gerçek zamanlı koruma"
+  },
+  "realtimeGuardDesc": {
+    "message": "Doğrulanmamış bir site izin aldığında bildirim erişimini anında engeller."
+  },
+  "silentGuardianLabel": {
+    "message": "Sessiz Muhafız (Aile Modu)"
+  },
+  "silentGuardianDesc": {
+    "message": "Doğrulanmamış sitelerden gelen bildirimleri uyarı göstermeden arka planda sessizce engeller. Aile bireylerinin bilgisayarları için idealdir."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Arka planda sessizce engellenen: {count} site"
+  },
+  "clearLogBtn": {
+    "message": "Sıfırla"
+  },
+  "scanBtn": {
+    "message": "İzin verilen siteleri tara (Geçmiş/Sekmeler)"
+  },
+  "scanningMessage": {
+    "message": "Tarama geçmişi, yer işaretleri ve açık sekmeler taranıyor..."
+  },
+  "allowedSectionTitle": {
+    "message": "Bildirime izin verilen siteler"
+  },
+  "suspiciousLabel": {
+    "message": "Doğrulanmamış / Bilinmeyen ({count})"
+  },
+  "trustedLabel": {
+    "message": "Güvenilir siteler ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Doğrulanmamış web sitelerinin bildirim izni olup olmadığını kontrol etmek için Tara'ya tıklayın."
+  },
+  "safeStateMsg": {
+    "message": "Doğrulanmamış bildirim izni algılanmadı.\n\nŞüpheli uyarılar veya istenmeyen reklamlar görüyorsanız, bunlar tarayıcı bildirim ayarlarını kötüye kullanan spam mesajlar olabilir.\n\nKaynak alan adları engellendiğinde bu bildirimler artık görünmez."
+  },
+  "cleanAllBtn": {
+    "message": "Tüm doğrulanmamış siteleri engelle"
+  },
+  "clearAllRulesBtn": {
+    "message": "Engellenen siteleri sıfırla"
+  },
+  "confirmClearAllRules": {
+    "message": "Bu işlem NotiSpam Cleaner tarafından oluşturulan tüm bildirim engellerini ve ayarlarını temizleyerek tarayıcı varsayılanlarına döndürür. Emin misiniz?"
+  },
+  "blockBtnTooltip": {
+    "message": "Bu siteyi engelle"
+  },
+  "trustBtnTooltip": {
+    "message": "Güvenilir listesine ekle"
+  },
+  "confirmResetAll": {
+    "message": "Tüm doğrulanmamış sitelerin bildirim izinlerini iptal etmek istediğinizden emin misiniz?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Bu web sitesi şu anda tarayıcınızda açık. Ayarları şimdi sıfırlamak otomatik engelleme uyarısının hemen tekrar görünmesine neden olabilir. Lütfen önce site sekmesini kapatın. Devam edilsin mi?"
+  },
+  "guardNotificationTitle": {
+    "message": "Güvenlik Uyarısı — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Doğrulanmamış \"$domain$\" sitesi için bildirim izinleri otomatik olarak engellendi. Bir hata olduğunu düşünüyorsanız güvenmek için aşağıya tıklayın.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "\"$domain$\" bildirimleri engellendi.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Siteye güven (İzin ver)"
+  },
+  "guardNotificationKeep": {
+    "message": "Engelli tut"
+  },
+  "currentSiteLabel": {
+    "message": "Mevcut web sitesi:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Bildirim izni:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "İzin ver"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Engelle"
+  },
+  "currentSiteResetBtn": {
+    "message": "Varsayılana sıfırla"
+  },
+  "statusActiveBlocked": {
+    "message": "Engellendi (Güvenli)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Engellendi (Uygulama tarafından)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Engellendi (Tarayıcı tarafından)"
+  },
+  "statusActiveAllowed": {
+    "message": "İzin verildi (Dikkat)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "İzin verildi (Uygulama tarafından güvenilir)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "İzin verildi (Tarayıcı tarafından - Doğrulanmamış)"
+  },
+  "statusActiveAsk": {
+    "message": "Göndermeden önce sor (Standart)"
+  },
+  "statusActiveDefault": {
+    "message": "Tarayıcı varsayılanı"
+  },
+  "labelAllowedBrowser": {
+    "message": "Tarayıcı tarafından izin verildi"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Bu izin tarayıcıda kayıtlıdır. Site kapatılırsa veya geçmişten silinirse taramada görünmez, ancak her zaman tarayıcı ayarlarından yönetebilirsiniz."
+  },
+  "labelAllowedTrusted": {
+    "message": "Uygulama tarafından güvenilir"
+  },
+  "labelBlockedApp": {
+    "message": "Uygulama tarafından engellendi"
+  },
+  "labelBlockedBrowser": {
+    "message": "Tarayıcı tarafından engellendi"
+  },
+  "allowedLabel": {
+    "message": "İzin verilen ({count})"
+  },
+  "blockedLabel": {
+    "message": "Engellenen ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Şu anda NotiSpam Cleaner tarafından engellenen site yok."
+  },
+  "unblockBtnTooltip": {
+    "message": "Engeli kaldır (Varsayılana döndür)"
+  },
+  "helpTitle": {
+    "message": "Bildirim kötüye kullanımı nedir?"
+  },
+  "helpDesc": {
+    "message": "Kötü amaçlı siteler genellikle sahte Captcha'lar (\"Robot olmadığınızı doğrulamak için İzin Ver'e tıklayın\") veya sahte güvenlik uyarıları göstererek \"İzin Ver\"e tıklamanız için sizi kandırır. İzin verildiğinde doğrudan ekranınıza spam reklamlar ve sahte antivirüs uyarıları gönderirler. NotiSpam Cleaner bunları anında tespit eder, tek tıklamayla temizlemenizi sağlar ve sizi gerçek zamanlı korur.\n\n*Not: NotiSpam Cleaner ayarları (Engelle/Güven) doğrudan tarayıcınızın yerleşik bildirim veritabanıyla senkronize edilir."
+  },
+  "settingsLinkNotice": {
+    "message": "Tarayıcı kısıtlamaları nedeniyle açık sekmelerde veya yakın geçmişte bulunmayan eski izinli siteler taranamaz. Tam listeyi yönetmek için tarayıcı ayarlarını açın."
+  },
+  "openSettingsBtn": {
+    "message": "Tarayıcı bildirim ayarlarını aç"
+  },
+  "sectionCurrentSite": {
+    "message": "Aktif web sitesi"
+  },
+  "sectionGlobalSettings": {
+    "message": "Genel koruma ayarları"
+  }
+}

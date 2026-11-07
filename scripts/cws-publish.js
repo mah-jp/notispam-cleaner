@@ -417,6 +417,16 @@ async function publishItem({
 }
 
 /**
+ * Extract target version string from a ZIP filename (e.g. "notispam-cleaner-v1.0.4.zip" -> "1.0.4").
+ * @param {string} zipPath
+ */
+function extractTargetVersionFromZipPath(zipPath) {
+  const base = path.basename(String(zipPath || ''));
+  const m = base.match(/v(\d+\.\d+\.\d+(?:\.\d+)?)\.zip$/i);
+  return m ? m[1] : null;
+}
+
+/**
  * Full deployment flow: authenticate -> upload -> wait if async -> publish (unless uploadOnly).
  */
 async function deployToChromeWebStore(options = {}, env = process.env, deps = {}) {
@@ -434,33 +444,74 @@ async function deployToChromeWebStore(options = {}, env = process.env, deps = {}
     fetchImpl
   });
 
-  logger.log(`[CWS] Uploading ${config.zipPath} to publisher/${config.publisherId}/items/${config.extensionId}...`);
-  const uploadResult = await uploadPackage({
-    publisherId: config.publisherId,
-    extensionId: config.extensionId,
-    accessToken,
-    zipPath: config.zipPath,
-    fetchImpl,
-    fsImpl
-  });
-
-  const state = uploadResult.uploadState;
-  if (state === 'IN_PROGRESS' || state === 'UPLOAD_IN_PROGRESS') {
-    logger.log(`[CWS] Upload is processing asynchronously (${state}). Polling fetchStatus...`);
-    await waitForUploadCompletion({
+  let uploadResult;
+  let state;
+  try {
+    logger.log(`[CWS] Uploading ${config.zipPath} to publisher/${config.publisherId}/items/${config.extensionId}...`);
+    uploadResult = await uploadPackage({
       publisherId: config.publisherId,
       extensionId: config.extensionId,
       accessToken,
+      zipPath: config.zipPath,
       fetchImpl,
-      pollIntervalMs: deps.pollIntervalMs,
-      maxAttempts: deps.maxAttempts,
-      sleepImpl
+      fsImpl
     });
-    logger.log(`[CWS] Async upload processing succeeded.`);
-  } else if (state !== 'SUCCEEDED') {
-    throw new Error(`Chrome Web Store upload did not succeed (uploadState: ${state || 'UNKNOWN'}): ${JSON.stringify(uploadResult)}`);
-  } else {
-    logger.log(`[CWS] Upload succeeded (crxVersion: ${uploadResult.crxVersion || 'unknown'}).`);
+
+    state = uploadResult.uploadState;
+    if (state === 'IN_PROGRESS' || state === 'UPLOAD_IN_PROGRESS') {
+      logger.log(`[CWS] Upload is processing asynchronously (${state}). Polling fetchStatus...`);
+      await waitForUploadCompletion({
+        publisherId: config.publisherId,
+        extensionId: config.extensionId,
+        accessToken,
+        fetchImpl,
+        pollIntervalMs: deps.pollIntervalMs,
+        maxAttempts: deps.maxAttempts,
+        sleepImpl
+      });
+      logger.log(`[CWS] Async upload processing succeeded.`);
+    } else if (state !== 'SUCCEEDED') {
+      throw new Error(`Chrome Web Store upload did not succeed (uploadState: ${state || 'UNKNOWN'}): ${JSON.stringify(uploadResult)}`);
+    } else {
+      logger.log(`[CWS] Upload succeeded (crxVersion: ${uploadResult.crxVersion || 'unknown'}).`);
+    }
+  } catch (uploadErr) {
+    const targetVersion = extractTargetVersionFromZipPath(config.zipPath);
+    let statusResult = null;
+    try {
+      statusResult = await fetchItemStatus({
+        publisherId: config.publisherId,
+        extensionId: config.extensionId,
+        accessToken,
+        fetchImpl
+      });
+    } catch {
+      throw uploadErr;
+    }
+
+    const publishedState = statusResult?.publishedItemRevisionStatus?.state || 'NONE';
+    const publishedVersion = statusResult?.publishedItemRevisionStatus?.distributionChannels?.[0]?.crxVersion || '';
+    const submittedState = statusResult?.submittedItemRevisionStatus?.state || 'NONE';
+
+    if (
+      (targetVersion && publishedState === 'PUBLISHED' && publishedVersion === targetVersion) ||
+      submittedState === 'PENDING_REVIEW'
+    ) {
+      logger.log(
+        `[CWS] Item ${config.extensionId} is already published or pending review ` +
+        `(publishedState: ${publishedState}, publishedVersion: ${publishedVersion || 'N/A'}, submittedState: ${submittedState}). ` +
+        `Skipping duplicate store upload.`
+      );
+      if (env.GITHUB_ACTIONS === 'true') {
+        logger.log(
+          `::notice title=Chrome Web Store Already Published::` +
+          `item=${config.extensionId}, publishedState=${publishedState}, publishedVersion=${publishedVersion || 'N/A'}, submittedState=${submittedState}`
+        );
+      }
+      return { uploadResult: statusResult, publishResult: null, skippedAlreadyPublished: true };
+    }
+
+    throw uploadErr;
   }
 
   if (config.uploadOnly) {

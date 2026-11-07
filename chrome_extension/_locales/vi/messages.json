@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Trình chặn thông báo rác"
+  },
+  "extDesc": {
+    "message": "Quét và dọn dẹp quyền thông báo của các trang web đáng ngờ. Bảo vệ khỏi spam và quảng cáo lừa đảo theo thời gian thực."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Trình chặn thông báo rác"
+  },
+  "globalStatusLabel": {
+    "message": "Hành vi mặc định:"
+  },
+  "statusBlocked": {
+    "message": "Đã chặn (Bảo mật cao nhất)"
+  },
+  "statusAsk": {
+    "message": "Hỏi trước khi gửi (Tiêu chuẩn)"
+  },
+  "statusAllowed": {
+    "message": "Cho phép tất cả (Rất nguy hiểm!)"
+  },
+  "togglePromptLabel": {
+    "message": "Cho phép các trang web yêu cầu gửi thông báo"
+  },
+  "realtimeGuardLabel": {
+    "message": "Bảo vệ theo thời gian thực"
+  },
+  "realtimeGuardDesc": {
+    "message": "Chặn ngay quyền truy cập thông báo nếu một trang web chưa xác minh có được quyền."
+  },
+  "silentGuardianLabel": {
+    "message": "Người bảo vệ thầm lặng (Chế độ gia đình)"
+  },
+  "silentGuardianDesc": {
+    "message": "Âm thầm chặn thông báo từ các trang web chưa xác minh trong nền mà không hiện cảnh báo. Lý tưởng cho máy tính của người thân."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Đã tự động chặn trong nền: {count} trang web"
+  },
+  "clearLogBtn": {
+    "message": "Đặt lại"
+  },
+  "scanBtn": {
+    "message": "Quét các trang được phép (Lịch sử/Thẻ)"
+  },
+  "scanningMessage": {
+    "message": "Đang quét lịch sử duyệt web, dấu trang và các thẻ đang mở..."
+  },
+  "allowedSectionTitle": {
+    "message": "Trang web được phép gửi thông báo"
+  },
+  "suspiciousLabel": {
+    "message": "Chưa xác minh / Không rõ ({count})"
+  },
+  "trustedLabel": {
+    "message": "Trang web đáng tin cậy ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Nhấn Quét để kiểm tra xem có trang web chưa xác minh nào được quyền gửi thông báo hay không."
+  },
+  "safeStateMsg": {
+    "message": "Không phát hiện quyền thông báo chưa xác minh nào.\n\nNếu bạn thấy cảnh báo đáng ngờ hoặc quảng cáo không mong muốn, có thể chúng là thông báo rác lợi dụng cài đặt trình duyệt.\n\nKhi các tên miền nguồn bị chặn, những thông báo đó sẽ ngừng xuất hiện."
+  },
+  "cleanAllBtn": {
+    "message": "Chặn tất cả trang chưa xác minh"
+  },
+  "clearAllRulesBtn": {
+    "message": "Đặt lại các trang đã chặn"
+  },
+  "confirmClearAllRules": {
+    "message": "Thao tác này sẽ xóa tất cả các chặn và cài đặt thông báo do NotiSpam Cleaner tạo, khôi phục về mặc định của trình duyệt. Bạn có chắc chắn không?"
+  },
+  "blockBtnTooltip": {
+    "message": "Chặn trang web này"
+  },
+  "trustBtnTooltip": {
+    "message": "Thêm vào danh sách tin cậy"
+  },
+  "confirmResetAll": {
+    "message": "Bạn có chắc chắn muốn thu hồi quyền thông báo của tất cả các trang web chưa xác minh không?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Trang web này hiện đang mở. Việc đặt lại cài đặt ngay bây giờ có thể khiến cảnh báo chặn tự động xuất hiện lại ngay lập tức. Vui lòng đóng thẻ trang web trước. Tiếp tục?"
+  },
+  "guardNotificationTitle": {
+    "message": "Cảnh báo bảo mật — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Đã tự động chặn quyền thông báo của trang web chưa xác minh \"$domain$\". Nhấn vào bên dưới để tin cậy nếu đây là nhầm lẫn.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Đã chặn thông báo từ \"$domain$\".",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Tin cậy trang này (Cho phép)"
+  },
+  "guardNotificationKeep": {
+    "message": "Giữ trạng thái chặn"
+  },
+  "currentSiteLabel": {
+    "message": "Trang web hiện tại:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Quyền thông báo:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Cho phép"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Chặn"
+  },
+  "currentSiteResetBtn": {
+    "message": "Khôi phục mặc định"
+  },
+  "statusActiveBlocked": {
+    "message": "Đã chặn (An toàn)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Đã chặn (Bởi ứng dụng)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Đã chặn (Bởi trình duyệt)"
+  },
+  "statusActiveAllowed": {
+    "message": "Được phép (Cẩn thận)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Được phép (Được ứng dụng tin cậy)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Được phép (Bởi trình duyệt - Chưa xác minh)"
+  },
+  "statusActiveAsk": {
+    "message": "Hỏi trước khi gửi (Tiêu chuẩn)"
+  },
+  "statusActiveDefault": {
+    "message": "Mặc định của trình duyệt"
+  },
+  "labelAllowedBrowser": {
+    "message": "Được trình duyệt cho phép"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Quyền này được lưu trong trình duyệt. Nó sẽ biến mất khỏi kết quả quét nếu trang web bị đóng hoặc xóa khỏi lịch sử, nhưng bạn luôn có thể quản lý trong cài đặt trình duyệt."
+  },
+  "labelAllowedTrusted": {
+    "message": "Được ứng dụng tin cậy"
+  },
+  "labelBlockedApp": {
+    "message": "Bị chặn bởi ứng dụng"
+  },
+  "labelBlockedBrowser": {
+    "message": "Bị chặn bởi trình duyệt"
+  },
+  "allowedLabel": {
+    "message": "Được phép ({count})"
+  },
+  "blockedLabel": {
+    "message": "Đã chặn ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Hiện không có trang web nào bị chặn bởi NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Bỏ chặn trang này (Khôi phục mặc định)"
+  },
+  "helpTitle": {
+    "message": "Lạm dụng thông báo là gì?"
+  },
+  "helpDesc": {
+    "message": "Các trang web độc hại thường lừa bạn nhấn \"Cho phép\" bằng cách hiển thị Captcha giả (\"Nhấn Cho phép để xác minh bạn không phải người máy\") hoặc cảnh báo bảo mật giả. Khi được phép, chúng đẩy quảng cáo rác và cảnh báo diệt virus giả trực tiếp lên màn hình. NotiSpam Cleaner phát hiện ngay, giúp bạn dọn sạch chỉ với một cú nhấp chuột và bảo vệ theo thời gian thực.\n\n*Lưu ý: Cài đặt trong NotiSpam Cleaner (Chặn/Tin cậy) đồng bộ trực tiếp với cơ sở dữ liệu thông báo gốc của trình duyệt."
+  },
+  "settingsLinkNotice": {
+    "message": "Do giới hạn của trình duyệt, các trang được phép không còn nằm trong thẻ đang mở hoặc lịch sử gần đây sẽ không thể quét được. Hãy mở cài đặt trình duyệt để quản lý danh sách đầy đủ."
+  },
+  "openSettingsBtn": {
+    "message": "Mở cài đặt thông báo của trình duyệt"
+  },
+  "sectionCurrentSite": {
+    "message": "Trang web đang hoạt động"
+  },
+  "sectionGlobalSettings": {
+    "message": "Cài đặt bảo vệ toàn cục"
+  }
+}

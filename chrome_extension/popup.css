@@ -617,6 +617,7 @@ input:checked+.slider:before {
 .site-info {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 2px;
   overflow: hidden;
   margin-right: 12px;
@@ -629,6 +630,7 @@ input:checked+.slider:before {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -897,6 +899,43 @@ input:checked+.slider:before {
   color: var(--accent-hover);
 }
 
+/* Right-to-Left (RTL) Localization Support (Arabic, Hebrew, Persian) */
+.current-site-domain,
+.site-domain {
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+.switch {
+  direction: ltr;
+}
+
+[dir="rtl"] .section-title {
+  padding-left: 0;
+  padding-right: 2px;
+}
+
+[dir="rtl"] .current-site-card.hero-card {
+  border-left: 1px solid hsla(210, 50%, 75%, 0.4);
+  border-right: 4px solid var(--accent-color);
+}
+
+[dir="rtl"] .guard-title-container {
+  margin-right: 0;
+  margin-left: 12px;
+}
+
+[dir="rtl"] .site-info {
+  margin-right: 0;
+  margin-left: 12px;
+  text-align: right;
+}
+
+[dir="rtl"] .text-link-btn {
+  margin-left: 0;
+  margin-right: 4px;
+}
+
 /* Chrome Refresh 2023 / MD3 Dark Mode Styling */
 @media (prefers-color-scheme: dark) {
   :root {
@@ -929,7 +968,13 @@ input:checked+.slider:before {
   .current-site-card.hero-card {
     background: linear-gradient(135deg, #1a2333 0%, #121824 100%);
     border-color: rgba(168, 199, 250, 0.2);
+    border-left-color: var(--accent-color);
     box-shadow: 0 4px 15px -3px rgba(168, 199, 250, 0.05), var(--panel-shadow);
+  }
+
+  [dir="rtl"] .current-site-card.hero-card {
+    border-left-color: rgba(168, 199, 250, 0.2);
+    border-right-color: var(--accent-color);
   }
 
   .tab-control {

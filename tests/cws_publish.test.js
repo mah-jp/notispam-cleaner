@@ -459,6 +459,84 @@ describe('scripts/cws-publish.js — Chrome Web Store API v2 Automation', () => 
         fs.rmSync(tmpDir, { recursive: true, force: true });
       }
     });
+
+    it('gracefully skips duplicate upload when target version is already PUBLISHED or PENDING_REVIEW on Chrome Web Store', async () => {
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cws-test-'));
+      const zipPath = path.join(tmpDir, 'notispam-cleaner-v1.0.4.zip');
+      fs.writeFileSync(zipPath, Buffer.from('PK\x03\x04dummy-zip-content'));
+
+      const baseEnv = {
+        CWS_PUBLISHER_ID: 'pub-1',
+        CWS_EXTENSION_ID: 'ext-1',
+        CWS_CLIENT_ID: 'cid',
+        CWS_CLIENT_SECRET: 'csec',
+        CWS_REFRESH_TOKEN: 'rtok',
+        GITHUB_ACTIONS: 'true'
+      };
+
+      try {
+        const logs = [];
+        const res = await cws.deployToChromeWebStore(
+          { zipPath },
+          baseEnv,
+          {
+            logger: { log: (m) => logs.push(m), error: () => {} },
+            fetchImpl: async (url) => {
+              if (url === cws.OAUTH_TOKEN_URL) return createJsonResponse(200, { access_token: 'tok' });
+              if (url.endsWith(':upload')) return createJsonResponse(200, { uploadState: 'FAILURE' });
+              if (url.endsWith(':fetchStatus')) {
+                return createJsonResponse(200, {
+                  itemId: 'ext-1',
+                  publishedItemRevisionStatus: {
+                    state: 'PUBLISHED',
+                    distributionChannels: [{ crxVersion: '1.0.4', deployPercentage: 100 }]
+                  },
+                  submittedItemRevisionStatus: {
+                    state: 'PUBLISHED'
+                  }
+                });
+              }
+              throw new Error(`Unexpected URL: ${url}`);
+            }
+          }
+        );
+
+        assert.equal(res.skippedAlreadyPublished, true);
+        assert.equal(res.publishResult, null);
+        assert.ok(logs.some((l) => l.includes('::notice title=Chrome Web Store Already Published::')));
+
+        // Rethrows when published version differs and item is not PENDING_REVIEW
+        await assert.rejects(
+          () => cws.deployToChromeWebStore(
+            { zipPath },
+            baseEnv,
+            {
+              logger: silentLogger,
+              fetchImpl: async (url) => {
+                if (url === cws.OAUTH_TOKEN_URL) return createJsonResponse(200, { access_token: 'tok' });
+                if (url.endsWith(':upload')) return createJsonResponse(200, { uploadState: 'FAILURE' });
+                if (url.endsWith(':fetchStatus')) {
+                  return createJsonResponse(200, {
+                    itemId: 'ext-1',
+                    publishedItemRevisionStatus: {
+                      state: 'PUBLISHED',
+                      distributionChannels: [{ crxVersion: '1.0.3', deployPercentage: 100 }]
+                    },
+                    submittedItemRevisionStatus: {
+                      state: 'PUBLISHED'
+                    }
+                  });
+                }
+                throw new Error(`Unexpected URL: ${url}`);
+              }
+            }
+          ),
+          /Chrome Web Store upload did not succeed \(uploadState: FAILURE\)/
+        );
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      }
+    });
   });
 
   describe('OAuth2 Refresh Token Helper & Workflow File Integrity', () => {

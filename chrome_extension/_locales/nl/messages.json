@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Meldingsspamblokkering"
+  },
+  "extDesc": {
+    "message": "Scant en verwijdert meldingsrechten van verdachte websites. Beschermt in realtime tegen spam en nep-advertenties."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Meldingsspamblokkering"
+  },
+  "globalStatusLabel": {
+    "message": "Standaardgedrag:"
+  },
+  "statusBlocked": {
+    "message": "Geblokkeerd (Maximale veiligheid)"
+  },
+  "statusAsk": {
+    "message": "Vragen voor verzenden (Standaard)"
+  },
+  "statusAllowed": {
+    "message": "Alles toestaan (Zeer gevaarlijk!)"
+  },
+  "togglePromptLabel": {
+    "message": "Sites toestaan om meldingen te vragen"
+  },
+  "realtimeGuardLabel": {
+    "message": "Realtime bescherming"
+  },
+  "realtimeGuardDesc": {
+    "message": "Blokkeert direct meldingstoegang wanneer een niet-geverifieerde site toestemming krijgt."
+  },
+  "silentGuardianLabel": {
+    "message": "Stille beschermer (Gezinsmodus)"
+  },
+  "silentGuardianDesc": {
+    "message": "Blokkeert meldingen van niet-geverifieerde sites stil op de achtergrond zonder waarschuwingen. Ideaal voor pc's van familieleden."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Automatisch stil geblokkeerd: {count} sites"
+  },
+  "clearLogBtn": {
+    "message": "Resetten"
+  },
+  "scanBtn": {
+    "message": "Toegestane sites scannen (Geschiedenis/Tabbladen)"
+  },
+  "scanningMessage": {
+    "message": "Browsergeschiedenis, bladwijzers en geopende tabbladen scannen..."
+  },
+  "allowedSectionTitle": {
+    "message": "Sites met toegestane meldingen"
+  },
+  "suspiciousLabel": {
+    "message": "Niet-geverifieerd / Onbekend ({count})"
+  },
+  "trustedLabel": {
+    "message": "Vertrouwde sites ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Klik op Scannen om te controleren of niet-geverifieerde sites toestemming hebben om meldingen te sturen."
+  },
+  "safeStateMsg": {
+    "message": "Geen niet-geverifieerde meldingsrechten gevonden.\n\nAls u verdachte waarschuwingen of ongewenste advertenties zag, waren dat mogelijk spammeldingen via de browser.\n\nZodra de brondomeinen zijn geblokkeerd, verschijnen deze meldingen niet meer."
+  },
+  "cleanAllBtn": {
+    "message": "Alle niet-geverifieerde sites blokkeren"
+  },
+  "clearAllRulesBtn": {
+    "message": "Geblokkeerde sites resetten"
+  },
+  "confirmClearAllRules": {
+    "message": "Hiermee worden alle door NotiSpam Cleaner gemaakte meldingsblokkades en instellingen gewist en teruggezet naar de browserstandaard. Weet u het zeker?"
+  },
+  "blockBtnTooltip": {
+    "message": "Deze site blokkeren"
+  },
+  "trustBtnTooltip": {
+    "message": "Toevoegen aan vertrouwde lijst"
+  },
+  "confirmResetAll": {
+    "message": "Weet u zeker dat u de meldingsrechten voor alle niet-geverifieerde sites wilt intrekken?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Deze website is momenteel geopend. Als u de instellingen nu reset, kan de automatische blokkeringswaarschuwing direct opnieuw verschijnen. Sluit eerst het tabblad. Doorgaan?"
+  },
+  "guardNotificationTitle": {
+    "message": "Beveiligingswaarschuwing — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Meldingsrechten voor niet-geverifieerde site \"$domain$\" zijn automatisch geblokkeerd. Klik hieronder om deze site te vertrouwen als dit een vergissing was.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Meldingen van \"$domain$\" geblokkeerd.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Site vertrouwen (Toestaan)"
+  },
+  "guardNotificationKeep": {
+    "message": "Geblokkeerd houden"
+  },
+  "currentSiteLabel": {
+    "message": "Huidige website:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Meldingsrecht:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Toestaan"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Blokkeren"
+  },
+  "currentSiteResetBtn": {
+    "message": "Standaard herstellen"
+  },
+  "statusActiveBlocked": {
+    "message": "Geblokkeerd (Veilig)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Geblokkeerd (Door app)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Geblokkeerd (Door browser)"
+  },
+  "statusActiveAllowed": {
+    "message": "Toegestaan (Let op)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Toegestaan (Vertrouwd door app)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Toegestaan (Door browser - Niet geverifieerd)"
+  },
+  "statusActiveAsk": {
+    "message": "Vragen voor verzenden (Standaard)"
+  },
+  "statusActiveDefault": {
+    "message": "Browserstandaard"
+  },
+  "labelAllowedBrowser": {
+    "message": "Toegestaan door browser"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Deze toestemming is opgeslagen in de browser. Deze verdwijnt uit de scan als de site wordt gesloten of uit de geschiedenis wordt gewist, maar u kunt deze altijd beheren in de browserinstellingen."
+  },
+  "labelAllowedTrusted": {
+    "message": "Vertrouwd door app"
+  },
+  "labelBlockedApp": {
+    "message": "Geblokkeerd door app"
+  },
+  "labelBlockedBrowser": {
+    "message": "Geblokkeerd door browser"
+  },
+  "allowedLabel": {
+    "message": "Toegestaan ({count})"
+  },
+  "blockedLabel": {
+    "message": "Geblokkeerd ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Er zijn momenteel geen sites geblokkeerd door NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Blokkering opheffen (Standaard herstellen)"
+  },
+  "helpTitle": {
+    "message": "Wat is meldingsmisbruik?"
+  },
+  "helpDesc": {
+    "message": "Kwaadaardige sites misleiden u vaak om op \"Toestaan\" te klikken via nep-captcha's (\"Klik op Toestaan om te bevestigen dat u geen robot bent\") of valse beveiligingswaarschuwingen. Eenmaal toegestaan sturen ze ongewenste advertenties en nep-antivirusmeldingen direct naar uw scherm. NotiSpam Cleaner detecteert dit direct, ruimt het met één klik op en beschermt u actief.\n\n*Opmerking: Instellingen in NotiSpam Cleaner (Blokkeren/Vertrouwen) worden direct gesynchroniseerd met de meldingsdatabase van uw browser."
+  },
+  "settingsLinkNotice": {
+    "message": "Vanwege browserbeperkingen kunnen toegestane sites die niet meer in actieve tabbladen of recente geschiedenis staan niet worden gescand. Open de browserinstellingen om de volledige lijst te beheren."
+  },
+  "openSettingsBtn": {
+    "message": "Meldingsinstellingen van browser openen"
+  },
+  "sectionCurrentSite": {
+    "message": "Actieve website"
+  },
+  "sectionGlobalSettings": {
+    "message": "Algemene beveiligingsinstellingen"
+  }
+}

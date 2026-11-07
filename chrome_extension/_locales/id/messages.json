@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Pemblokir Spam Notifikasi"
+  },
+  "extDesc": {
+    "message": "Memindai dan membersihkan izin notifikasi situs web mencurigakan. Melindungi dari spam dan iklan penipuan secara real-time."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Pemblokir Spam Notifikasi"
+  },
+  "globalStatusLabel": {
+    "message": "Perilaku izin default:"
+  },
+  "statusBlocked": {
+    "message": "Diblokir (Keamanan tertinggi)"
+  },
+  "statusAsk": {
+    "message": "Tanya sebelum mengirim (Standar)"
+  },
+  "statusAllowed": {
+    "message": "Izinkan semua (Sangat berbahaya!)"
+  },
+  "togglePromptLabel": {
+    "message": "Izinkan situs meminta untuk mengirim notifikasi"
+  },
+  "realtimeGuardLabel": {
+    "message": "Perlindungan real-time"
+  },
+  "realtimeGuardDesc": {
+    "message": "Langsung memblokir akses notifikasi jika situs yang belum diverifikasi mendapatkan izin."
+  },
+  "silentGuardianLabel": {
+    "message": "Penjaga Senyap (Mode Keluarga)"
+  },
+  "silentGuardianDesc": {
+    "message": "Secara diam-diam memblokir notifikasi dari situs tak terverifikasi di latar belakang tanpa peringatan. Ideal untuk PC keluarga."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Diblokir otomatis di latar belakang: {count} situs"
+  },
+  "clearLogBtn": {
+    "message": "Atur ulang"
+  },
+  "scanBtn": {
+    "message": "Pindai situs yang diizinkan (Riwayat/Tab)"
+  },
+  "scanningMessage": {
+    "message": "Memindai riwayat penjelajahan, bookmark, dan tab terbuka..."
+  },
+  "allowedSectionTitle": {
+    "message": "Situs yang diizinkan mengirim notifikasi"
+  },
+  "suspiciousLabel": {
+    "message": "Belum diverifikasi / Tidak dikenal ({count})"
+  },
+  "trustedLabel": {
+    "message": "Situs tepercaya ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Klik Pindai untuk memeriksa apakah ada situs yang belum diverifikasi yang memiliki izin mengirim notifikasi."
+  },
+  "safeStateMsg": {
+    "message": "Tidak ditemukan izin notifikasi yang belum diverifikasi.\n\nJika Anda melihat peringatan mencurigakan atau iklan yang tidak diinginkan, mungkin itu adalah spam yang menyalahgunakan pengaturan notifikasi.\n\nSetelah domain sumber diblokir, notifikasi tersebut akan berhenti muncul."
+  },
+  "cleanAllBtn": {
+    "message": "Blokir semua situs tak terverifikasi"
+  },
+  "clearAllRulesBtn": {
+    "message": "Atur ulang situs yang diblokir"
+  },
+  "confirmClearAllRules": {
+    "message": "Tindakan ini akan menghapus semua blokir dan pengaturan notifikasi yang dibuat oleh NotiSpam Cleaner, mengembalikannya ke default browser. Apakah Anda yakin?"
+  },
+  "blockBtnTooltip": {
+    "message": "Blokir situs ini"
+  },
+  "trustBtnTooltip": {
+    "message": "Tambahkan ke daftar tepercaya"
+  },
+  "confirmResetAll": {
+    "message": "Apakah Anda yakin ingin mencabut izin notifikasi untuk semua situs yang belum diverifikasi?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Situs web ini sedang terbuka di browser Anda. Mengatur ulang pengaturannya sekarang dapat menyebabkan peringatan blokir otomatis langsung muncul kembali. Tutup tab situs terlebih dahulu. Lanjutkan?"
+  },
+  "guardNotificationTitle": {
+    "message": "Peringatan Keamanan — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Izin notifikasi untuk situs tak terverifikasi \"$domain$\" telah diblokir secara otomatis. Klik di bawah untuk mempercayai situs ini jika itu adalah kesalahan.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Notifikasi dari \"$domain$\" diblokir.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Percayai situs (Izinkan)"
+  },
+  "guardNotificationKeep": {
+    "message": "Tetap blokir"
+  },
+  "currentSiteLabel": {
+    "message": "Situs web saat ini:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Izin notifikasi:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Izinkan"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Blokir"
+  },
+  "currentSiteResetBtn": {
+    "message": "Kembalikan ke default"
+  },
+  "statusActiveBlocked": {
+    "message": "Diblokir (Aman)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Diblokir (Oleh aplikasi)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Diblokir (Oleh browser)"
+  },
+  "statusActiveAllowed": {
+    "message": "Diizinkan (Perhatian)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Diizinkan (Dipercaya aplikasi)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Diizinkan (Oleh browser - Belum diverifikasi)"
+  },
+  "statusActiveAsk": {
+    "message": "Tanya sebelum mengirim (Standar)"
+  },
+  "statusActiveDefault": {
+    "message": "Default browser"
+  },
+  "labelAllowedBrowser": {
+    "message": "Diizinkan oleh browser"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Izin ini disimpan di browser. Izin akan hilang dari hasil pindaian jika situs ditutup atau dihapus dari riwayat, tetapi Anda selalu dapat mengelolanya di pengaturan browser."
+  },
+  "labelAllowedTrusted": {
+    "message": "Dipercaya oleh aplikasi"
+  },
+  "labelBlockedApp": {
+    "message": "Diblokir oleh aplikasi"
+  },
+  "labelBlockedBrowser": {
+    "message": "Diblokir oleh browser"
+  },
+  "allowedLabel": {
+    "message": "Diizinkan ({count})"
+  },
+  "blockedLabel": {
+    "message": "Diblokir ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Saat ini tidak ada situs yang diblokir oleh NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Buka blokir situs ini (Kembalikan ke default)"
+  },
+  "helpTitle": {
+    "message": "Apa itu penyalahgunaan notifikasi?"
+  },
+  "helpDesc": {
+    "message": "Situs berbahaya sering menipu Anda agar mengklik \"Izinkan\" dengan menampilkan Captcha palsu (\"Klik Izinkan untuk memverifikasi bahwa Anda bukan robot\") atau peringatan keamanan palsu. Setelah diizinkan, mereka mengirimkan iklan spam dan peringatan antivirus palsu langsung ke layar Anda. NotiSpam Cleaner mendeteksinya dengan mudah, memungkinkan pembersihan sekali klik, dan melindungi Anda secara dinamis.\n\n*Catatan: Pengaturan di NotiSpam Cleaner (Blokir/Percaya) disinkronkan langsung dengan database notifikasi bawaan browser Anda."
+  },
+  "settingsLinkNotice": {
+    "message": "Karena batasan browser, situs yang diizinkan yang tidak lagi ada di tab aktif atau riwayat terbaru tidak dapat dipindai. Buka pengaturan browser untuk mengelola daftar lengkap."
+  },
+  "openSettingsBtn": {
+    "message": "Buka pengaturan notifikasi browser"
+  },
+  "sectionCurrentSite": {
+    "message": "Situs web aktif"
+  },
+  "sectionGlobalSettings": {
+    "message": "Pengaturan perlindungan global"
+  }
+}

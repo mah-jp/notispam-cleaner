@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Blocant de notificări spam"
+  },
+  "extDesc": {
+    "message": "Scanează și curăță permisiunile de notificare ale site-urilor suspecte. Protejează în timp real împotriva spamului și reclamelor."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Blocant de notificări spam"
+  },
+  "globalStatusLabel": {
+    "message": "Comportament implicit:"
+  },
+  "statusBlocked": {
+    "message": "Blocat (Securitate maximă)"
+  },
+  "statusAsk": {
+    "message": "Întreabă înainte de trimitere (Standard)"
+  },
+  "statusAllowed": {
+    "message": "Permite tot (Foarte periculos!)"
+  },
+  "togglePromptLabel": {
+    "message": "Permite site-urilor să solicite trimiterea de notificări"
+  },
+  "realtimeGuardLabel": {
+    "message": "Protecție în timp real"
+  },
+  "realtimeGuardDesc": {
+    "message": "Blochează instantaneu accesul la notificări dacă un site neverificat primește permisiunea."
+  },
+  "silentGuardianLabel": {
+    "message": "Gardian silențios (Mod familie)"
+  },
+  "silentGuardianDesc": {
+    "message": "Blochează silențios în fundal notificările de la site-uri neverificate, fără a afișa alerte. Ideal pentru PC-urile familiei."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Blocate automat în fundal: {count} site-uri"
+  },
+  "clearLogBtn": {
+    "message": "Resetează"
+  },
+  "scanBtn": {
+    "message": "Scanează site-urile permise (Istoric/File)"
+  },
+  "scanningMessage": {
+    "message": "Se scanează istoricul de navigare, marcajele și filele deschise..."
+  },
+  "allowedSectionTitle": {
+    "message": "Site-uri cu notificări permise"
+  },
+  "suspiciousLabel": {
+    "message": "Neverificate / Necunoscute ({count})"
+  },
+  "trustedLabel": {
+    "message": "Site-uri de încredere ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Apasă pe Scanează pentru a verifica dacă vreun site neverificat are permisiunea de a trimite notificări."
+  },
+  "safeStateMsg": {
+    "message": "Nu au fost detectate permisiuni de notificare neverificate.\n\nDacă vedeai avertismente suspecte sau reclame nedorite, este posibil să fi fost mesaje spam care abuzau de setările de notificare.\n\nOdată ce domeniile sursă sunt blocate, acele notificări nu vor mai apărea."
+  },
+  "cleanAllBtn": {
+    "message": "Blochează toate site-urile neverificate"
+  },
+  "clearAllRulesBtn": {
+    "message": "Resetează site-urile blocate"
+  },
+  "confirmClearAllRules": {
+    "message": "Această acțiune va șterge toate blocările și setările de notificare create de NotiSpam Cleaner, revenind la valorile implicite ale browserului. Ești sigur?"
+  },
+  "blockBtnTooltip": {
+    "message": "Blochează acest site"
+  },
+  "trustBtnTooltip": {
+    "message": "Adaugă în lista de încredere"
+  },
+  "confirmResetAll": {
+    "message": "Ești sigur că vrei să revoci permisiunile de notificare pentru toate site-urile neverificate?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Acest site web este deschis în prezent în browser. Resetarea setărilor acum poate face ca alerta de blocare automată să reapară imediat. Închide mai întâi fila site-ului. Continui?"
+  },
+  "guardNotificationTitle": {
+    "message": "Alertă de securitate — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Permisiunile de notificare pentru site-ul neverificat \"$domain$\" au fost blocate automat. Apasă mai jos pentru a permite dacă a fost o greșeală.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Notificări blocate de la \"$domain$\".",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Ai încredere în site (Permite)"
+  },
+  "guardNotificationKeep": {
+    "message": "Păstrează blocat"
+  },
+  "currentSiteLabel": {
+    "message": "Site-ul web actual:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Permisiune de notificare:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Permite"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Blochează"
+  },
+  "currentSiteResetBtn": {
+    "message": "Resetează la implicit"
+  },
+  "statusActiveBlocked": {
+    "message": "Blocat (Sigur)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Blocat (De aplicație)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Blocat (De browser)"
+  },
+  "statusActiveAllowed": {
+    "message": "Permis (Atenție)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Permis (De încredere în aplicație)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Permis (De browser - Neverificat)"
+  },
+  "statusActiveAsk": {
+    "message": "Întreabă înainte de trimitere (Standard)"
+  },
+  "statusActiveDefault": {
+    "message": "Implicit browser"
+  },
+  "labelAllowedBrowser": {
+    "message": "Permis de browser"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Această permisiune este salvată în browser. Va dispărea din această scanare dacă site-ul este închis sau șters din istoric, dar o poți gestiona oricând în setările browserului."
+  },
+  "labelAllowedTrusted": {
+    "message": "De încredere în aplicație"
+  },
+  "labelBlockedApp": {
+    "message": "Blocat de aplicație"
+  },
+  "labelBlockedBrowser": {
+    "message": "Blocat de browser"
+  },
+  "allowedLabel": {
+    "message": "Permise ({count})"
+  },
+  "blockedLabel": {
+    "message": "Blocate ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "În prezent nu există site-uri blocate de NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Deblochează acest site (Resetează la implicit)"
+  },
+  "helpTitle": {
+    "message": "Ce este abuzul de notificări?"
+  },
+  "helpDesc": {
+    "message": "Site-urile rău intenționate te păcălesc adesea să apeși pe „Permite” afișând teste Captcha false („Apasă pe Permite pentru a confirma că nu ești robot”) sau alerte false de securitate. Odată permise, trimit reclame nedorite și alerte false de antivirus direct pe ecran. NotiSpam Cleaner le detectează imediat, îți permite să le cureți cu un singur clic și te protejează în timp real.\n\n*Notă: Setările din NotiSpam Cleaner (Blochează/Ai încredere) se sincronizează direct cu baza de date nativă de notificări a browserului."
+  },
+  "settingsLinkNotice": {
+    "message": "Din cauza limitărilor browserului, site-urile permise care nu mai sunt în filele active sau în istoricul recent nu pot fi scanate. Deschide setările browserului pentru a gestiona lista completă."
+  },
+  "openSettingsBtn": {
+    "message": "Deschide setările de notificare ale browserului"
+  },
+  "sectionCurrentSite": {
+    "message": "Site web activ"
+  },
+  "sectionGlobalSettings": {
+    "message": "Setări globale de protecție"
+  }
+}

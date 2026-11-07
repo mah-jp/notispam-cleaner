@@ -55,6 +55,33 @@ describe('popup.js — UI Localization, Scanning, Classification, Self-Healing, 
 
       const helpDescEl = document.querySelector('[data-i18n="helpDesc"]');
       assert.ok(helpDescEl.innerHTML.includes('<br><br>'));
+      assert.equal(document.documentElement.getAttribute('dir'), 'ltr');
+      assert.equal(document.body.getAttribute('dir'), 'ltr');
+      assert.equal(document.body.classList.contains('rtl'), false);
+    });
+
+    it('detects RTL locales (ar, he, fa) and applies dir="rtl" and .rtl class on document', () => {
+      for (const rtlLang of ['ar', 'he', 'fa']) {
+        global.chrome = createChromeMock({ uiLanguage: rtlLang });
+        popup.localizeUI();
+        assert.equal(popup.detectTextDirection(), 'rtl');
+        assert.equal(document.documentElement.getAttribute('dir'), 'rtl');
+        assert.equal(document.body.getAttribute('dir'), 'rtl');
+        assert.equal(document.body.classList.contains('rtl'), true);
+      }
+
+      // Fallback when @@bidi_dir returns empty string but getUILanguage returns 'ar-SA'
+      global.chrome = createChromeMock({ uiLanguage: 'ar-SA' });
+      global.chrome.i18n.getMessage = () => '';
+      assert.equal(popup.detectTextDirection(), 'rtl');
+
+      // Switch back to LTR (e.g. 'ro')
+      global.chrome = createChromeMock({ uiLanguage: 'ro' });
+      popup.localizeUI();
+      assert.equal(popup.detectTextDirection(), 'ltr');
+      assert.equal(document.documentElement.getAttribute('dir'), 'ltr');
+      assert.equal(document.body.getAttribute('dir'), 'ltr');
+      assert.equal(document.body.classList.contains('rtl'), false);
     });
   });
 

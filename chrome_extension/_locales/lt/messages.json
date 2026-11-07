@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Šlamšto pranešimų blokavimas"
+  },
+  "extDesc": {
+    "message": "Nuskaito ir išvalo įtartinų svetainių pranešimų leidimus. Realiuoju laiku saugo nuo šlamšto ir sukčių reklamų."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Šlamšto pranešimų blokavimas"
+  },
+  "globalStatusLabel": {
+    "message": "Numatytasis veikimas:"
+  },
+  "statusBlocked": {
+    "message": "Užblokuota (Aukščiausias saugumas)"
+  },
+  "statusAsk": {
+    "message": "Klausti prieš siunčiant (Standartinis)"
+  },
+  "statusAllowed": {
+    "message": "Leisti viską (Labai pavojinga!)"
+  },
+  "togglePromptLabel": {
+    "message": "Leisti svetainėms prašyti siųsti pranešimus"
+  },
+  "realtimeGuardLabel": {
+    "message": "Apsauga realiuoju laiku"
+  },
+  "realtimeGuardDesc": {
+    "message": "Akimirksniu užblokuoja pranešimų prieigą, jei nepatvirtinta svetainė gauna leidimą."
+  },
+  "silentGuardianLabel": {
+    "message": "Tylusis sargas (Šeimos režimas)"
+  },
+  "silentGuardianDesc": {
+    "message": "Tyliai fone blokuoja nepatvirtintų svetainių pranešimus nerodydamas įspėjimų. Puikiai tinka šeimos narių kompiuteriams."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Automatiškai užblokuota fone: {count} svet."
+  },
+  "clearLogBtn": {
+    "message": "Atstatyti"
+  },
+  "scanBtn": {
+    "message": "Nuskaityti leidžiamas svetaines (Istorija/Kortelės)"
+  },
+  "scanningMessage": {
+    "message": "Nuskaitoma naršymo istorija, žymės ir atviros kortelės..."
+  },
+  "allowedSectionTitle": {
+    "message": "Svetainės, kurioms leidžiami pranešimai"
+  },
+  "suspiciousLabel": {
+    "message": "Nepatvirtintos / Nežinomos ({count})"
+  },
+  "trustedLabel": {
+    "message": "Patikimos svetainės ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Spustelėkite Nuskaityti, kad patikrintumėte, ar nepatvirtintos svetainės turi leidimą siųsti pranešimus."
+  },
+  "safeStateMsg": {
+    "message": "Nepatvirtintų pranešimų leidimų nerasta.\n\nJei matėte įtartinus įspėjimus ar nepageidaujamas reklamas, tai galėjo būti šlamštas, piktnaudžiaujantis naršyklės pranešimų nustatymais.\n\nUžblokavus šaltinio domenus, šie pranešimai nebepasirodys."
+  },
+  "cleanAllBtn": {
+    "message": "Blokuoti visas nepatvirtintas svetaines"
+  },
+  "clearAllRulesBtn": {
+    "message": "Atstatyti užblokuotas svetaines"
+  },
+  "confirmClearAllRules": {
+    "message": "Tai išvalys visus „NotiSpam Cleaner“ sukurtus pranešimų blokavimus ir nustatymus bei atkurs numatytuosius naršyklės parametrus. Ar tikrai norite tęsti?"
+  },
+  "blockBtnTooltip": {
+    "message": "Blokuoti šią svetainę"
+  },
+  "trustBtnTooltip": {
+    "message": "Pridėti į patikimų sąrašą"
+  },
+  "confirmResetAll": {
+    "message": "Ar tikrai norite atšaukti pranešimų leidimus visoms nepatvirtintoms svetainėms?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Ši svetainė šiuo metu atidaryta. Dabar atstačius jos nustatymus, automatinio blokavimo įspėjimas gali iškart vėl pasirodyti. Pirmiausia uždarykite svetainės kortelę. Tęsti?"
+  },
+  "guardNotificationTitle": {
+    "message": "Saugumo įspėjimas — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Nepatvirtintai svetainei \"$domain$\" pranešimų leidimai buvo automatiškai užblokuoti. Spustelėkite žemiau, jei norite ja pasitikėti.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Pranešimai iš \"$domain$\" užblokuoti.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Pasitikėti svetaine (Leisti)"
+  },
+  "guardNotificationKeep": {
+    "message": "Palikti užblokuotą"
+  },
+  "currentSiteLabel": {
+    "message": "Dabartinė svetainė:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Pranešimų leidimas:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Leisti"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Blokuoti"
+  },
+  "currentSiteResetBtn": {
+    "message": "Atkurti numatytąjį"
+  },
+  "statusActiveBlocked": {
+    "message": "Užblokuota (Saugu)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Užblokuota (Programėlės)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Užblokuota (Naršyklės)"
+  },
+  "statusActiveAllowed": {
+    "message": "Leidžiama (Atsargiai)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Leidžiama (Patikima programėlėje)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Leidžiama (Naršyklės - Nepatvirtinta)"
+  },
+  "statusActiveAsk": {
+    "message": "Klausti prieš siunčiant (Standartinis)"
+  },
+  "statusActiveDefault": {
+    "message": "Naršyklės numatytasis"
+  },
+  "labelAllowedBrowser": {
+    "message": "Leidžiama naršyklės"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Šis leidimas išsaugotas naršyklėje. Jis dings iš nuskaitymo, jei svetainė bus uždaryta arba ištrinta iš istorijos, tačiau visada galite jį valdyti naršyklės nustatymuose."
+  },
+  "labelAllowedTrusted": {
+    "message": "Patikima programėlėje"
+  },
+  "labelBlockedApp": {
+    "message": "Užblokuota programėlės"
+  },
+  "labelBlockedBrowser": {
+    "message": "Užblokuota naršyklės"
+  },
+  "allowedLabel": {
+    "message": "Leidžiama ({count})"
+  },
+  "blockedLabel": {
+    "message": "Užblokuota ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Šiuo metu nėra „NotiSpam Cleaner“ užblokuotų svetainių."
+  },
+  "unblockBtnTooltip": {
+    "message": "Atblokuoti šią svetainę (Atkurti numatytąjį)"
+  },
+  "helpTitle": {
+    "message": "Kas yra piktnaudžiavimas pranešimais?"
+  },
+  "helpDesc": {
+    "message": "Kenkėjiškos svetainės dažnai apgaudinėja prašydamos spustelėti „Leisti“, rodydamos netikrus Captcha patikrinimus („Spustelėkite Leisti, kad patvirtintumėte, jog nesate robotas“) arba netikrus saugumo įspėjimus. Gavusios leidimą, jos siunčia šlamšto reklamas ir netikrus antivirusinius pranešimus tiesiai į ekraną. „NotiSpam Cleaner“ juos aptinka, leidžia išvalyti vienu spustelėjimu ir saugo realiuoju laiku.\n\n*Pastaba: „NotiSpam Cleaner“ nustatymai tiesiogiai sinchronizuojami su naršyklės pranešimų duomenų baze."
+  },
+  "settingsLinkNotice": {
+    "message": "Dėl naršyklės apribojimų leidžiamos svetainės, kurių nebėra aktyviose kortelėse ar naujausioje istorijoje, negali būti nuskaitytos. Atidarykite naršyklės nustatymus visam sąrašui valdyti."
+  },
+  "openSettingsBtn": {
+    "message": "Atidaryti naršyklės pranešimų nustatymus"
+  },
+  "sectionCurrentSite": {
+    "message": "Aktyvi svetainė"
+  },
+  "sectionGlobalSettings": {
+    "message": "Bendrieji apsaugos nustatymai"
+  }
+}

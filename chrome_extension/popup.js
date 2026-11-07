@@ -13,8 +13,49 @@ function escapeHtmlAndPreserveLineBreaks(str) {
   return escapeHtml(str).replace(/\n/g, '<br>');
 }
 
-// Localize all elements with data-i18n attributes
+const RTL_LOCALES = new Set(['ar', 'fa', 'he', 'ur', 'ps', 'sd', 'ug', 'yi']);
+const BIDI_DIR_KEY = '@@bidi_dir';
+
+// Detect text direction ('rtl' or 'ltr') from Chrome i18n API
+function detectTextDirection() {
+  if (typeof chrome !== 'undefined' && chrome.i18n) {
+    if (typeof chrome.i18n.getMessage === 'function') {
+      const bidiDir = chrome.i18n.getMessage(BIDI_DIR_KEY);
+      if (bidiDir === 'rtl' || bidiDir === 'ltr') {
+        return bidiDir;
+      }
+    }
+    if (typeof chrome.i18n.getUILanguage === 'function') {
+      const uiLang = String(chrome.i18n.getUILanguage() || '').split(/[-_]/)[0].toLowerCase();
+      if (RTL_LOCALES.has(uiLang)) {
+        return 'rtl';
+      }
+    }
+  }
+  return 'ltr';
+}
+
+// Localize all elements with data-i18n attributes and apply text direction
 function localizeUI() {
+  const dir = detectTextDirection();
+  if (typeof document !== 'undefined') {
+    if (document.documentElement && typeof document.documentElement.setAttribute === 'function') {
+      document.documentElement.setAttribute('dir', dir);
+    }
+    if (document.body) {
+      if (typeof document.body.setAttribute === 'function') {
+        document.body.setAttribute('dir', dir);
+      }
+      if (document.body.classList) {
+        if (dir === 'rtl') {
+          document.body.classList.add('rtl');
+        } else {
+          document.body.classList.remove('rtl');
+        }
+      }
+    }
+  }
+
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const tag = el.getAttribute('data-i18n');
     const msg = chrome.i18n.getMessage(tag);
@@ -959,6 +1000,7 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     escapeHtml,
     escapeHtmlAndPreserveLineBreaks,
+    detectTextDirection,
     localizeUI,
     updateListHeaders,
     gatherDomains,

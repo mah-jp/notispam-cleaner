@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Blokování nevyžádaných oznámení"
+  },
+  "extDesc": {
+    "message": "Skenuje a čistí oprávnění k oznámením u podezřelých webů. Chrání v reálném čase před spamem a podvodnými reklamami."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Blokování spamu"
+  },
+  "globalStatusLabel": {
+    "message": "Výchozí chování:"
+  },
+  "statusBlocked": {
+    "message": "Blokováno (Nejvyšší zabezpečení)"
+  },
+  "statusAsk": {
+    "message": "Zeptat se před odesláním (Standardní)"
+  },
+  "statusAllowed": {
+    "message": "Povolit vše (Velmi nebezpečné!)"
+  },
+  "togglePromptLabel": {
+    "message": "Povolit webům žádat o zasílání oznámení"
+  },
+  "realtimeGuardLabel": {
+    "message": "Ochrana v reálném čase"
+  },
+  "realtimeGuardDesc": {
+    "message": "Okamžitě zablokuje přístup k oznámením, pokud neověřený web získá oprávnění."
+  },
+  "silentGuardianLabel": {
+    "message": "Tichý strážce (Rodinný režim)"
+  },
+  "silentGuardianDesc": {
+    "message": "Tiše na pozadí blokuje oznámení z neověřených webů bez zobrazování upozornění. Ideální pro počítače rodinných příslušníků."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Automaticky zablokováno na pozadí: {count} webů"
+  },
+  "clearLogBtn": {
+    "message": "Resetovat"
+  },
+  "scanBtn": {
+    "message": "Skenovat povolené weby (Historie/Karty)"
+  },
+  "scanningMessage": {
+    "message": "Skenování historie prohlížení, záložek a otevřených karet..."
+  },
+  "allowedSectionTitle": {
+    "message": "Weby s povolenými oznámeními"
+  },
+  "suspiciousLabel": {
+    "message": "Neověřené / Neznámé ({count})"
+  },
+  "trustedLabel": {
+    "message": "Důvěryhodné weby ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Kliknutím na Skenovat zkontrolujete, zda některé neověřené weby nemají povoleno odesílat oznámení."
+  },
+  "safeStateMsg": {
+    "message": "Nebyla zjištěna žádná neověřená oprávnění k oznámením.\n\nPokud se vám zobrazovala podezřelá varování nebo nevyžádané reklamy, mohlo jít o spam zneužívající nastavení oznámení.\n\nPo zablokování zdrojových domén se tato oznámení přestanou zobrazovat."
+  },
+  "cleanAllBtn": {
+    "message": "Zablokovat všechny neověřené weby"
+  },
+  "clearAllRulesBtn": {
+    "message": "Resetovat zablokované weby"
+  },
+  "confirmClearAllRules": {
+    "message": "Tímto vymažete všechna blokování a nastavení oznámení vytvořená rozšířením NotiSpam Cleaner a vrátíte je na výchozí hodnoty prohlížeče. Opravdu chcete pokračovat?"
+  },
+  "blockBtnTooltip": {
+    "message": "Zablokovat tento web"
+  },
+  "trustBtnTooltip": {
+    "message": "Přidat mezi důvěryhodné"
+  },
+  "confirmResetAll": {
+    "message": "Opravdu chcete odebrat oprávnění k oznámením všem neověřeným webům?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Tento web je momentálně otevřený. Resetování nastavení nyní může způsobit okamžité opětovné zobrazení varování o automatickém zablokování. Nejprve zavřete kartu webu. Pokračovat?"
+  },
+  "guardNotificationTitle": {
+    "message": "Bezpečnostní upozornění — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Automaticky byla zablokována oznámení pro neověřený web \"$domain$\". Pokud šlo o omyl, kliknutím níže webu důvěřujte.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Oznámení z \"$domain$\" byla zablokována.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Důvěřovat webu (Povolit)"
+  },
+  "guardNotificationKeep": {
+    "message": "Ponechat zablokované"
+  },
+  "currentSiteLabel": {
+    "message": "Aktuální web:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Oprávnění k oznámením:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Povolit"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Blokovat"
+  },
+  "currentSiteResetBtn": {
+    "message": "Obnovit výchozí"
+  },
+  "statusActiveBlocked": {
+    "message": "Blokováno (Bezpečné)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Blokováno (Aplikací)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Blokováno (Prohlížečem)"
+  },
+  "statusActiveAllowed": {
+    "message": "Povoleno (Pozor)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Povoleno (Důvěryhodné v aplikaci)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Povoleno (Prohlížečem - Neověřeno)"
+  },
+  "statusActiveAsk": {
+    "message": "Zeptat se před odesláním (Standardní)"
+  },
+  "statusActiveDefault": {
+    "message": "Výchozí nastavení prohlížeče"
+  },
+  "labelAllowedBrowser": {
+    "message": "Povoleno prohlížečem"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Toto oprávnění je uloženo v prohlížeči. Zmizí z výsledků skenování, pokud web zavřete nebo vymažete z historie, ale vždy jej můžete spravovat v nastavení prohlížeče."
+  },
+  "labelAllowedTrusted": {
+    "message": "Důvěryhodné v aplikaci"
+  },
+  "labelBlockedApp": {
+    "message": "Blokováno aplikací"
+  },
+  "labelBlockedBrowser": {
+    "message": "Blokováno prohlížečem"
+  },
+  "allowedLabel": {
+    "message": "Povolené ({count})"
+  },
+  "blockedLabel": {
+    "message": "Blokované ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Momentálně nejsou rozšířením NotiSpam Cleaner blokovány žádné weby."
+  },
+  "unblockBtnTooltip": {
+    "message": "Odblokovat tento web (Obnovit výchozí)"
+  },
+  "helpTitle": {
+    "message": "Co je zneužívání oznámení?"
+  },
+  "helpDesc": {
+    "message": "Škodlivé weby vás často přimějí kliknout na „Povolit“ zobrazením falešného ověření Captcha („Klikněte na Povolit a potvrďte, že nejste robot“) nebo falešných bezpečnostních varování. Po povolení posílají nevyžádané reklamy a falešná antivirová varování přímo na obrazovku. NotiSpam Cleaner je odhalí, umožní vyčištění jedním kliknutím a chrání vás v reálném čase.\n\n*Poznámka: Nastavení v NotiSpam Cleaner (Blokovat/Důvěřovat) se synchronizují přímo s databází oznámení vašeho prohlížeče."
+  },
+  "settingsLinkNotice": {
+    "message": "Kvůli omezením prohlížeče nelze skenovat povolené weby, které již nejsou v otevřených kartách nebo nedávné historii. Úplný seznam můžete spravovat v nastavení prohlížeče."
+  },
+  "openSettingsBtn": {
+    "message": "Otevřít nastavení oznámení prohlížeče"
+  },
+  "sectionCurrentSite": {
+    "message": "Aktivní web"
+  },
+  "sectionGlobalSettings": {
+    "message": "Globální nastavení ochrany"
+  }
+}

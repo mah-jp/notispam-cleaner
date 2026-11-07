@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Blocco notifiche spam"
+  },
+  "extDesc": {
+    "message": "Scansiona e pulisce i permessi di notifica dei siti sospetti. Protegge in tempo reale da spam e annunci truffaldini."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Blocco notifiche spam"
+  },
+  "globalStatusLabel": {
+    "message": "Comportamento predefinito:"
+  },
+  "statusBlocked": {
+    "message": "Bloccato (Massima sicurezza)"
+  },
+  "statusAsk": {
+    "message": "Chiedi prima di inviare (Standard)"
+  },
+  "statusAllowed": {
+    "message": "Consenti tutto (Molto pericoloso!)"
+  },
+  "togglePromptLabel": {
+    "message": "Consenti ai siti di chiedere di inviare notifiche"
+  },
+  "realtimeGuardLabel": {
+    "message": "Protezione in tempo reale"
+  },
+  "realtimeGuardDesc": {
+    "message": "Blocca istantaneamente l'accesso alle notifiche se un sito non verificato ottiene il permesso."
+  },
+  "silentGuardianLabel": {
+    "message": "Guardiano silenzioso (Modalità famiglia)"
+  },
+  "silentGuardianDesc": {
+    "message": "Blocca silenziosamente in background le notifiche dei siti non verificati senza mostrare avvisi. Ideale per i PC dei familiari."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Bloccati automaticamente in background: {count} siti"
+  },
+  "clearLogBtn": {
+    "message": "Reimposta"
+  },
+  "scanBtn": {
+    "message": "Scansiona siti consentiti (Cronologia/Schede)"
+  },
+  "scanningMessage": {
+    "message": "Scansione di cronologia, preferiti e schede aperte in corso..."
+  },
+  "allowedSectionTitle": {
+    "message": "Siti con notifiche consentite"
+  },
+  "suspiciousLabel": {
+    "message": "Non verificati / Sconosciuti ({count})"
+  },
+  "trustedLabel": {
+    "message": "Siti attendibili ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Fai clic su Scansiona per verificare se siti non verificati hanno il permesso di inviare notifiche."
+  },
+  "safeStateMsg": {
+    "message": "Nessun permesso di notifica non verificato rilevato.\n\nSe vedevi avvisi sospetti o pubblicità indesiderate, probabilmente erano messaggi spam che abusavano delle impostazioni di notifica.\n\nUna volta bloccati i domini di origine, tali notifiche smetteranno di apparire."
+  },
+  "cleanAllBtn": {
+    "message": "Blocca tutti i siti non verificati"
+  },
+  "clearAllRulesBtn": {
+    "message": "Reimposta siti bloccati"
+  },
+  "confirmClearAllRules": {
+    "message": "Questo cancellerà tutti i blocchi e le impostazioni di notifica creati da NotiSpam Cleaner, ripristinando i valori predefiniti del browser. Continuare?"
+  },
+  "blockBtnTooltip": {
+    "message": "Blocca questo sito"
+  },
+  "trustBtnTooltip": {
+    "message": "Aggiungi all'elenco attendibili"
+  },
+  "confirmResetAll": {
+    "message": "Sei sicuro di voler revocare i permessi di notifica per tutti i siti non verificati?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Questo sito è attualmente aperto. Reimpostare i permessi ora potrebbe far riapparire subito l'avviso di blocco automatico. Chiudi prima la scheda del sito. Continuare?"
+  },
+  "guardNotificationTitle": {
+    "message": "Avviso di sicurezza — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Permessi di notifica bloccati automaticamente per il sito non verificato \"$domain$\". Fai clic qui sotto per autorizzarlo se è stato un errore.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Notifiche bloccate da \"$domain$\".",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Considera attendibile (Consenti)"
+  },
+  "guardNotificationKeep": {
+    "message": "Mantieni bloccato"
+  },
+  "currentSiteLabel": {
+    "message": "Sito web attuale:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Permesso notifiche:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Consenti"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Blocca"
+  },
+  "currentSiteResetBtn": {
+    "message": "Ripristina predefinito"
+  },
+  "statusActiveBlocked": {
+    "message": "Bloccato (Sicuro)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Bloccato (Dall'app)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Bloccato (Dal browser)"
+  },
+  "statusActiveAllowed": {
+    "message": "Consentito (Attenzione)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Consentito (Attendibile per l'app)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Consentito (Dal browser - Non verificato)"
+  },
+  "statusActiveAsk": {
+    "message": "Chiedi prima di inviare (Standard)"
+  },
+  "statusActiveDefault": {
+    "message": "Predefinito del browser"
+  },
+  "labelAllowedBrowser": {
+    "message": "Consentito dal browser"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Questo permesso è salvato nel browser. Scomparirà dalla scansione se il sito viene chiuso o cancellato dalla cronologia, ma puoi sempre gestirlo nelle impostazioni del browser."
+  },
+  "labelAllowedTrusted": {
+    "message": "Attendibile per l'app"
+  },
+  "labelBlockedApp": {
+    "message": "Bloccato dall'app"
+  },
+  "labelBlockedBrowser": {
+    "message": "Bloccato dal browser"
+  },
+  "allowedLabel": {
+    "message": "Consentiti ({count})"
+  },
+  "blockedLabel": {
+    "message": "Bloccati ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "Nessun sito è attualmente bloccato da NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Sblocca questo sito (Ripristina predefinito)"
+  },
+  "helpTitle": {
+    "message": "Cos'è l'abuso delle notifiche?"
+  },
+  "helpDesc": {
+    "message": "I siti malevoli spesso ingannano inducendo a fare clic su \"Consenti\" mostrando falsi Captcha (\"Fai clic su Consenti per verificare di non essere un robot\") o falsi avvisi di sicurezza. Una volta autorizzati, inviano annunci indesiderati e falsi avvisi antivirus direttamente sullo schermo. NotiSpam Cleaner li rileva, permette di pulirli con un clic e ti protegge in tempo reale.\n\n*Nota: Le impostazioni di NotiSpam Cleaner (Blocca/Attendibile) si sincronizzano direttamente con il database nativo delle notifiche del browser."
+  },
+  "settingsLinkNotice": {
+    "message": "Per limitazioni del browser, i siti consentiti che non sono più nelle schede attive o nella cronologia recente non possono essere scansionati. Apri le impostazioni del browser per gestire l'elenco completo."
+  },
+  "openSettingsBtn": {
+    "message": "Apri impostazioni notifiche del browser"
+  },
+  "sectionCurrentSite": {
+    "message": "Sito web attivo"
+  },
+  "sectionGlobalSettings": {
+    "message": "Impostazioni di protezione globale"
+  }
+}

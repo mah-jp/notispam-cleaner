@@ -97,7 +97,13 @@ function createChromeMock(options = {}) {
     },
 
     i18n: {
+      getUILanguage: () => options.uiLanguage || 'en',
       getMessage: (key, substitutions) => {
+        if (key === '@@bidi_dir') {
+          if (options.bidiDir) return options.bidiDir;
+          const lang = String(options.uiLanguage || 'en').split(/[-_]/)[0].toLowerCase();
+          return ['ar', 'fa', 'he', 'ur', 'ps', 'sd', 'ug', 'yi'].includes(lang) ? 'rtl' : 'ltr';
+        }
         const entry = localeMessages[key];
         if (!entry || !entry.message) return '';
         let msg = entry.message;

@@ -1,0 +1,200 @@
+{
+  "extName": {
+    "message": "NotiSpam Cleaner: Блокиране на спам известия"
+  },
+  "extDesc": {
+    "message": "Сканира и изчиства разрешенията за известия от подозрителни сайтове. Защитава в реално време от спам и измамни реклами."
+  },
+  "appTitle": {
+    "message": "NotiSpam Cleaner"
+  },
+  "appSubtitle": {
+    "message": "Блокиране на спам"
+  },
+  "globalStatusLabel": {
+    "message": "Поведение по подразбиране:"
+  },
+  "statusBlocked": {
+    "message": "Блокирано (Най-висока сигурност)"
+  },
+  "statusAsk": {
+    "message": "Питане преди изпращане (Стандартно)"
+  },
+  "statusAllowed": {
+    "message": "Разрешаване на всички (Много опасно!)"
+  },
+  "togglePromptLabel": {
+    "message": "Разрешаване на сайтовете да искат да изпращат известия"
+  },
+  "realtimeGuardLabel": {
+    "message": "Защита в реално време"
+  },
+  "realtimeGuardDesc": {
+    "message": "Незабавно блокира достъпа до известия, ако непроверен сайт получи разрешение."
+  },
+  "silentGuardianLabel": {
+    "message": "Тих пазител (Семеен режим)"
+  },
+  "silentGuardianDesc": {
+    "message": "Тихо блокира във фонов режим известията от непроверени сайтове без предупреждения. Идеален за компютрите на близките ви."
+  },
+  "backgroundBlockedLabel": {
+    "message": "Автоматично блокирани във фонов режим: {count} сайта"
+  },
+  "clearLogBtn": {
+    "message": "Нулиране"
+  },
+  "scanBtn": {
+    "message": "Сканиране на разрешени сайтове (История/Раздели)"
+  },
+  "scanningMessage": {
+    "message": "Сканиране на историята, отметките и отворените раздели..."
+  },
+  "allowedSectionTitle": {
+    "message": "Сайтове с разрешени известия"
+  },
+  "suspiciousLabel": {
+    "message": "Непроверени / Неизвестни ({count})"
+  },
+  "trustedLabel": {
+    "message": "Доверени сайтове ({count})"
+  },
+  "emptyStateMsg": {
+    "message": "Щракнете върху Сканиране, за да проверите дали непроверени сайтове имат разрешение да изпращат известия."
+  },
+  "safeStateMsg": {
+    "message": "Не са открити непроверени разрешения за известия.\n\nАко сте виждали подозрителни предупреждения или нежелани реклами, те може да са били спам чрез настройките за известия.\n\nСлед блокиране на домейните тези известия ще спрат да се появяват."
+  },
+  "cleanAllBtn": {
+    "message": "Блокиране на всички непроверени сайтове"
+  },
+  "clearAllRulesBtn": {
+    "message": "Нулиране на блокираните сайтове"
+  },
+  "confirmClearAllRules": {
+    "message": "Това ще изчисти всички блокирания и настройки за известия, създадени от NotiSpam Cleaner, и ще възстанови настройките по подразбиране на браузъра. Сигурни ли сте?"
+  },
+  "blockBtnTooltip": {
+    "message": "Блокиране на този сайт"
+  },
+  "trustBtnTooltip": {
+    "message": "Добавяне в списъка с доверени"
+  },
+  "confirmResetAll": {
+    "message": "Сигурни ли сте, че искате да отнемете разрешенията за известия на всички непроверени сайтове?"
+  },
+  "confirmResetActiveDomain": {
+    "message": "Този уебсайт в момента е отворен. Нулирането на настройките сега може да доведе до незабавно повторно появяване на предупреждението за блокиране. Първо затворете раздела. Продължаване?"
+  },
+  "guardNotificationTitle": {
+    "message": "Сигнал за сигурност — NotiSpam Cleaner"
+  },
+  "guardNotificationMessage": {
+    "message": "Автоматично са блокирани известията за непроверения сайт \"$domain$\". Щракнете по-долу, за да му се доверите, ако е било грешка.",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationBlocked": {
+    "message": "Блокирани са известията от \"$domain$\".",
+    "placeholders": {
+      "domain": {
+        "content": "$1",
+        "example": "example.com"
+      }
+    }
+  },
+  "guardNotificationAction": {
+    "message": "Доверяване на сайта (Разрешаване)"
+  },
+  "guardNotificationKeep": {
+    "message": "Оставяне блокиран"
+  },
+  "currentSiteLabel": {
+    "message": "Текущ уебсайт:"
+  },
+  "currentSiteStatusLabel": {
+    "message": "Разрешение за известия:"
+  },
+  "currentSiteAllowBtn": {
+    "message": "Разрешаване"
+  },
+  "currentSiteBlockBtn": {
+    "message": "Блокиране"
+  },
+  "currentSiteResetBtn": {
+    "message": "Възстановяване по подразбиране"
+  },
+  "statusActiveBlocked": {
+    "message": "Блокирано (Безопасно)"
+  },
+  "statusActiveBlockedApp": {
+    "message": "Блокирано (От приложението)"
+  },
+  "statusActiveBlockedBrowser": {
+    "message": "Блокирано (От браузъра)"
+  },
+  "statusActiveAllowed": {
+    "message": "Разрешено (Внимание)"
+  },
+  "statusActiveAllowedTrusted": {
+    "message": "Разрешено (Доверен от приложението)"
+  },
+  "statusActiveAllowedBrowser": {
+    "message": "Разрешено (От браузъра - Непроверен)"
+  },
+  "statusActiveAsk": {
+    "message": "Питане преди изпращане (Стандартно)"
+  },
+  "statusActiveDefault": {
+    "message": "По подразбиране за браузъра"
+  },
+  "labelAllowedBrowser": {
+    "message": "Разрешено от браузъра"
+  },
+  "tooltipAllowedBrowser": {
+    "message": "Това разрешение е запазено в браузъра. То ще изчезне от сканирането, ако сайтът бъде затворен или изтрит от историята, но винаги можете да го управлявате от настройките на браузъра."
+  },
+  "labelAllowedTrusted": {
+    "message": "Доверен от приложението"
+  },
+  "labelBlockedApp": {
+    "message": "Блокиран от приложението"
+  },
+  "labelBlockedBrowser": {
+    "message": "Блокиран от браузъра"
+  },
+  "allowedLabel": {
+    "message": "Разрешени ({count})"
+  },
+  "blockedLabel": {
+    "message": "Блокирани ({count})"
+  },
+  "emptyStateBlockedMsg": {
+    "message": "В момента няма сайтове, блокирани от NotiSpam Cleaner."
+  },
+  "unblockBtnTooltip": {
+    "message": "Отблокиране на сайта (Възстановяване по подразбиране)"
+  },
+  "helpTitle": {
+    "message": "Какво представлява злоупотребата с известия?"
+  },
+  "helpDesc": {
+    "message": "Злонамерените сайтове често ви подмамват да натиснете „Разрешаване“, като показват фалшиви Captcha („Натиснете Разрешаване, за да потвърдите, че не сте робот“) или фалшиви предупреждения за сигурност. След разрешаване те изпращат нежелани реклами и фалшиви антивирусни сигнали директно на екрана ви. NotiSpam Cleaner ги открива, изчиства ги с един клик и ви защитава в реално време.\n\n*Забележка: Настройките в NotiSpam Cleaner се синхронизират директно с базата данни за известия на браузъра."
+  },
+  "settingsLinkNotice": {
+    "message": "Поради ограничения на браузъра разрешените сайтове, които вече не са в активните раздели или скорошната история, не могат да бъдат сканирани. Отворете настройките на браузъра за пълния списък."
+  },
+  "openSettingsBtn": {
+    "message": "Отваряне на настройките за известия на браузъра"
+  },
+  "sectionCurrentSite": {
+    "message": "Активен уебсайт"
+  },
+  "sectionGlobalSettings": {
+    "message": "Глобални настройки за защита"
+  }
+}

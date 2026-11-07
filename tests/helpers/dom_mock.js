@@ -319,8 +319,11 @@ function createPopupDocument() {
 
   const bodyMatch = POPUP_HTML.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   const bodyHtml = bodyMatch ? bodyMatch[1] : POPUP_HTML;
+  const htmlEl = new MockElement('HTML', doc);
   const bodyEl = new MockElement('BODY', doc);
+  doc.documentElement = htmlEl;
   doc.body = bodyEl;
+  htmlEl.appendChild(bodyEl);
   const children = parseHtmlFragment(bodyHtml, doc);
   for (const child of children) {
     bodyEl.appendChild(child);
