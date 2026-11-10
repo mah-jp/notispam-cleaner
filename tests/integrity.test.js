@@ -132,15 +132,19 @@ describe('Extension Package & Localization Integrity', () => {
       assert.equal(buf.subarray(0, 4).toString('hex'), '89504e47', `Invalid PNG signature in ${filePath}`);
       const width = buf.readUInt32BE(16);
       const height = buf.readUInt32BE(20);
-      return { width, height };
+      const bitDepth = buf[24];
+      const colorType = buf[25];
+      return { width, height, bitDepth, colorType };
     }
 
     for (const locale of locales) {
       for (const screenNum of [1, 2]) {
         const p = path.join(imagesDir, `notispam-cleaner_screen-${screenNum}_${locale}.png`);
-        const { width, height } = readPngDimensions(p);
+        const { width, height, bitDepth, colorType } = readPngDimensions(p);
         assert.equal(width, 1280, `Invalid width for ${p}`);
         assert.equal(height, 800, `Invalid height for ${p}`);
+        assert.equal(bitDepth, 8, `Expected 8-bit channel depth for ${p}`);
+        assert.equal(colorType, 2, `Expected 24-bit RGB PNG (no alpha, colorType=2) for ${p}, got colorType=${colorType}`);
       }
     }
 
@@ -148,12 +152,85 @@ describe('Extension Package & Localization Integrity', () => {
       const bannerDim = readPngDimensions(path.join(imagesDir, bannerFile));
       assert.equal(bannerDim.width, 440, `Invalid width for ${bannerFile}`);
       assert.equal(bannerDim.height, 280, `Invalid height for ${bannerFile}`);
+      assert.equal(bannerDim.bitDepth, 8, `Expected 8-bit channel depth for ${bannerFile}`);
+      assert.equal(bannerDim.colorType, 2, `Expected 24-bit RGB PNG (no alpha, colorType=2) for ${bannerFile}`);
     }
 
     for (const origToast of ['Screenshot 2026-05-29 at 1.25.47.png', 'スクリーンショット 2026-05-29 1.29.26.png']) {
       const toastDim = readPngDimensions(path.join(imagesDir, '_original', origToast));
       assert.equal(toastDim.width, 728, `Invalid width for ${origToast}`);
       assert.equal(toastDim.height, 252, `Invalid height for ${origToast}`);
+    }
+  });
+
+  it('scripts/cws-store-listings.json contains valid Detailed Descriptions and asset mappings for all 35 locales', () => {
+    const listingsPath = path.join(ROOT_DIR, 'scripts/cws-store-listings.json');
+    assert.ok(fs.existsSync(listingsPath), 'Missing scripts/cws-store-listings.json');
+    const listings = JSON.parse(fs.readFileSync(listingsPath, 'utf8'));
+
+    const expectedLocales = fs.readdirSync(path.join(EXT_DIR, '_locales')).sort();
+    assert.deepEqual(Object.keys(listings).sort(), expectedLocales);
+
+    for (const locale of expectedLocales) {
+      const entry = listings[locale];
+      const msgData = JSON.parse(fs.readFileSync(path.join(EXT_DIR, '_locales', locale, 'messages.json'), 'utf8'));
+
+      assert.equal(entry.locale, locale);
+      assert.ok(Array.isArray(entry.languageNames) && entry.languageNames.length >= 2, `Missing languageNames for ${locale}`);
+      assert.equal(entry.extName, msgData.extName.message, `extName mismatch in cws-store-listings.json for ${locale}`);
+      assert.equal(entry.extDesc, msgData.extDesc.message, `extDesc mismatch in cws-store-listings.json for ${locale}`);
+
+      assert.ok(
+        typeof entry.detailedDescription === 'string' &&
+        entry.detailedDescription.length >= 400 &&
+        entry.detailedDescription.length <= 16000,
+        `Invalid detailedDescription length for ${locale}: ${entry.detailedDescription?.length}`
+      );
+      assert.ok(
+        entry.detailedDescription.includes('https://github.com/mah-jp/notispam-cleaner'),
+        `Missing GitHub repository URL in detailedDescription for ${locale}`
+      );
+
+      for (const uiKey of ['scanBtn', 'cleanAllBtn', 'realtimeGuardLabel', 'silentGuardianLabel', 'openSettingsBtn']) {
+        const label = msgData[uiKey].message;
+        assert.ok(
+          entry.detailedDescription.toLowerCase().includes(label.toLowerCase()),
+          `detailedDescription for ${locale} should reference localized ${uiKey} ("${label}")`
+        );
+      }
+
+      for (const prefixKey of ['suspiciousLabel', 'trustedLabel']) {
+        const prefix = msgData[prefixKey].message.split('(')[0].split('（')[0].trim();
+        assert.ok(
+          entry.detailedDescription.toLowerCase().includes(prefix.toLowerCase()),
+          `detailedDescription for ${locale} should reference localized ${prefixKey} ("${prefix}")`
+        );
+      }
+
+      assert.deepEqual(entry.screenshots, [
+        `images/notispam-cleaner_screen-1_${locale}.png`,
+        `images/notispam-cleaner_screen-2_${locale}.png`
+      ]);
+      assert.equal(
+        entry.promoBanner,
+        locale === 'ja' ? 'images/notispam-cleaner_banner.png' : 'images/notispam-cleaner_banner_en.png'
+      );
+    }
+
+    const cwsEnPath = path.join(ROOT_DIR, 'CHROMEWEBSTORE.md');
+    if (fs.existsSync(cwsEnPath)) {
+      const cwsEn = fs.readFileSync(cwsEnPath, 'utf8');
+      assert.ok(cwsEn.includes(listings.en.extName), 'CHROMEWEBSTORE.md must include English extName');
+      assert.ok(cwsEn.includes(listings.en.extDesc), 'CHROMEWEBSTORE.md must include English extDesc');
+      assert.ok(cwsEn.includes(listings.en.detailedDescription), 'CHROMEWEBSTORE.md must match en.detailedDescription');
+    }
+
+    const cwsJaPath = path.join(ROOT_DIR, 'CHROMEWEBSTORE_JA.md');
+    if (fs.existsSync(cwsJaPath)) {
+      const cwsJa = fs.readFileSync(cwsJaPath, 'utf8');
+      assert.ok(cwsJa.includes(listings.ja.extName), 'CHROMEWEBSTORE_JA.md must include Japanese extName');
+      assert.ok(cwsJa.includes(listings.ja.extDesc), 'CHROMEWEBSTORE_JA.md must include Japanese extDesc');
+      assert.ok(cwsJa.includes(listings.ja.detailedDescription), 'CHROMEWEBSTORE_JA.md must match ja.detailedDescription');
     }
   });
 });
