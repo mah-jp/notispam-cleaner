@@ -139,11 +139,26 @@ function rememberDomainProtocol(domain, protocol) {
   }
 }
 
-// Sync protocol map from storage object into in-memory lookup table
-function syncDomainProtocols(protocolsMap) {
+// Record explicit http:// or https:// scheme from a contentSettings pattern string
+function rememberProtocolFromPattern(domain, pattern) {
+  const cleanDomain = normalizeDomain(domain);
+  if (!cleanDomain || !pattern || typeof pattern !== 'string') return;
+  const lowerPattern = pattern.trim().toLowerCase();
+  if (lowerPattern.startsWith('http://')) {
+    rememberDomainProtocol(cleanDomain, 'http');
+  } else if (lowerPattern.startsWith('https://')) {
+    rememberDomainProtocol(cleanDomain, 'https');
+  }
+}
+
+// Sync protocol map from storage object into in-memory lookup table without clobbering newer live observations
+function syncDomainProtocols(protocolsMap, overwrite = false) {
   if (!protocolsMap || typeof protocolsMap !== 'object') return;
   for (const [domain, proto] of Object.entries(protocolsMap)) {
-    rememberDomainProtocol(domain, proto);
+    const normalized = normalizeDomain(domain);
+    if (!normalized) continue;
+    if (!overwrite && knownDomainProtocols.has(normalized)) continue;
+    rememberDomainProtocol(normalized, proto);
   }
 }
 
@@ -301,8 +316,8 @@ async function addBlockedDomain(domain) {
   return enqueueStorageOp(async () => {
     const data = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [], domain_protocols: {} });
     syncDomainProtocols(data.domain_protocols);
-    const list = Array.isArray(data.blocked_domains) ? data.blocked_domains.map(d => normalizeDomain(d)).filter(Boolean) : [];
-    const whitelist = Array.isArray(data.user_whitelist) ? data.user_whitelist.map(d => normalizeDomain(d)).filter(Boolean) : [];
+    const list = normalizeDomainList(data.blocked_domains);
+    const whitelist = normalizeDomainList(data.user_whitelist);
     const updates = {};
     if (!list.includes(cleanDomain)) {
       list.push(cleanDomain);
@@ -325,9 +340,8 @@ async function removeBlockedDomain(domain) {
   return enqueueStorageOp(async () => {
     const data = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [], domain_protocols: {} });
     syncDomainProtocols(data.domain_protocols);
-    const list = Array.isArray(data.blocked_domains) ? data.blocked_domains : [];
-    const whitelist = Array.isArray(data.user_whitelist) ? data.user_whitelist.map(d => normalizeDomain(d)).filter(Boolean) : [];
-    const newList = list.map(d => normalizeDomain(d)).filter(d => d && d !== cleanDomain);
+    const newList = normalizeDomainList(data.blocked_domains).filter(d => d !== cleanDomain);
+    const whitelist = normalizeDomainList(data.user_whitelist);
     const nextProtocols = buildPrunedDomainProtocols(data.domain_protocols, newList, whitelist);
     const updates = { blocked_domains: newList };
     if (!shallowEqualStringMap(data.domain_protocols, nextProtocols)) {
@@ -344,8 +358,8 @@ async function addWhitelistedDomain(domain) {
   return enqueueStorageOp(async () => {
     const data = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [], domain_protocols: {} });
     syncDomainProtocols(data.domain_protocols);
-    const blocked = Array.isArray(data.blocked_domains) ? data.blocked_domains.map(d => normalizeDomain(d)).filter(Boolean) : [];
-    const list = Array.isArray(data.user_whitelist) ? data.user_whitelist.map(d => normalizeDomain(d)).filter(Boolean) : [];
+    const blocked = normalizeDomainList(data.blocked_domains);
+    const list = normalizeDomainList(data.user_whitelist);
     const updates = {};
     if (!list.includes(cleanDomain)) {
       list.push(cleanDomain);
@@ -368,9 +382,8 @@ async function removeWhitelistedDomain(domain) {
   return enqueueStorageOp(async () => {
     const data = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [], domain_protocols: {} });
     syncDomainProtocols(data.domain_protocols);
-    const blocked = Array.isArray(data.blocked_domains) ? data.blocked_domains.map(d => normalizeDomain(d)).filter(Boolean) : [];
-    const list = Array.isArray(data.user_whitelist) ? data.user_whitelist : [];
-    const newList = list.map(d => normalizeDomain(d)).filter(d => d && d !== cleanDomain);
+    const blocked = normalizeDomainList(data.blocked_domains);
+    const newList = normalizeDomainList(data.user_whitelist).filter(d => d !== cleanDomain);
     const nextProtocols = buildPrunedDomainProtocols(data.domain_protocols, blocked, newList);
     const updates = { user_whitelist: newList };
     if (!shallowEqualStringMap(data.domain_protocols, nextProtocols)) {
@@ -458,14 +471,7 @@ async function blockAndRecordDomain(domain, customPattern = null) {
     const cleanDomain = normalizeDomain(domain) || patternDomain;
     if (!cleanDomain && !customPattern) return;
 
-    if (customPattern && typeof customPattern === 'string' && cleanDomain) {
-      const lowerPattern = customPattern.trim().toLowerCase();
-      if (lowerPattern.startsWith('http://')) {
-        rememberDomainProtocol(cleanDomain, 'http');
-      } else if (lowerPattern.startsWith('https://')) {
-        rememberDomainProtocol(cleanDomain, 'https');
-      }
-    }
+    rememberProtocolFromPattern(cleanDomain, customPattern);
 
     const primaryPattern = customPattern
       ? stripPortFromPattern(customPattern)
@@ -510,37 +516,28 @@ async function allowAndTrustDomain(domain, customPattern = null) {
     const cleanDomain = normalizeDomain(domain) || patternDomain;
     if (!cleanDomain) return;
 
-    if (customPattern && typeof customPattern === 'string') {
-      const lowerPattern = customPattern.trim().toLowerCase();
-      if (lowerPattern.startsWith('http://')) {
-        rememberDomainProtocol(cleanDomain, 'http');
-      } else if (lowerPattern.startsWith('https://')) {
-        rememberDomainProtocol(cleanDomain, 'https');
-      }
-    }
+    rememberProtocolFromPattern(cleanDomain, customPattern);
 
     const primaryPattern = customPattern
       ? stripPortFromPattern(customPattern)
       : getPrimaryPatternForDomain(cleanDomain);
 
+    let prevStorageSnapshot = null;
     await enqueueStorageOp(async () => {
       const data = await chrome.storage.local.get({
         blocked_domains: [],
         user_whitelist: [],
         domain_protocols: {}
       });
+      prevStorageSnapshot = data;
       syncDomainProtocols(data.domain_protocols);
-      const blockedList = (Array.isArray(data.blocked_domains) ? data.blocked_domains : [])
-        .map(d => normalizeDomain(d))
-        .filter(d => d && d !== cleanDomain && (!primaryPattern || getPrimaryPatternForDomain(d) !== primaryPattern));
-      const whitelist = Array.from(new Set(
-        (Array.isArray(data.user_whitelist) ? data.user_whitelist : [])
-          .map(d => normalizeDomain(d))
-          .filter(Boolean)
-      ));
-      if (!whitelist.includes(cleanDomain)) {
-        whitelist.push(cleanDomain);
-      }
+      const blockedList = normalizeDomainList(data.blocked_domains).filter(
+        d => d !== cleanDomain && (!primaryPattern || getPrimaryPatternForDomain(d) !== primaryPattern)
+      );
+      const whitelist = normalizeDomainList([
+        ...(Array.isArray(data.user_whitelist) ? data.user_whitelist : []),
+        cleanDomain
+      ]);
       const nextProtocols = buildPrunedDomainProtocols(data.domain_protocols, blockedList, whitelist);
       await chrome.storage.local.set({
         blocked_domains: blockedList,
@@ -550,10 +547,19 @@ async function allowAndTrustDomain(domain, customPattern = null) {
     });
 
     if (primaryPattern) {
-      await chrome.contentSettings.notifications.set({
-        primaryPattern,
-        setting: 'allow'
-      });
+      try {
+        await chrome.contentSettings.notifications.set({
+          primaryPattern,
+          setting: 'allow'
+        });
+      } catch (err) {
+        if (prevStorageSnapshot) {
+          await enqueueStorageOp(async () => {
+            await chrome.storage.local.set(prevStorageSnapshot);
+          });
+        }
+        throw err;
+      }
     }
   });
 }
@@ -585,12 +591,8 @@ async function setGlobalNotificationDefault(setting) {
         domain_protocols: {}
       });
       syncDomainProtocols(data.domain_protocols);
-      blockedList = (Array.isArray(data.blocked_domains) ? data.blocked_domains : [])
-        .map(d => normalizeDomain(d))
-        .filter(Boolean);
-      whitelist = (Array.isArray(data.user_whitelist) ? data.user_whitelist : [])
-        .map(d => normalizeDomain(d))
-        .filter(Boolean);
+      blockedList = normalizeDomainList(data.blocked_domains);
+      whitelist = normalizeDomainList(data.user_whitelist);
     });
 
     await chrome.contentSettings.notifications.clear({});
@@ -610,29 +612,35 @@ async function reapplyExtensionRules(blockedDomains, whitelistedDomains, previou
     }
   }
 
-  const blockPromises = (Array.isArray(blockedDomains) ? blockedDomains : []).map(async (d) => {
-    const primaryPattern = getPrimaryPatternForDomain(d);
-    if (!primaryPattern) return;
+  const allowPatterns = Array.from(new Set(
+    normalizeDomainList(whitelistedDomains).map(d => getPrimaryPatternForDomain(d)).filter(Boolean)
+  ));
+  const allowPatternSet = new Set(allowPatterns);
+  const blockPatterns = Array.from(new Set(
+    normalizeDomainList(blockedDomains)
+      .map(d => getPrimaryPatternForDomain(d))
+      .filter(p => p && !allowPatternSet.has(p))
+  ));
+
+  const blockPromises = blockPatterns.map(async (primaryPattern) => {
     try {
       await chrome.contentSettings.notifications.set({
         primaryPattern,
         setting: 'block'
       });
     } catch (e) {
-      console.error(`Failed to re-block ${d}:`, e);
+      console.error(`Failed to re-block ${primaryPattern}:`, e);
     }
   });
 
-  const allowPromises = (Array.isArray(whitelistedDomains) ? whitelistedDomains : []).map(async (d) => {
-    const primaryPattern = getPrimaryPatternForDomain(d);
-    if (!primaryPattern) return;
+  const allowPromises = allowPatterns.map(async (primaryPattern) => {
     try {
       await chrome.contentSettings.notifications.set({
         primaryPattern,
         setting: 'allow'
       });
     } catch (e) {
-      console.error(`Failed to re-allow ${d}:`, e);
+      console.error(`Failed to re-allow ${primaryPattern}:`, e);
     }
   });
 
@@ -647,6 +655,7 @@ async function resetDomainRules(domain) {
   return enqueueRuleOp(async () => {
     const previousGlobalDefault = await getGlobalNotificationDefault();
 
+    let prevStorageSnapshot = null;
     let newBlocked = [];
     let newWhitelist = [];
     await enqueueStorageOp(async () => {
@@ -655,14 +664,15 @@ async function resetDomainRules(domain) {
         user_whitelist: [],
         domain_protocols: {}
       });
+      prevStorageSnapshot = data;
       syncDomainProtocols(data.domain_protocols);
       const targetPattern = getPrimaryPatternForDomain(cleanDomain);
-      newBlocked = (Array.isArray(data.blocked_domains) ? data.blocked_domains : [])
-        .map(d => normalizeDomain(d))
-        .filter(d => d && d !== cleanDomain && (!targetPattern || getPrimaryPatternForDomain(d) !== targetPattern));
-      newWhitelist = (Array.isArray(data.user_whitelist) ? data.user_whitelist : [])
-        .map(d => normalizeDomain(d))
-        .filter(d => d && d !== cleanDomain && (!targetPattern || getPrimaryPatternForDomain(d) !== targetPattern));
+      newBlocked = normalizeDomainList(data.blocked_domains).filter(
+        d => d !== cleanDomain && (!targetPattern || getPrimaryPatternForDomain(d) !== targetPattern)
+      );
+      newWhitelist = normalizeDomainList(data.user_whitelist).filter(
+        d => d !== cleanDomain && (!targetPattern || getPrimaryPatternForDomain(d) !== targetPattern)
+      );
       const nextProtocols = buildPrunedDomainProtocols(data.domain_protocols, newBlocked, newWhitelist);
       await chrome.storage.local.set({
         blocked_domains: newBlocked,
@@ -671,7 +681,16 @@ async function resetDomainRules(domain) {
       });
     });
 
-    await chrome.contentSettings.notifications.clear({});
+    try {
+      await chrome.contentSettings.notifications.clear({});
+    } catch (err) {
+      if (prevStorageSnapshot) {
+        await enqueueStorageOp(async () => {
+          await chrome.storage.local.set(prevStorageSnapshot);
+        });
+      }
+      throw err;
+    }
     await reapplyExtensionRules(newBlocked, newWhitelist, previousGlobalDefault);
   });
 }
@@ -681,16 +700,17 @@ async function clearAllExtensionBlockRules() {
   return enqueueRuleOp(async () => {
     const previousGlobalDefault = await getGlobalNotificationDefault();
 
+    let prevStorageSnapshot = null;
     let whitelist = [];
     await enqueueStorageOp(async () => {
       const data = await chrome.storage.local.get({
+        blocked_domains: [],
         user_whitelist: [],
         domain_protocols: {}
       });
+      prevStorageSnapshot = data;
       syncDomainProtocols(data.domain_protocols);
-      whitelist = (Array.isArray(data.user_whitelist) ? data.user_whitelist : [])
-        .map(d => normalizeDomain(d))
-        .filter(Boolean);
+      whitelist = normalizeDomainList(data.user_whitelist);
       const nextProtocols = buildPrunedDomainProtocols(data.domain_protocols, [], whitelist);
       await chrome.storage.local.set({
         blocked_domains: [],
@@ -698,7 +718,19 @@ async function clearAllExtensionBlockRules() {
       });
     });
 
-    await chrome.contentSettings.notifications.clear({});
+    try {
+      await chrome.contentSettings.notifications.clear({});
+    } catch (err) {
+      if (prevStorageSnapshot) {
+        await enqueueStorageOp(async () => {
+          await chrome.storage.local.set({
+            blocked_domains: prevStorageSnapshot.blocked_domains,
+            domain_protocols: prevStorageSnapshot.domain_protocols
+          });
+        });
+      }
+      throw err;
+    }
     await reapplyExtensionRules([], whitelist, previousGlobalDefault);
   });
 }
@@ -876,6 +908,7 @@ if (typeof module !== 'undefined' && module.exports) {
     matchesDomainRuleList,
     getPortFromDomain,
     rememberDomainProtocol,
+    rememberProtocolFromPattern,
     syncDomainProtocols,
     clearKnownDomainProtocols,
     getCleanHostname,
@@ -886,6 +919,7 @@ if (typeof module !== 'undefined' && module.exports) {
     getSiteDetailsUrl,
     isDomainTrusted,
     buildPrunedDomainProtocols,
+    shallowEqualStringMap,
     enqueueStorageOp,
     enqueueRuleOp,
     addBlockedDomain,

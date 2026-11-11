@@ -2,9 +2,107 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const zlib = require('node:zlib');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const EXT_DIR = path.join(ROOT_DIR, 'chrome_extension');
+
+function paethPredictor(a, b, c) {
+  const p = a + b - c;
+  const pa = Math.abs(p - a);
+  const pb = Math.abs(p - b);
+  const pc = Math.abs(p - c);
+  if (pa <= pb && pa <= pc) return a;
+  if (pb <= pc) return b;
+  return c;
+}
+
+// Zero-dependency RFC 2083 PNG pixel decoder supporting 8-bit RGB (colorType=2) and RGBA (colorType=6)
+function decodePngPixels(filePath) {
+  assert.ok(fs.existsSync(filePath), `Missing PNG asset: ${filePath}`);
+  const buf = fs.readFileSync(filePath);
+  assert.equal(buf.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', `Invalid PNG signature in ${filePath}`);
+
+  let pos = 8;
+  let width = 0;
+  let height = 0;
+  let bitDepth = 0;
+  let colorType = 0;
+  let interlaceMethod = 0;
+  const idatChunks = [];
+
+  while (pos < buf.length) {
+    const length = buf.readUInt32BE(pos);
+    const type = buf.subarray(pos + 4, pos + 8).toString('ascii');
+    const chunkData = buf.subarray(pos + 8, pos + 8 + length);
+    pos += 12 + length;
+
+    if (type === 'IHDR') {
+      width = chunkData.readUInt32BE(0);
+      height = chunkData.readUInt32BE(4);
+      bitDepth = chunkData[8];
+      colorType = chunkData[9];
+      interlaceMethod = chunkData[12];
+    } else if (type === 'IDAT') {
+      idatChunks.push(chunkData);
+    } else if (type === 'IEND') {
+      break;
+    }
+  }
+
+  assert.equal(bitDepth, 8, `Unsupported PNG bitDepth=${bitDepth} in ${filePath}`);
+  assert.equal(interlaceMethod, 0, `Unsupported interlaced PNG in ${filePath}`);
+  assert.ok(colorType === 2 || colorType === 6, `Unsupported PNG colorType=${colorType} in ${filePath}`);
+
+  const bpp = colorType === 6 ? 4 : 3;
+  const stride = width * bpp;
+  const raw = zlib.inflateSync(Buffer.concat(idatChunks));
+  assert.equal(raw.length, height * (stride + 1), `Unexpected decompressed PNG size in ${filePath}`);
+
+  const pixels = Buffer.alloc(height * stride);
+  for (let y = 0; y < height; y++) {
+    const filterType = raw[y * (stride + 1)];
+    const srcOffset = y * (stride + 1) + 1;
+    const dstOffset = y * stride;
+
+    for (let i = 0; i < stride; i++) {
+      const byte = raw[srcOffset + i];
+      const left = i >= bpp ? pixels[dstOffset + i - bpp] : 0;
+      const up = y > 0 ? pixels[dstOffset - stride + i] : 0;
+      const upLeft = y > 0 && i >= bpp ? pixels[dstOffset - stride + i - bpp] : 0;
+
+      let recon = byte;
+      if (filterType === 1) {
+        recon = (byte + left) & 0xff;
+      } else if (filterType === 2) {
+        recon = (byte + up) & 0xff;
+      } else if (filterType === 3) {
+        recon = (byte + ((left + up) >> 1)) & 0xff;
+      } else if (filterType === 4) {
+        recon = (byte + paethPredictor(left, up, upLeft)) & 0xff;
+      } else if (filterType !== 0) {
+        assert.fail(`Invalid PNG scanline filter ${filterType} at row ${y} in ${filePath}`);
+      }
+      pixels[dstOffset + i] = recon;
+    }
+  }
+
+  return {
+    width,
+    height,
+    bitDepth,
+    colorType,
+    getPixel(x, y) {
+      const idx = (y * width + x) * bpp;
+      return [
+        pixels[idx],
+        pixels[idx + 1],
+        pixels[idx + 2],
+        bpp === 4 ? pixels[idx + 3] : 255
+      ];
+    }
+  };
+}
 
 describe('Extension Package & Localization Integrity', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(EXT_DIR, 'manifest.json'), 'utf8'));
@@ -38,13 +136,36 @@ describe('Extension Package & Localization Integrity', () => {
       assert.ok(fs.existsSync(path.join(EXT_DIR, iconPath)), `Missing manifest icon: ${iconPath}`);
     }
 
-    // Dynamic status icons used by background.js
+    // Dynamic status icons used by background.js (verify existence, dimensions, and distinct color semantics)
     for (const prefix of ['icon', 'icon-allowed', 'icon-blocked']) {
       for (const size of [16, 48, 128]) {
         const p = path.join(EXT_DIR, `icons/${prefix}-${size}.png`);
         assert.ok(fs.existsSync(p), `Missing dynamic icon: ${p}`);
       }
     }
+    const defaultIcon48 = decodePngPixels(path.join(EXT_DIR, 'icons/icon-48.png'));
+    const allowedIcon48 = decodePngPixels(path.join(EXT_DIR, 'icons/icon-allowed-48.png'));
+    const blockedIcon48 = decodePngPixels(path.join(EXT_DIR, 'icons/icon-blocked-48.png'));
+    assert.equal(defaultIcon48.width, 48);
+    assert.equal(allowedIcon48.width, 48);
+    assert.equal(blockedIcon48.width, 48);
+
+    let hasBlue = false;
+    let hasRed = false;
+    let hasGreen = false;
+    for (let y = 0; y < 48; y++) {
+      for (let x = 0; x < 48; x++) {
+        const [r1, g1, b1, a1] = defaultIcon48.getPixel(x, y);
+        if (a1 > 200 && b1 > r1 + 60 && b1 > 150) hasBlue = true;
+        const [r2, g2, b2, a2] = allowedIcon48.getPixel(x, y);
+        if (a2 > 200 && r2 > g2 + 60 && r2 > b2 + 60) hasRed = true;
+        const [r3, g3, b3, a3] = blockedIcon48.getPixel(x, y);
+        if (a3 > 200 && g3 > r3 + 40 && g3 > b3 + 20) hasGreen = true;
+      }
+    }
+    assert.ok(hasBlue, 'icon-48.png must contain blue accent pixels');
+    assert.ok(hasRed, 'icon-allowed-48.png must contain red caution pixels');
+    assert.ok(hasGreen, 'icon-blocked-48.png must contain green protected pixels');
 
     // Strict MV3 CSP & 100% offline/local-only popup assets (matching PRIVACY.md zero-external-network guarantee)
     assert.ok(manifest.content_security_policy && manifest.content_security_policy.extension_pages);
@@ -144,7 +265,7 @@ describe('Extension Package & Localization Integrity', () => {
     }
   });
 
-  it('all 35 localized store screenshots (1280x800), promo banners (440x280), and sanitized notification captures exist and have valid PNG dimensions', (t) => {
+  it('all 35 localized store screenshots (1280x800), promo banners (440x280), and sanitized notification captures exist and have valid PNG dimensions and pure white backgrounds with role titles', (t) => {
     const imagesDir = path.join(ROOT_DIR, 'images');
     if (!fs.existsSync(imagesDir)) {
       t.skip('images/ directory is gitignored in CI checkout');
@@ -163,14 +284,46 @@ describe('Extension Package & Localization Integrity', () => {
       return { width, height, bitDepth, colorType };
     }
 
+    const whiteBgProbeCoords = [
+      [16, 150],
+      [16, 400],
+      [760, 750],
+      [1024, 750]
+    ];
+
     for (const locale of locales) {
       for (const screenNum of [1, 2]) {
         const p = path.join(imagesDir, `notispam-cleaner_screen-${screenNum}_${locale}.png`);
-        const { width, height, bitDepth, colorType } = readPngDimensions(p);
-        assert.equal(width, 1280, `Invalid width for ${p}`);
-        assert.equal(height, 800, `Invalid height for ${p}`);
-        assert.equal(bitDepth, 8, `Expected 8-bit channel depth for ${p}`);
-        assert.equal(colorType, 2, `Expected 24-bit RGB PNG (no alpha, colorType=2) for ${p}, got colorType=${colorType}`);
+        const img = decodePngPixels(p);
+        assert.equal(img.width, 1280, `Invalid width for ${p}`);
+        assert.equal(img.height, 800, `Invalid height for ${p}`);
+        assert.equal(img.bitDepth, 8, `Expected 8-bit channel depth for ${p}`);
+        assert.equal(img.colorType, 2, `Expected 24-bit RGB PNG (no alpha, colorType=2) for ${p}, got colorType=${img.colorType}`);
+
+        // Verify unified pure #ffffff background on both Screen 1 and Screen 2
+        for (const [bx, by] of whiteBgProbeCoords) {
+          const [r, g, b] = img.getPixel(bx, by);
+          assert.deepEqual(
+            [r, g, b],
+            [255, 255, 255],
+            `Expected pure #ffffff background at (${bx}, ${by}) in ${path.basename(p)}, got rgb(${r}, ${g}, ${b}) — re-run generate_store_assets.py`
+          );
+        }
+
+        // Verify rendered role-header pill rgb(232, 240, 254) above callouts 1, 2, 3 (x=48..684, y=185..310)
+        let rolePillPixels = 0;
+        for (let y = 185; y <= 310; y++) {
+          for (let x = 48; x <= 684; x++) {
+            const [r, g, b] = img.getPixel(x, y);
+            if (Math.abs(r - 232) <= 2 && Math.abs(g - 240) <= 2 && Math.abs(b - 254) <= 2) {
+              rolePillPixels++;
+            }
+          }
+        }
+        assert.ok(
+          rolePillPixels >= 40,
+          `Expected rendered role-header pill rgb(232, 240, 254) in ${path.basename(p)} (found ${rolePillPixels} pixels) — re-run generate_store_assets.py`
+        );
       }
     }
 

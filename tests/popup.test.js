@@ -537,7 +537,7 @@ describe('popup.js — UI Localization, Scanning, Classification, Self-Healing, 
       assert.equal(await popup.getNotificationSetting('scam-alerts.xyz:443'), 'allow');
     });
 
-    it('updates settings and resyncs UI when default-toggle, guard-toggle, and silent-toggle change', async () => {
+    it('enforces the Real-time Protection -> Silent Guardian dependency invariant across UI and storage', async () => {
       await popup.initPopup();
 
       const defaultToggle = document.getElementById('default-toggle');
@@ -547,16 +547,195 @@ describe('popup.js — UI Localization, Scanning, Classification, Self-Healing, 
       assert.equal(document.getElementById('global-status').className, 'status-value blocked');
 
       const guardToggle = document.getElementById('guard-toggle');
-      guardToggle.checked = false;
-      await guardToggle.trigger('change');
-
       const silentToggle = document.getElementById('silent-toggle');
+      const silentRow = document.getElementById('silent-guardian-row');
+
+      // 1. While Real-time Protection is ON, Silent Guardian can be turned ON
+      assert.equal(guardToggle.checked, true);
+      assert.equal(silentToggle.disabled, false);
+      assert.equal(silentRow.classList.contains('is-disabled'), false);
       silentToggle.checked = true;
       await silentToggle.trigger('change');
 
-      const storage = await chrome.storage.local.get({ guard_enabled: true, silent_guardian_enabled: false });
-      assert.equal(storage.guard_enabled, false);
+      let storage = await chrome.storage.local.get({ guard_enabled: true, silent_guardian_enabled: false });
+      assert.equal(storage.guard_enabled, true);
       assert.equal(storage.silent_guardian_enabled, true);
+
+      // 2. Turning Real-time Protection OFF automatically unchecks & disables Silent Guardian in UI and storage
+      guardToggle.checked = false;
+      await guardToggle.trigger('change');
+
+      assert.equal(silentToggle.checked, false);
+      assert.equal(silentToggle.disabled, true);
+      assert.equal(silentRow.classList.contains('is-disabled'), true);
+      assert.equal(silentRow.getAttribute('aria-disabled'), 'true');
+      storage = await chrome.storage.local.get({ guard_enabled: true, silent_guardian_enabled: false });
+      assert.equal(storage.guard_enabled, false);
+      assert.equal(storage.silent_guardian_enabled, false);
+
+      // 3. Even a synthetic change event attempting to enable Silent Guardian while Guard is OFF is rejected
+      silentToggle.checked = true;
+      await silentToggle.trigger('change');
+      assert.equal(silentToggle.checked, false);
+      assert.equal(silentToggle.disabled, true);
+      storage = await chrome.storage.local.get({ guard_enabled: true, silent_guardian_enabled: false });
+      assert.equal(storage.guard_enabled, false);
+      assert.equal(storage.silent_guardian_enabled, false);
+
+      // 4. Re-enabling Real-time Protection unlocks Silent Guardian (leaving it safely unchecked until user opts in)
+      guardToggle.checked = true;
+      await guardToggle.trigger('change');
+      assert.equal(silentToggle.disabled, false);
+      assert.equal(silentToggle.checked, false);
+      assert.equal(silentRow.classList.contains('is-disabled'), false);
+      assert.equal(silentRow.getAttribute('aria-disabled'), 'false');
+    });
+
+    it('heals legacy { guard_enabled: false, silent_guardian_enabled: true } storage on initPopup and syncs via storage.onChanged', async () => {
+      await chrome.storage.local.set({ guard_enabled: false, silent_guardian_enabled: true });
+      await popup.initPopup();
+
+      const guardToggle = document.getElementById('guard-toggle');
+      const silentToggle = document.getElementById('silent-toggle');
+      const silentRow = document.getElementById('silent-guardian-row');
+      assert.equal(guardToggle.checked, false);
+      assert.equal(silentToggle.checked, false);
+      assert.equal(silentToggle.disabled, true);
+      assert.equal(silentRow.classList.contains('is-disabled'), true);
+
+      const healed = await chrome.storage.local.get({ guard_enabled: true, silent_guardian_enabled: true });
+      assert.equal(healed.guard_enabled, false);
+      assert.equal(healed.silent_guardian_enabled, false);
+
+      // Live storage.onChanged updates toggle UI state
+      await chrome.storage.local.set({ guard_enabled: true, silent_guardian_enabled: true });
+      assert.equal(guardToggle.checked, true);
+      assert.equal(silentToggle.checked, true);
+      assert.equal(silentToggle.disabled, false);
+      assert.equal(silentRow.classList.contains('is-disabled'), false);
+    });
+
+    it('warns on cross-port active-tab reset when primaryPattern matches, skips warning across different schemes, and immediately syncs toolbar icon on row actions', async () => {
+      config.rememberDomainProtocol('dev.local:3000', 'http');
+      await config.blockAndRecordDomain('dev.local:3000');
+
+      // Active tab is on port :8080 over HTTP (shares http://dev.local/* rule with dev.local:3000)
+      chrome._state.openTabs.splice(0, chrome._state.openTabs.length, {
+        id: 1,
+        active: true,
+        windowId: 1,
+        url: 'http://dev.local:8080/dashboard'
+      });
+      await popup.initPopup();
+
+      let confirmCalls = 0;
+      global.confirm = () => {
+        confirmCalls++;
+        return false; // cancel reset
+      };
+
+      const blockedItems = document.getElementById('blocked-list').querySelectorAll('.site-item');
+      assert.equal(blockedItems.length, 2);
+      const port3000Row = blockedItems.find(
+        li => li.querySelector('.site-domain').getAttribute('data-domain') === 'dev.local:3000'
+      );
+      assert.ok(port3000Row);
+      await port3000Row.querySelector('.unblock-btn').click();
+      assert.equal(confirmCalls, 1, 'Must prompt confirmation when resetting a port-wildcard rule affecting the open HTTP tab on :8080');
+      assert.equal(await popup.getNotificationSetting('dev.local:3000'), 'block');
+
+      // Now switch active tab to HTTPS on :8443 (https://dev.local/* is unaffected by resetting http://dev.local/*)
+      chrome._state.openTabs.splice(0, chrome._state.openTabs.length, {
+        id: 1,
+        active: true,
+        windowId: 1,
+        url: 'https://dev.local:8443/secure'
+      });
+      // Rebuild fresh DOM for clean re-init
+      document.body.removeAttribute('data-listeners-bound');
+      await popup.initPopup();
+
+      confirmCalls = 0;
+      const beforeMsgCount = chrome._state.sentMessages.filter(m => m && m.action === 'update_active_tab_icon').length;
+      const updatedBlockedItems = document.getElementById('blocked-list').querySelectorAll('.site-item');
+      await updatedBlockedItems[0].querySelector('.unblock-btn').click();
+      assert.equal(confirmCalls, 0, 'Must NOT prompt confirmation when open tab uses HTTPS and reset rule is HTTP');
+      assert.equal(await popup.getNotificationSetting('dev.local:3000'), 'ask');
+      const afterMsgCount = chrome._state.sentMessages.filter(m => m && m.action === 'update_active_tab_icon').length;
+      assert.equal(afterMsgCount, beforeMsgCount + 1, 'Row action must immediately dispatch update_active_tab_icon before delayed scan timer');
+    });
+
+    it('preserves concurrent background blocks during performScan self-healing, honors gatherDomains protocol precedence, and exports no dangling symbols', async () => {
+      assert.equal('reapplyExtensionRules' in popup, false, 'popup.js must not export undefined/global reapplyExtensionRules');
+      assert.equal(typeof popup.syncGuardAndSilentUI, 'function');
+      assert.equal(typeof popup.notifyActiveTabIconSync, 'function');
+
+      // 1. Verify gatherDomains protocol precedence: Bookmarks (http) -> History older (http) -> History newer (https) -> Open Tab (http)
+      chrome._state.bookmarkTree.splice(0, chrome._state.bookmarkTree.length, {
+        id: '0',
+        children: [
+          { id: '1', url: 'http://hist-upgrade.local:3000/' },
+          { id: '2', url: 'https://tab-downgrade.local:3000/' }
+        ]
+      });
+      chrome._state.historyItems.splice(
+        0,
+        chrome._state.historyItems.length,
+        { url: 'https://hist-upgrade.local:3000/new', lastVisitTime: 2000 },
+        { url: 'http://hist-upgrade.local:3000/old', lastVisitTime: 1000 }
+      );
+      chrome._state.openTabs.splice(0, chrome._state.openTabs.length, {
+        id: 10,
+        active: true,
+        windowId: 1,
+        url: 'http://tab-downgrade.local:3000/live'
+      });
+
+      await popup.gatherDomains();
+      assert.equal(config.getProtocolForDomain('hist-upgrade.local:3000'), 'https');
+      assert.equal(config.getProtocolForDomain('tab-downgrade.local:3000'), 'http');
+
+      // 2. Concurrent background block arriving mid-scan during performScan self-healing must NOT be lost
+      await config.blockAndRecordDomain('keep-active.example:443');
+      // Inject a stale entry into storage that has no rule in Chrome so self-healing triggers
+      await chrome.storage.local.set({
+        blocked_domains: ['keep-active.example:443', 'stale-ghost.example:443']
+      });
+
+      let injectedConcurrentBlock = false;
+      const origGet = chrome.contentSettings.notifications.get;
+      chrome.contentSettings.notifications.get = async (details) => {
+        if (!injectedConcurrentBlock && details && details.primaryUrl === 'https://stale-ghost.example/') {
+          injectedConcurrentBlock = true;
+          await config.blockAndRecordDomain('concurrent-bg.local:8080', 'http://concurrent-bg.local:8080/*');
+        }
+        return origGet(details);
+      };
+
+      await popup.doScan();
+      chrome.contentSettings.notifications.get = origGet;
+
+      const afterScan = await chrome.storage.local.get({ blocked_domains: [], domain_protocols: {} });
+      assert.equal(afterScan.blocked_domains.includes('stale-ghost.example:443'), false, 'Stale domain should be pruned');
+      assert.equal(afterScan.blocked_domains.includes('keep-active.example:443'), true, 'Active domain should remain');
+      assert.equal(afterScan.blocked_domains.includes('concurrent-bg.local:8080'), true, 'Concurrent background block must not be overwritten');
+      assert.equal(afterScan.domain_protocols['concurrent-bg.local:8080'], 'http');
+
+      // 3. clearAllBlockedRules recovers button disabled state via finally even if contentSettings.clear throws
+      document.body.removeAttribute('data-listeners-bound');
+      await popup.initPopup();
+      const clearBtn = document.getElementById('clear-all-rules-btn');
+      assert.equal(clearBtn.disabled, false);
+
+      const origClear = chrome.contentSettings.notifications.clear;
+      chrome.contentSettings.notifications.clear = async () => {
+        throw new Error('Transient Chrome clear error');
+      };
+      global.confirm = () => true;
+      await clearBtn.click();
+      chrome.contentSettings.notifications.clear = origClear;
+
+      assert.equal(clearBtn.disabled, false, '#clear-all-rules-btn must not remain stuck disabled after transient clear error');
     });
 
     it('keeps help modal open when clicking inside .help-card (event bubbling), live-updates blocked_count via storage.onChanged, and batches cleanAllSuspicious into 1 storage write', async () => {

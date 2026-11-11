@@ -397,5 +397,110 @@ describe('config.js — Domain, URL, Pattern, and Storage Helpers', () => {
       assert.equal((await chrome.contentSettings.notifications.get({ primaryUrl: 'http://batch-two.example/' })).setting, 'block');
       assert.equal((await chrome.contentSettings.notifications.get({ primaryUrl: 'https://was-trusted.example/' })).setting, 'block');
     });
+
+    it('preserves newer live HTTPS protocol observations when stale HTTP domain_protocols exist in storage', async () => {
+      // Simulate stale HTTP entry in storage from an earlier session on custom port :3000
+      await chrome.storage.local.set({
+        blocked_domains: ['dual.local:3000'],
+        user_whitelist: [],
+        domain_protocols: {
+          'dual.local:3000': 'http',
+          'dual-trust.local:3000': 'http'
+        }
+      });
+
+      // Hydrate from storage (cold start -> 'http'), then observe live HTTPS navigation on :3000
+      config.syncDomainProtocols({ 'dual.local:3000': 'http', 'dual-trust.local:3000': 'http' });
+      assert.equal(config.getProtocolForDomain('dual.local:3000'), 'http');
+
+      const observed = config.getHostAndPortFromUrl('https://dual.local:3000/app');
+      assert.equal(observed, 'dual.local:3000');
+      assert.equal(config.getProtocolForDomain('dual.local:3000'), 'https');
+
+      // Blocking via batch/single path must NOT let stale storage domain_protocols revert 'https' back to 'http'
+      await config.blockAndRecordDomains(['dual.local:3000']);
+      assert.equal(config.getProtocolForDomain('dual.local:3000'), 'https');
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'https://dual.local:3000/' })).setting,
+        'block'
+      );
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'http://dual.local:3000/' })).setting,
+        'ask'
+      );
+
+      // Trusting via explicit https:// customPattern must also upgrade protocol and prune stale 'http' map entry
+      await config.allowAndTrustDomain('dual-trust.local:3000', 'https://dual-trust.local:3000/*');
+      assert.equal(config.getProtocolForDomain('dual-trust.local:3000'), 'https');
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'https://dual-trust.local:3000/' })).setting,
+        'allow'
+      );
+
+      const finalStorage = await chrome.storage.local.get({ domain_protocols: {} });
+      assert.deepEqual(finalStorage.domain_protocols, {});
+
+      // Explicit overwrite=true on syncDomainProtocols replaces in-memory cache when explicitly requested
+      config.syncDomainProtocols({ 'dual.local:3000': 'http' }, true);
+      assert.equal(config.getProtocolForDomain('dual.local:3000'), 'http');
+    });
+
+    it('reapplyExtensionRules deduplicates shared host+scheme patterns across ports and gives whitelist deterministic precedence', async () => {
+      let setCalls = [];
+      const origSet = chrome.contentSettings.notifications.set;
+      chrome.contentSettings.notifications.set = async (details) => {
+        setCalls.push(details);
+        return origSet(details);
+      };
+
+      config.rememberDomainProtocol('multi.local:3000', 'http');
+      config.rememberDomainProtocol('multi.local:3001', 'http');
+      config.rememberDomainProtocol('conflict.local:8080', 'http');
+      config.rememberDomainProtocol('conflict.local:8081', 'http');
+
+      await config.reapplyExtensionRules(
+        ['multi.local:3000', 'multi.local:3001', 'conflict.local:8080'],
+        ['conflict.local:8081'],
+        'ask'
+      );
+
+      assert.deepEqual(setCalls, [
+        { primaryPattern: 'http://multi.local/*', setting: 'block' },
+        { primaryPattern: 'http://conflict.local/*', setting: 'allow' }
+      ]);
+      assert.equal(config.shallowEqualStringMap({ a: '1', b: '2' }, { b: '2', a: '1' }), true);
+      assert.equal(config.shallowEqualStringMap({ a: '1' }, { a: '2' }), false);
+    });
+
+    it('atomically rolls back storage in allowAndTrustDomain and resetDomainRules if Chrome contentSettings throws', async () => {
+      await config.blockAndRecordDomain('rollback-test.example:443');
+
+      const origSet = chrome.contentSettings.notifications.set;
+      chrome.contentSettings.notifications.set = async () => {
+        throw new Error('Simulated set failure');
+      };
+      await assert.rejects(
+        () => config.allowAndTrustDomain('rollback-test.example:443'),
+        /Simulated set failure/
+      );
+      chrome.contentSettings.notifications.set = origSet;
+
+      let state = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [] });
+      assert.deepEqual(state.blocked_domains, ['rollback-test.example:443']);
+      assert.deepEqual(state.user_whitelist, []);
+
+      const origClear = chrome.contentSettings.notifications.clear;
+      chrome.contentSettings.notifications.clear = async () => {
+        throw new Error('Simulated clear failure');
+      };
+      await assert.rejects(
+        () => config.resetDomainRules('rollback-test.example:443'),
+        /Simulated clear failure/
+      );
+      chrome.contentSettings.notifications.clear = origClear;
+
+      state = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [] });
+      assert.deepEqual(state.blocked_domains, ['rollback-test.example:443']);
+    });
   });
 });

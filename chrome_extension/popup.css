@@ -401,6 +401,17 @@ input:checked+.slider:before {
   transform: translateX(22px);
 }
 
+.setting-row.is-disabled {
+  opacity: 0.5;
+  transition: opacity var(--transition-speed);
+}
+
+.switch input:disabled+.slider {
+  cursor: not-allowed;
+  background-color: hsl(210, 20%, 85%);
+  border-color: hsl(214, 32%, 82%);
+}
+
 .slider.round {
   border-radius: 34px;
 }
@@ -1049,6 +1060,11 @@ input:checked+.slider:before {
   input:checked+.slider:before {
     background-color: #0b57d0;
     /* On state knob: Chrome standard dark blue */
+  }
+
+  .switch input:disabled+.slider {
+    background-color: #2d2f31;
+    border-color: #3c4043;
   }
 
 
