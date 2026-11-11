@@ -53,6 +53,14 @@ async function processNotificationGranted(domain, url) {
     }
   } catch (e) { }
 
+  // If already recorded in blocked_domains (e.g. transient window during rule clear/reapply),
+  // silently re-enforce the block without firing a duplicate alert or inflating blocked_count.
+  if (matchesDomainRuleList(targetDomain, data.blocked_domains)) {
+    await blockPattern(patternWithPort);
+    await updateActiveTabIcons();
+    return;
+  }
+
   // If Silent Guardian Mode is active, block silently and atomically increment badge count
   if (data.silent_guardian_enabled) {
     await blockPattern(patternWithPort);
@@ -106,10 +114,10 @@ function handleNotificationGranted(domain, url) {
   return guardQueue;
 }
 
-// Helper to update icons for all active tabs in the current window
+// Helper to update icons for active tabs across all open browser windows
 async function updateActiveTabIcons() {
   try {
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tabs = await chrome.tabs.query({ active: true });
     if (tabs && tabs.length > 0) {
       for (const tab of tabs) {
         await updateIconForTab(tab);
@@ -213,20 +221,32 @@ async function updateIconForTab(tab) {
   }
 }
 
+const registeredChromeInstances = new WeakSet();
+
 // Register Chrome event listeners for the background service worker
 function registerBackgroundListeners() {
-  if (typeof chrome === 'undefined') return;
+  if (typeof chrome === 'undefined' || !chrome) return;
+  if (registeredChromeInstances.has(chrome)) return;
+  registeredChromeInstances.add(chrome);
 
-  if (chrome.runtime && chrome.runtime.onMessage) {
-    chrome.runtime.onMessage.addListener((message) => {
-      handleRuntimeMessage(message);
-    });
+  if (chrome.runtime) {
+    if (chrome.runtime.onMessage) {
+      chrome.runtime.onMessage.addListener((message) => {
+        handleRuntimeMessage(message);
+      });
+    }
+    if (chrome.runtime.onInstalled) {
+      chrome.runtime.onInstalled.addListener(() => updateActiveTabIcons());
+    }
+    if (chrome.runtime.onStartup) {
+      chrome.runtime.onStartup.addListener(() => updateActiveTabIcons());
+    }
   }
 
   if (chrome.notifications && chrome.notifications.onButtonClicked) {
-    chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
-      handleNotificationButtonClicked(notificationId, buttonIndex);
-    });
+    chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) =>
+      handleNotificationButtonClicked(notificationId, buttonIndex)
+    );
   }
 
   if (chrome.tabs && chrome.tabs.onActivated) {

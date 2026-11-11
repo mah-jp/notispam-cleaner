@@ -21,10 +21,13 @@ function initContentPermissionMonitor() {
               if (protocol !== 'http:' && protocol !== 'https:') return;
               const hostname = loc.hostname ? String(loc.hostname).toLowerCase().replace(/\.+$/, '') : '';
               if (!hostname) return;
+              const formattedHost = hostname.includes(':') && !hostname.startsWith('[')
+                ? `[${hostname}]`
+                : hostname;
               const port = loc.port || (protocol === 'https:' ? '443' : '80');
               const result = chrome.runtime.sendMessage({
                 action: 'notification_granted',
-                domain: `${hostname}:${port}`,
+                domain: `${formattedHost}:${port}`,
                 url: loc.href
               });
               if (result && typeof result.catch === 'function') {

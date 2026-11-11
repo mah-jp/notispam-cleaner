@@ -88,6 +88,34 @@ describe('content.js — Real-time Notification Permission Monitor', () => {
     assert.equal(chrome._state.sentMessages[0].domain, 'plain-http.example:80');
   });
 
+  it('brackets bare IPv6 window.location.hostname literals so background normalizeDomain accepts IPv6 origins', async () => {
+    global.window.location = {
+      hostname: '::1',
+      port: '8080',
+      protocol: 'http:',
+      href: 'http://[::1]:8080/dev'
+    };
+    permissionStatus.state = 'granted';
+    await initContentPermissionMonitor();
+
+    assert.equal(chrome._state.sentMessages.length, 1);
+    assert.deepEqual(chrome._state.sentMessages[0], {
+      action: 'notification_granted',
+      domain: '[::1]:8080',
+      url: 'http://[::1]:8080/dev'
+    });
+
+    // Already-bracketed IPv6 hostname is also preserved without double brackets
+    global.window.location = {
+      hostname: '[2001:db8::1]',
+      port: '',
+      protocol: 'https:',
+      href: 'https://[2001:db8::1]/'
+    };
+    await initContentPermissionMonitor();
+    assert.equal(chrome._state.sentMessages[1].domain, '[2001:db8::1]:443');
+  });
+
   it('gracefully handles missing hostname, missing navigator.permissions, or rejected sendMessage promise', async () => {
     // 1. Empty hostname (e.g. about:blank)
     global.window.location.hostname = '';

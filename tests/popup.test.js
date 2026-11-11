@@ -267,6 +267,56 @@ describe('popup.js — UI Localization, Scanning, Classification, Self-Healing, 
       await popup.updateCurrentSiteStatusUI('active-site.io:443');
       assert.equal(document.getElementById('current-site-status').textContent, 'Allowed (Caution)');
       assert.equal(document.getElementById('current-site-reset').disabled, true);
+
+      // 5. Global default 'ask' + Browser-allowed unverified site -> statusActiveAllowedBrowser ("Allowed (By Browser - Unverified)"), reset disabled
+      await popup.setGlobalDefault('ask');
+      chrome._state.setBrowserRule('https://scam-alerts.xyz/*', 'allow');
+      await popup.updateCurrentSiteStatusUI('scam-alerts.xyz:443');
+      assert.equal(document.getElementById('current-site-status').textContent, 'Allowed (By Browser - Unverified)');
+      assert.equal(document.getElementById('current-site-reset').disabled, true);
+    });
+
+    it('accurately attributes cross-port Chrome extension rules (localhost:3000 -> localhost:8080) as App-managed without affecting HTTPS (:8443)', async () => {
+      chrome._state.historyItems.push(
+        { url: 'http://localhost:3000/app' },
+        { url: 'http://localhost:8080/api' },
+        { url: 'https://localhost:8443/secure' }
+      );
+      config.rememberDomainProtocol('localhost:3000', 'http');
+      config.rememberDomainProtocol('localhost:8080', 'http');
+
+      // Block localhost:3000 via extension -> sets http://localhost/* (port wildcard across all HTTP ports)
+      await popup.blockDomain('localhost:3000');
+      await popup.doScan();
+
+      // Visiting http://localhost:8080 must show "Blocked (By App)" with Reset ENABLED (not "Blocked (By Browser)")
+      await popup.updateCurrentSiteStatusUI('localhost:8080');
+      assert.equal(document.getElementById('current-site-status').textContent, 'Blocked (By App)');
+      assert.equal(document.getElementById('current-site-reset').disabled, false);
+
+      // And in the Blocked list, localhost:8080 must also show an Unblock button
+      const blockedItems = document.getElementById('blocked-list').querySelectorAll('.site-item');
+      const item8080 = blockedItems.find(li => li.querySelector('.site-domain').getAttribute('data-domain') === 'localhost:8080');
+      assert.ok(item8080, 'localhost:8080 should appear in Blocked list');
+      assert.ok(item8080.querySelector('.unblock-btn'), 'Cross-port HTTP site blocked by extension rule must show Unblock button');
+
+      // Meanwhile https://localhost:8443 is a different scheme and remains standard 'ask'
+      await popup.updateCurrentSiteStatusUI('localhost:8443');
+      assert.equal(document.getElementById('current-site-status').textContent, 'Ask before sending (Standard)');
+      assert.equal(document.getElementById('current-site-reset').disabled, true);
+    });
+
+    it('renders full multi-paragraph safeStateMsg text when no unverified sites are allowed, and handles global Allow All status', async () => {
+      await popup.doScan();
+      const emptyP = document.querySelector('#allowed-list .empty-state p');
+      assert.ok(emptyP);
+      // Verify dom_mock preserves all paragraphs separated by <br><br> (not just the first paragraph)
+      assert.ok(emptyP.textContent.includes('\n\n'), 'Multi-paragraph safeStateMsg must retain all paragraphs across <br><br>');
+
+      await popup.setGlobalDefault('allow');
+      await popup.doScan();
+      assert.equal(document.getElementById('global-status').textContent, 'Allow All (Highly Dangerous!)');
+      assert.equal(document.getElementById('global-status').className, 'status-value allowed');
     });
   });
 
@@ -507,6 +557,53 @@ describe('popup.js — UI Localization, Scanning, Classification, Self-Healing, 
       const storage = await chrome.storage.local.get({ guard_enabled: true, silent_guardian_enabled: false });
       assert.equal(storage.guard_enabled, false);
       assert.equal(storage.silent_guardian_enabled, true);
+    });
+
+    it('keeps help modal open when clicking inside .help-card (event bubbling), live-updates blocked_count via storage.onChanged, and batches cleanAllSuspicious into 1 storage write', async () => {
+      chrome._state.historyItems.push(
+        { url: 'https://spam-batch-1.xyz/' },
+        { url: 'https://spam-batch-2.xyz/' }
+      );
+      chrome._state.setBrowserRule('https://spam-batch-1.xyz/*', 'allow');
+      chrome._state.setBrowserRule('https://spam-batch-2.xyz/*', 'allow');
+
+      await popup.initPopup();
+
+      // 1. Open Help modal and click inside .help-card -> event bubbles to #help-overlay,
+      //    where e.target !== helpOverlay so modal MUST remain open!
+      const helpOverlay = document.getElementById('help-overlay');
+      const helpCard = helpOverlay.querySelector('.help-card');
+      await document.getElementById('help-btn').click();
+      assert.equal(helpOverlay.classList.contains('hidden'), false);
+      await helpCard.click();
+      assert.equal(helpOverlay.classList.contains('hidden'), false, 'Clicking inside .help-card must not dismiss #help-overlay');
+      await helpOverlay.click();
+      assert.equal(helpOverlay.classList.contains('hidden'), true, 'Clicking backdrop directly dismisses #help-overlay');
+
+      // 2. Live storage.onChanged updates #block-log-row while popup is open
+      const logRow = document.getElementById('block-log-row');
+      assert.equal(logRow.classList.contains('hidden'), true);
+      await chrome.storage.local.set({ blocked_count: 9 });
+      assert.equal(logRow.classList.contains('hidden'), false);
+      assert.ok(document.getElementById('block-log-text').textContent.includes('9'));
+
+      // 3. cleanAllSuspicious via #reset-all-btn writes to chrome.storage.local.set only ONCE for multiple sites
+      let setCalls = 0;
+      const origSet = chrome.storage.local.set;
+      chrome.storage.local.set = async (items) => {
+        setCalls++;
+        return origSet(items);
+      };
+      await document.getElementById('reset-all-btn').click();
+      assert.equal(setCalls, 1, 'cleanAllSuspicious must batch storage updates into 1 write');
+      assert.equal(await popup.getNotificationSetting('spam-batch-1.xyz:443'), 'block');
+      assert.equal(await popup.getNotificationSetting('spam-batch-2.xyz:443'), 'block');
+
+      // 4. Switching to Blocked tab and rescanning preserves active Blocked tab visibility
+      await document.getElementById('tab-blocked').click();
+      await document.getElementById('scan-btn').click();
+      assert.equal(document.getElementById('blocked-list').classList.contains('hidden'), false);
+      assert.equal(document.getElementById('allowed-list').classList.contains('hidden'), true);
     });
   });
 });

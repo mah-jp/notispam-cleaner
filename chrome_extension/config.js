@@ -39,17 +39,34 @@ function isValidHostname(host) {
   if (host.startsWith('[')) {
     if (!host.endsWith(']')) return false;
     const inner = host.slice(1, -1);
-    return (
-      inner.length > 1 &&
-      inner.includes(':') &&
-      !inner.startsWith('.') &&
-      !inner.endsWith('.') &&
-      /^[0-9a-f:.]+$/i.test(inner)
-    );
+    if (
+      inner.length <= 1 ||
+      !inner.includes(':') ||
+      inner.startsWith('.') ||
+      inner.endsWith('.') ||
+      !/^[0-9a-f:.]+$/i.test(inner)
+    ) {
+      return false;
+    }
+    try {
+      const parsed = new URL(`http://${host}`);
+      return Boolean(parsed.hostname && parsed.hostname.startsWith('[') && parsed.hostname.endsWith(']'));
+    } catch (e) {
+      return false;
+    }
   }
-  if (host.startsWith('.') || host.endsWith('.')) return false;
-  if (/[\s/\\?#@<>'"`[\]:]/.test(host)) return false;
-  return true;
+  if (host.startsWith('.') || host.endsWith('.') || host.includes('..')) return false;
+  if (/[\s/\\?#@<>'"`[\]:*%]/.test(host)) return false;
+  const labels = host.split('.');
+  if (labels.some(label => !label || label.startsWith('-') || label.endsWith('-'))) {
+    return false;
+  }
+  try {
+    const parsed = new URL(`http://${host}`);
+    return Boolean(parsed.hostname);
+  } catch (e) {
+    return false;
+  }
 }
 
 // Normalize a domain (with optional port) to lowercase and strip trailing dots on hostname
@@ -205,12 +222,41 @@ function isDomainTrusted(domain, userWhitelist = []) {
   return TRUSTED_DOMAINS.some(d => cleanDomain === d || cleanDomain.endsWith('.' + d));
 }
 
+// Normalize and deduplicate an array of domain strings while preserving order
+function normalizeDomainList(domains) {
+  if (!Array.isArray(domains)) return [];
+  const seen = new Set();
+  const result = [];
+  for (const item of domains) {
+    const clean = normalizeDomain(item);
+    if (clean && !seen.has(clean)) {
+      seen.add(clean);
+      result.push(clean);
+    }
+  }
+  return result;
+}
+
+// Check whether a domain matches any entry in domainList either by exact normalized domain:port
+// or by identical extension contentSettings primaryPattern (scheme + host port-wildcard).
+function matchesDomainRuleList(domain, domainList) {
+  const cleanDomain = normalizeDomain(domain);
+  if (!cleanDomain || !Array.isArray(domainList) || domainList.length === 0) return false;
+  const targetPattern = getPrimaryPatternForDomain(cleanDomain);
+  return domainList.some((entry) => {
+    const cleanEntry = normalizeDomain(entry);
+    if (!cleanEntry) return false;
+    if (cleanEntry === cleanDomain) return true;
+    return Boolean(targetPattern && getPrimaryPatternForDomain(cleanEntry) === targetPattern);
+  });
+}
+
 // Build a clean domain_protocols map retaining only active blocked/whitelisted HTTP custom-port domains
 function buildPrunedDomainProtocols(rawProtocols, blockedList, whitelist) {
   syncDomainProtocols(rawProtocols);
   const retained = new Set([
-    ...(Array.isArray(blockedList) ? blockedList : []).map(d => normalizeDomain(d)).filter(Boolean),
-    ...(Array.isArray(whitelist) ? whitelist : []).map(d => normalizeDomain(d)).filter(Boolean)
+    ...normalizeDomainList(blockedList),
+    ...normalizeDomainList(whitelist)
   ]);
   const nextProtocols = {};
   for (const d of retained) {
@@ -352,8 +398,61 @@ async function resetBlockedCount() {
   });
 }
 
+// Block multiple domains in parallel and atomically record them in a single storage transaction
+async function blockAndRecordDomains(domains) {
+  const cleanDomains = normalizeDomainList(domains);
+  if (cleanDomains.length === 0) return;
+
+  return enqueueRuleOp(async () => {
+    const uniquePatterns = Array.from(new Set(
+      cleanDomains.map(d => getPrimaryPatternForDomain(d)).filter(Boolean)
+    ));
+    if (uniquePatterns.length === 0) return;
+
+    await Promise.all(
+      uniquePatterns.map(primaryPattern =>
+        chrome.contentSettings.notifications.set({
+          primaryPattern,
+          setting: 'block'
+        })
+      )
+    );
+
+    const patternSet = new Set(uniquePatterns);
+    const domainSet = new Set(cleanDomains);
+
+    await enqueueStorageOp(async () => {
+      const data = await chrome.storage.local.get({
+        blocked_domains: [],
+        user_whitelist: [],
+        domain_protocols: {}
+      });
+      syncDomainProtocols(data.domain_protocols);
+      const blockedList = normalizeDomainList([
+        ...(Array.isArray(data.blocked_domains) ? data.blocked_domains : []),
+        ...cleanDomains
+      ]);
+      const whitelist = normalizeDomainList(data.user_whitelist).filter(
+        d => !domainSet.has(d) && !patternSet.has(getPrimaryPatternForDomain(d))
+      );
+      const nextProtocols = buildPrunedDomainProtocols(data.domain_protocols, blockedList, whitelist);
+      await chrome.storage.local.set({
+        blocked_domains: blockedList,
+        user_whitelist: whitelist,
+        domain_protocols: nextProtocols
+      });
+    });
+  });
+}
+
 // Block a domain and atomically record it in storage (removing any conflicting whitelist entry)
 async function blockAndRecordDomain(domain, customPattern = null) {
+  if (!customPattern) {
+    const cleanOnly = normalizeDomain(domain);
+    if (!cleanOnly) return;
+    return blockAndRecordDomains([cleanOnly]);
+  }
+
   return enqueueRuleOp(async () => {
     const patternDomain = customPattern ? getDomainFromPattern(customPattern) : '';
     const cleanDomain = normalizeDomain(domain) || patternDomain;
@@ -386,17 +485,13 @@ async function blockAndRecordDomain(domain, customPattern = null) {
           domain_protocols: {}
         });
         syncDomainProtocols(data.domain_protocols);
-        const blockedList = Array.from(new Set(
-          (Array.isArray(data.blocked_domains) ? data.blocked_domains : [])
-            .map(d => normalizeDomain(d))
-            .filter(Boolean)
-        ));
-        if (!blockedList.includes(cleanDomain)) {
-          blockedList.push(cleanDomain);
-        }
-        const whitelist = (Array.isArray(data.user_whitelist) ? data.user_whitelist : [])
-          .map(d => normalizeDomain(d))
-          .filter(d => d && d !== cleanDomain && getPrimaryPatternForDomain(d) !== primaryPattern);
+        const blockedList = normalizeDomainList([
+          ...(Array.isArray(data.blocked_domains) ? data.blocked_domains : []),
+          cleanDomain
+        ]);
+        const whitelist = normalizeDomainList(data.user_whitelist).filter(
+          d => d !== cleanDomain && getPrimaryPatternForDomain(d) !== primaryPattern
+        );
         const nextProtocols = buildPrunedDomainProtocols(data.domain_protocols, blockedList, whitelist);
         await chrome.storage.local.set({
           blocked_domains: blockedList,
@@ -609,7 +704,7 @@ async function clearAllExtensionBlockRules() {
 }
 
 // Fast string-based host & port extractor
-function getHostAndPortFromUrl(urlString) {
+function parseUrlHostAndPort(urlString, recordProtocol = true) {
   if (!urlString || typeof urlString !== 'string') return null;
   const trimmed = urlString.trim();
   const lowerPrefix = trimmed.substring(0, 8).toLowerCase();
@@ -679,8 +774,14 @@ function getHostAndPortFromUrl(urlString) {
   }
 
   const domainWithPort = `${hostname.toLowerCase()}:${port}`;
-  rememberDomainProtocol(domainWithPort, protocol);
+  if (recordProtocol) {
+    rememberDomainProtocol(domainWithPort, protocol);
+  }
   return domainWithPort;
+}
+
+function getHostAndPortFromUrl(urlString) {
+  return parseUrlHostAndPort(urlString, true);
 }
 
 // Fast string-based port stripper from primary patterns
@@ -740,18 +841,22 @@ function getDomainFromPattern(pattern) {
 
   // Clean up pattern parts like [*.], wildcard scheme *://, and wildcard port :*
   let clean = trimmed.replace('[*.]', '');
-  if (clean.startsWith('*://')) {
+  const lowerClean = clean.toLowerCase();
+  const hasExplicitHttpScheme = lowerClean.startsWith('http://') || lowerClean.startsWith('https://');
+  if (lowerClean.startsWith('*://')) {
     clean = 'https://' + clean.slice(4);
   } else if (!clean.includes('://')) {
     clean = 'https://' + clean;
   }
   clean = clean.replace(/:\*(?=[/?#\\]|$)/, '');
 
-  const parsed = getHostAndPortFromUrl(clean);
+  const parsed = parseUrlHostAndPort(clean, hasExplicitHttpScheme);
   if (parsed) {
     const hostOnly = getCleanHostname(parsed);
     if (!hostOnly || hostOnly === '*' || hostOnly.includes('*')) {
-      knownDomainProtocols.delete(parsed);
+      if (hasExplicitHttpScheme) {
+        knownDomainProtocols.delete(parsed);
+      }
       return '';
     }
     return parsed;
@@ -767,6 +872,8 @@ if (typeof module !== 'undefined' && module.exports) {
     isValidPort,
     isValidHostname,
     normalizeDomain,
+    normalizeDomainList,
+    matchesDomainRuleList,
     getPortFromDomain,
     rememberDomainProtocol,
     syncDomainProtocols,
@@ -787,6 +894,7 @@ if (typeof module !== 'undefined' && module.exports) {
     removeWhitelistedDomain,
     incrementBlockedCount,
     resetBlockedCount,
+    blockAndRecordDomains,
     blockAndRecordDomain,
     allowAndTrustDomain,
     getGlobalNotificationDefault,

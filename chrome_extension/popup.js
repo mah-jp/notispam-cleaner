@@ -254,10 +254,10 @@ async function updateCurrentSiteStatusUI(domain) {
     getNotificationSetting(normalizedDomain),
     getGlobalDefaultSetting()
   ]);
-  const userWhitelist = (storageData.user_whitelist || []).map(d => normalizeDomain(d)).filter(Boolean);
-  const blockedDomains = (storageData.blocked_domains || []).map(d => normalizeDomain(d)).filter(Boolean);
-  const isUserWhitelisted = userWhitelist.includes(normalizedDomain);
-  const isAppBlocked = blockedDomains.includes(normalizedDomain);
+  const userWhitelist = normalizeDomainList(storageData.user_whitelist);
+  const blockedDomains = normalizeDomainList(storageData.blocked_domains);
+  const isUserWhitelisted = matchesDomainRuleList(normalizedDomain, userWhitelist);
+  const isAppBlocked = matchesDomainRuleList(normalizedDomain, blockedDomains);
 
   const resetBtn = document.getElementById('current-site-reset');
   if (resetBtn) {
@@ -378,7 +378,8 @@ async function performScan() {
       if (userWhitelist.includes(domain)) {
         activeWhitelistInChrome.push(domain);
       }
-      if (globalDefault !== 'allow' || userWhitelist.includes(domain)) {
+      const hasAppAllowRule = matchesDomainRuleList(domain, userWhitelist);
+      if (globalDefault !== 'allow' || hasAppAllowRule) {
         if (isDomainTrusted(domain, userWhitelist)) {
           trustedAllowed.push(domain);
         } else {
@@ -386,12 +387,12 @@ async function performScan() {
         }
       }
     } else if (setting === 'block') {
-      const isAppBlocked = storedBlockedDomains.includes(domain);
-      if (isAppBlocked) {
+      if (storedBlockedDomains.includes(domain)) {
         activeBlockedInChrome.push(domain);
       }
+      const hasAppBlockRule = matchesDomainRuleList(domain, storedBlockedDomains);
       // When globalDefault is 'block', avoid listing every history item as an individual browser block
-      if (globalDefault !== 'block' || isAppBlocked) {
+      if (globalDefault !== 'block' || hasAppBlockRule) {
         blockedSites.push(domain);
       }
     }
@@ -521,12 +522,8 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
     return;
   }
 
-  const normalizedWhitelist = (Array.isArray(userWhitelist) ? userWhitelist : [])
-    .map(d => normalizeDomain(d))
-    .filter(Boolean);
-  const normalizedBlocked = (Array.isArray(storedBlockedDomains) ? storedBlockedDomains : [])
-    .map(d => normalizeDomain(d))
-    .filter(Boolean);
+  const normalizedWhitelist = normalizeDomainList(userWhitelist);
+  const normalizedBlocked = normalizeDomainList(storedBlockedDomains);
 
   sites.forEach(domain => {
     const normalizedItemDomain = normalizeDomain(domain);
@@ -564,7 +561,7 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
       } else {
         statusText = '✔ ' + (chrome.i18n.getMessage('labelAllowedTrusted') || 'Trusted by App');
         statusClass = 'site-source trusted';
-        const hasUserExtensionRule = normalizedWhitelist.includes(normalizedItemDomain);
+        const hasUserExtensionRule = matchesDomainRuleList(normalizedItemDomain, normalizedWhitelist);
         const resetButtonHtml = hasUserExtensionRule ? `
           <button class="btn-icon-secondary unblock-btn" data-domain="${escapeHtml(domain)}" title="${escapeHtml(unblockTitle)}">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -583,7 +580,7 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
         `;
       }
     } else if (type === 'blocked') {
-      const isAppBlocked = normalizedBlocked.includes(normalizedItemDomain);
+      const isAppBlocked = matchesDomainRuleList(normalizedItemDomain, normalizedBlocked);
       if (isAppBlocked) {
         statusText = '✖ ' + (chrome.i18n.getMessage('labelBlockedApp') || 'Blocked by App');
       } else {
@@ -704,19 +701,28 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
   });
 }
 
-// Clean all suspicious allowed sites
+let isCleaningSuspicious = false;
+
+// Clean all suspicious allowed sites atomically in a single batch storage update
 async function cleanAllSuspicious() {
-  if (!currentSuspiciousSites || currentSuspiciousSites.length === 0) return;
+  if (isCleaningSuspicious || !currentSuspiciousSites || currentSuspiciousSites.length === 0) return;
 
   const confirmMsg = chrome.i18n.getMessage('confirmResetAll') || 'Revoke all suspicious permissions?';
   if (!confirm(confirmMsg)) return;
 
-  const sitesToBlock = [...currentSuspiciousSites];
-  for (const domain of sitesToBlock) {
-    await blockDomain(domain);
+  const cleanBtn = document.getElementById('reset-all-btn');
+  isCleaningSuspicious = true;
+  if (cleanBtn) cleanBtn.disabled = true;
+  try {
+    const sitesToBlock = [...currentSuspiciousSites];
+    await blockAndRecordDomains(sitesToBlock);
+    await doScan();
+  } catch (err) {
+    console.error('Failed to clean suspicious sites:', err);
+  } finally {
+    isCleaningSuspicious = false;
+    if (cleanBtn) cleanBtn.disabled = false;
   }
-
-  await doScan();
 }
 
 // Initialize Popup UI
@@ -765,7 +771,9 @@ async function initPopup() {
   updateBlockLogUI(storageData.blocked_count);
 
   // Reset the extension icon badge count since user opened the popup to check settings
-  await chrome.action.setBadgeText({ text: '' });
+  try {
+    await chrome.action.setBadgeText({ text: '' });
+  } catch (e) { }
 
   // 3. Initialize global status UI
   await updateGlobalStatusUI();
@@ -804,11 +812,28 @@ async function initPopup() {
     document.body.setAttribute('data-listeners-bound', 'true');
   }
 
+  // Live-sync Silent Guardian blocked_count if background blocks occur while popup is open
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName !== 'local' || !changes || !changes.blocked_count) return;
+      const nextCount = Number(changes.blocked_count.newValue) || 0;
+      updateBlockLogUI(nextCount);
+      if (nextCount > 0 && chrome.action && typeof chrome.action.setBadgeText === 'function') {
+        try {
+          const res = chrome.action.setBadgeText({ text: '' });
+          if (res && typeof res.catch === 'function') res.catch(() => { });
+        } catch (e) { }
+      }
+    });
+  }
+
   if (clearLogBtn) {
     clearLogBtn.addEventListener('click', async () => {
       await resetBlockedCount();
       updateBlockLogUI(0);
-      await chrome.action.setBadgeText({ text: '' });
+      try {
+        await chrome.action.setBadgeText({ text: '' });
+      } catch (e) { }
     });
   }
 
@@ -822,35 +847,42 @@ async function initPopup() {
   }
 
   const allowBtn = document.getElementById('current-site-allow');
-  if (allowBtn) {
-    allowBtn.addEventListener('click', async () => {
-      if (!currentDomain) return;
-      await allowAndTrustDomain(currentDomain);
-      await updateCurrentSiteStatusUI(currentDomain);
-      await doScan();
-    });
-  }
-
   const blockBtn = document.getElementById('current-site-block');
-  if (blockBtn) {
-    blockBtn.addEventListener('click', async () => {
-      if (!currentDomain) return;
-      await blockDomain(currentDomain);
+  const resetBtn = document.getElementById('current-site-reset');
+
+  async function runCurrentSiteAction(actionFn) {
+    if (!currentDomain) return;
+    if (allowBtn) allowBtn.disabled = true;
+    if (blockBtn) blockBtn.disabled = true;
+    if (resetBtn) resetBtn.disabled = true;
+    try {
+      await actionFn(currentDomain);
       await updateCurrentSiteStatusUI(currentDomain);
       await doScan();
-    });
+    } finally {
+      if (allowBtn) allowBtn.disabled = false;
+      if (blockBtn) blockBtn.disabled = false;
+      if (currentDomain) {
+        await updateCurrentSiteStatusUI(currentDomain);
+      }
+    }
   }
 
-  const resetBtn = document.getElementById('current-site-reset');
+  if (allowBtn) {
+    allowBtn.addEventListener('click', () => runCurrentSiteAction(allowAndTrustDomain));
+  }
+
+  if (blockBtn) {
+    blockBtn.addEventListener('click', () => runCurrentSiteAction(blockDomain));
+  }
+
   if (resetBtn) {
     resetBtn.addEventListener('click', async () => {
       if (!currentDomain) return;
       const confirmMsg = chrome.i18n.getMessage('confirmResetActiveDomain') ||
         `This website is currently open in your browser. Resetting its notification settings in this state may cause the automatic block warning to reappear immediately. Please close the website's tab first, then perform the reset operation. Do you want to continue?`;
       if (!confirm(confirmMsg)) return;
-      await resetDomain(currentDomain);
-      await updateCurrentSiteStatusUI(currentDomain);
-      await doScan();
+      await runCurrentSiteAction(resetDomain);
     });
   }
 
@@ -865,7 +897,12 @@ async function initPopup() {
     clearAllRulesBtn.addEventListener('click', async () => {
       const confirmMsg = chrome.i18n.getMessage('confirmClearAllRules') || 'Reset all blocked sites?';
       if (!confirm(confirmMsg)) return;
-      await clearAllBlockedRules();
+      clearAllRulesBtn.disabled = true;
+      try {
+        await clearAllBlockedRules();
+      } finally {
+        // performScan inside clearAllBlockedRules sets accurate disabled state based on activeBlockedInChrome
+      }
     });
   }
 

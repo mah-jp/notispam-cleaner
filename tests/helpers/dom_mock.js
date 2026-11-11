@@ -22,8 +22,33 @@ function decodeEntities(str) {
     .replace(/&amp;/g, '&');
 }
 
-function stripTagsToText(html) {
-  return decodeEntities(String(html).replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, ''));
+function normalizeParsedText(raw) {
+  if (!raw) return '';
+  if (raw.trim() === '') {
+    return /[\r\n]/.test(raw) ? '' : ' ';
+  }
+  return raw
+    .replace(/^\s*[\r\n]+\s*/, '')
+    .replace(/\s*[\r\n]+\s*$/, '')
+    .replace(/\s+/g, ' ');
+}
+
+class MockTextNode {
+  constructor(text, ownerDocument) {
+    this.nodeType = 3;
+    this.nodeName = '#text';
+    this.ownerDocument = ownerDocument;
+    this.parentNode = null;
+    this.nodeValue = text === null || text === undefined ? '' : String(text);
+  }
+
+  get textContent() {
+    return this.nodeValue;
+  }
+
+  set textContent(val) {
+    this.nodeValue = val === null || val === undefined ? '' : String(val);
+  }
 }
 
 class MockClassList {
@@ -65,19 +90,24 @@ class MockClassList {
 
 class MockElement {
   constructor(tagName, ownerDocument) {
+    this.nodeType = 1;
     this.tagName = String(tagName || 'DIV').toUpperCase();
+    this.nodeName = this.tagName;
     this.ownerDocument = ownerDocument;
     this._attributes = new Map();
     this.classList = new MockClassList(this);
-    this.children = [];
+    this.childNodes = [];
     this.parentNode = null;
     this.style = {};
     this.disabled = false;
     this.checked = false;
     this.placeholder = '';
-    this._textContent = '';
     this._innerHTML = '';
     this._listeners = new Map();
+  }
+
+  get children() {
+    return this.childNodes.filter(n => n.nodeType === 1);
   }
 
   get id() {
@@ -103,15 +133,19 @@ class MockElement {
   }
 
   get textContent() {
-    if (this.children.length > 0 && !this._textContent) {
-      return this.children.map(c => c.textContent).join('');
-    }
-    return this._textContent;
+    return this.childNodes.map(node => {
+      if (node.nodeType === 3) return node.nodeValue;
+      if (node.tagName === 'BR') return '\n';
+      return node.textContent;
+    }).join('');
   }
   set textContent(val) {
-    this.children = [];
-    this._textContent = val === null || val === undefined ? '' : String(val);
-    this._innerHTML = encodeEntities(this._textContent);
+    this.childNodes = [];
+    const str = val === null || val === undefined ? '' : String(val);
+    if (str.length > 0) {
+      this.appendChild(new MockTextNode(str, this.ownerDocument));
+    }
+    this._innerHTML = encodeEntities(str);
   }
 
   get innerHTML() {
@@ -120,14 +154,12 @@ class MockElement {
   set innerHTML(html) {
     const str = html === null || html === undefined ? '' : String(html);
     this._innerHTML = str;
-    this.children = [];
+    this.childNodes = [];
     if (!str.trim()) {
-      this._textContent = '';
       return;
     }
-    this._textContent = stripTagsToText(str);
-    const parsedChildren = parseHtmlFragment(str, this.ownerDocument);
-    for (const child of parsedChildren) {
+    const parsedNodes = parseHtmlFragment(str, this.ownerDocument);
+    for (const child of parsedNodes) {
       this.appendChild(child);
     }
   }
@@ -164,8 +196,14 @@ class MockElement {
   }
 
   appendChild(child) {
+    if (child.parentNode && Array.isArray(child.parentNode.childNodes)) {
+      const idx = child.parentNode.childNodes.indexOf(child);
+      if (idx !== -1) {
+        child.parentNode.childNodes.splice(idx, 1);
+      }
+    }
     child.parentNode = this;
-    this.children.push(child);
+    this.childNodes.push(child);
     return child;
   }
 
@@ -177,18 +215,56 @@ class MockElement {
   }
 
   async trigger(type, eventInit = {}) {
-    const handlers = this._listeners.get(type) || [];
+    let propagationStopped = false;
+    let immediateStopped = false;
+    let defaultPrevented = false;
+    const target = eventInit.target || this;
+    const bubbles = eventInit.bubbles !== undefined ? Boolean(eventInit.bubbles) : true;
     const event = {
+      ...eventInit,
       type,
-      target: eventInit.target || this,
+      target,
       currentTarget: this,
-      preventDefault: () => {},
-      stopPropagation: () => {},
-      ...eventInit
+      bubbles,
+      get defaultPrevented() {
+        return defaultPrevented;
+      },
+      preventDefault: () => {
+        defaultPrevented = true;
+      },
+      stopPropagation: () => {
+        propagationStopped = true;
+      },
+      stopImmediatePropagation: () => {
+        propagationStopped = true;
+        immediateStopped = true;
+      }
     };
-    for (const fn of handlers) {
-      await fn(event);
+
+    const path = [this];
+    if (bubbles) {
+      let curr = this.parentNode;
+      while (curr) {
+        if (curr.tagName !== 'FRAGMENT') {
+          path.push(curr);
+        }
+        curr = curr.parentNode;
+      }
+      if (this.ownerDocument) {
+        path.push(this.ownerDocument);
+      }
     }
+
+    for (const node of path) {
+      event.currentTarget = node;
+      const handlers = (node._listeners && node._listeners.get(type)) || [];
+      for (const fn of [...handlers]) {
+        await fn(event);
+        if (immediateStopped) break;
+      }
+      if (propagationStopped) break;
+    }
+    return event;
   }
 
   async click() {
@@ -317,12 +393,9 @@ function parseHtmlFragment(html, ownerDocument) {
   while ((match = tokenRegex.exec(cleanHtml)) !== null) {
     const full = match[0];
     if (match[4] !== undefined) {
-      const text = decodeEntities(match[4]);
-      if (text.trim() && stack.length > 0) {
-        const current = stack[stack.length - 1];
-        if (current.children.length === 0) {
-          current._textContent = (current._textContent ? current._textContent + ' ' : '') + text.trim();
-        }
+      const normalized = normalizeParsedText(decodeEntities(match[4]));
+      if (normalized && stack.length > 0) {
+        stack[stack.length - 1].appendChild(new MockTextNode(normalized, ownerDocument));
       }
       continue;
     }
@@ -349,7 +422,7 @@ function parseHtmlFragment(html, ownerDocument) {
     }
   }
 
-  return root.children;
+  return [...root.childNodes];
 }
 
 function createPopupDocument() {
@@ -359,6 +432,9 @@ function createPopupDocument() {
     documentElement: null,
     head: null,
     body: null,
+    createTextNode(text) {
+      return new MockTextNode(text, doc);
+    },
     createElement(tagName) {
       return new MockElement(tagName, doc);
     },
@@ -433,5 +509,6 @@ function createPopupDocument() {
 
 module.exports = {
   createPopupDocument,
-  MockElement
+  MockElement,
+  MockTextNode
 };

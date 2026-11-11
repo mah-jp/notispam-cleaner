@@ -111,6 +111,42 @@ describe('background.js — Real-Time Guard, Silent Guardian, Notification Actio
       assert.deepEqual(storage.user_whitelist, ['dev-app.local:3000']);
       assert.deepEqual(storage.domain_protocols, { 'dev-app.local:3000': 'http' });
     });
+
+    it('silently re-enforces block rule without firing duplicate alert or inflating blocked_count if domain is already in blocked_domains', async () => {
+      // Simulate transient rule-clear window: domain is already recorded in storage blocked_domains,
+      // while browser PrefProvider had 'allow' and extension rules were momentarily cleared
+      chrome._state.setBrowserRule('https://already-blocked.example/*', 'allow');
+      await chrome.storage.local.set({
+        guard_enabled: true,
+        silent_guardian_enabled: false,
+        blocked_domains: ['already-blocked.example:443'],
+        blocked_count: 7
+      });
+
+      await background.handleNotificationGranted('already-blocked.example:443', 'https://already-blocked.example/');
+      assert.equal(chrome._state.createdNotifications.size, 0, 'Must not fire duplicate Security Alert for already-blocked domain');
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'https://already-blocked.example/' })).setting,
+        'block'
+      );
+
+      // Same invariant in Silent Guardian mode (also across cross-port HTTP rule match)
+      config.rememberDomainProtocol('localhost:3000', 'http');
+      config.rememberDomainProtocol('localhost:8080', 'http');
+      await chrome.storage.local.set({
+        guard_enabled: true,
+        silent_guardian_enabled: true,
+        blocked_domains: ['localhost:3000'],
+        blocked_count: 7
+      });
+      await background.handleNotificationGranted('localhost:8080', 'http://localhost:8080/');
+      const storage = await chrome.storage.local.get({ blocked_count: 0 });
+      assert.equal(storage.blocked_count, 7, 'Must not inflate blocked_count for already-blocked domain rule');
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'http://localhost:8080/' })).setting,
+        'block'
+      );
+    });
   });
 
   describe('handleNotificationGranted — Silent Guardian (Family Mode)', () => {
@@ -272,6 +308,93 @@ describe('background.js — Real-Time Guard, Silent Guardian, Notification Actio
       assert.equal(chrome._state.listeners.onUpdated.length, 1);
       await chrome._state.listeners.onUpdated[0](1, { status: 'complete' }, { id: 1, url: 'https://suspicious.example/page' });
       assert.equal(chrome._state.iconCalls.at(-1).path['16'], 'icons/icon-blocked-16.png');
+
+      // Loading status (not 'complete') does not trigger redundant icon update
+      const prevCallCount = chrome._state.iconCalls.length;
+      await chrome._state.listeners.onUpdated[0](1, { status: 'loading' }, { id: 1, url: 'https://suspicious.example/page' });
+      assert.equal(chrome._state.iconCalls.length, prevCallCount);
+    });
+
+    it('updates active tabs across ALL open browser windows, syncs on onInstalled/onStartup, and guards duplicate listener registration', async () => {
+      global.chrome = createChromeMock({
+        tabs: [
+          { id: 101, url: 'https://win1-blocked.example/', active: true, windowId: 1 },
+          { id: 102, url: 'https://win1-bg.example/', active: false, windowId: 1 },
+          { id: 201, url: 'https://win2-allowed.example/', active: true, windowId: 2 }
+        ]
+      });
+      await chrome.contentSettings.notifications.set({ primaryPattern: 'https://win1-blocked.example/*', setting: 'block' });
+      await chrome.contentSettings.notifications.set({ primaryPattern: 'https://win2-allowed.example/*', setting: 'allow' });
+
+      // Calling registerBackgroundListeners multiple times on the same chrome instance must remain idempotent
+      background.registerBackgroundListeners();
+      background.registerBackgroundListeners();
+      assert.equal(chrome._state.listeners.onMessage.length, 1);
+      assert.equal(chrome._state.listeners.onInstalled.length, 1);
+      assert.equal(chrome._state.listeners.onStartup.length, 1);
+
+      await chrome._state.listeners.onStartup[0]();
+
+      const updatedTabIds = chrome._state.iconCalls.map(c => c.tabId);
+      assert.deepEqual(updatedTabIds, [101, 201], 'Active tabs in both Window 1 and Window 2 must be synced');
+      assert.equal(chrome._state.iconCalls.find(c => c.tabId === 101).path['16'], 'icons/icon-blocked-16.png');
+      assert.equal(chrome._state.iconCalls.find(c => c.tabId === 201).path['16'], 'icons/icon-allowed-16.png');
+
+      // Edge-case no-ops
+      await background.updateIconForTab(null);
+      await background.updateIconForTab({});
+      await background.handleNotificationGranted('', '');
+      await background.handleRuntimeMessage(null);
+    });
+
+    it('integrates end-to-end with content.js permission grant message through onMessage and onButtonClicked', async () => {
+      const { initContentPermissionMonitor } = require('../chrome_extension/content');
+
+      // Wire chrome.runtime.sendMessage to dispatch directly to registered background onMessage listeners
+      const baseSendMessage = chrome.runtime.sendMessage;
+      chrome.runtime.sendMessage = async (msg) => {
+        await baseSendMessage(msg);
+        for (const fn of chrome._state.listeners.onMessage) {
+          await fn(msg, { tab: chrome._state.openTabs[0] }, () => {});
+        }
+      };
+
+      const permissionStatus = { state: 'prompt', onchange: null };
+      Object.defineProperty(globalThis, 'navigator', {
+        value: { permissions: { query: async () => permissionStatus } },
+        configurable: true,
+        writable: true
+      });
+      global.window = {
+        location: {
+          hostname: 'e2e-scam.example',
+          port: '8443',
+          protocol: 'https:',
+          href: 'https://e2e-scam.example:8443/offer'
+        }
+      };
+      chrome._state.openTabs[0] = { id: 1, url: 'https://e2e-scam.example:8443/offer', active: true, windowId: 1 };
+
+      await initContentPermissionMonitor();
+      permissionStatus.state = 'granted';
+      permissionStatus.onchange();
+
+      // Wait for async message pipeline to settle
+      await new Promise(resolve => setTimeout(resolve, 20));
+
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'https://e2e-scam.example:8443/' })).setting,
+        'block'
+      );
+      assert.equal(chrome._state.createdNotifications.size, 1);
+      const [notifId] = Array.from(chrome._state.createdNotifications.keys());
+
+      // User clicks Button 0 ("Trust & Allow") via chrome.notifications.onButtonClicked
+      await chrome._state.listeners.onButtonClicked[0](notifId, 0);
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'https://e2e-scam.example:8443/' })).setting,
+        'allow'
+      );
     });
   });
 });

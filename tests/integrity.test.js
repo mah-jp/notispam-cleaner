@@ -132,6 +132,8 @@ describe('Extension Package & Localization Integrity', () => {
       assert.ok(!storePy.includes('www.example.com'), 'Store asset generator should use spam.example.com instead of www.example.com');
       assert.ok(!storePy.includes('(238, 238, 238'), 'Store asset generator must unify both Screen 1 and Screen 2 backgrounds to pure white (#ffffff)');
       assert.ok(storePy.includes('SCREEN_ROLE_TITLES') && storePy.includes('draw_screen_role_header'), 'Store asset generator must render distinct localized role titles on Screen 1 and Screen 2');
+      assert.ok(storePy.includes('BRAND_HEADER_Y = 90'), 'Store asset generator must align Screen 1 and Screen 2 brand headers at identical Y coordinate');
+      assert.ok(storePy.includes('desc_max_lines=2'), 'Store asset generator must cap Screen 2 editorial point lines to prevent toast overlap on verbose locales');
       const expectedLocales = fs.readdirSync(path.join(EXT_DIR, '_locales')).sort();
       for (const locale of expectedLocales) {
         assert.ok(

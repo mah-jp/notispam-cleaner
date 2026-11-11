@@ -33,6 +33,33 @@ function isValidPortNum(portStr) {
   return Number.isInteger(n) && n >= 1 && n <= 65535;
 }
 
+function isValidPatternHostname(host, isIpv6 = false) {
+  if (!host || typeof host !== 'string') return false;
+  if (isIpv6) {
+    if (!host.startsWith('[') || !host.endsWith(']')) return false;
+    const inner = host.slice(1, -1);
+    if (inner.length <= 1 || !inner.includes(':') || !/^[0-9a-f:.]+$/i.test(inner)) {
+      return false;
+    }
+    try {
+      const u = new URL(`http://${host}`);
+      return Boolean(u.hostname && u.hostname.startsWith('['));
+    } catch (e) {
+      return false;
+    }
+  }
+  if (host.startsWith('.') || host.endsWith('.') || host.includes('..')) return false;
+  if (/[\s/\\?#@<>'"`[\]:*%]/.test(host)) return false;
+  const labels = host.split('.');
+  if (labels.some(l => !l || l.startsWith('-') || l.endsWith('-'))) return false;
+  try {
+    const u = new URL(`http://${host}`);
+    return Boolean(u.hostname);
+  } catch (e) {
+    return false;
+  }
+}
+
 /**
  * Parse a Chromium ContentSettingsPattern (or browser origin rule).
  * - Extension patterns (`mode = 'extension'`): omitted port or `:*` is a port wildcard matching all ports
@@ -53,8 +80,7 @@ function parseContentSettingsPattern(pattern, mode = 'extension') {
       scheme: '*',
       host: '*',
       domainWildcard: true,
-      port: '*',
-      specificity: 0
+      port: '*'
     };
   }
 
@@ -74,8 +100,7 @@ function parseContentSettingsPattern(pattern, mode = 'extension') {
       scheme,
       host: '*',
       domainWildcard: true,
-      port: '*',
-      specificity: (scheme === '*' ? 0 : 10) + 1
+      port: '*'
     };
   }
 
@@ -86,6 +111,7 @@ function parseContentSettingsPattern(pattern, mode = 'extension') {
 
   let host = '';
   let portSpec = '';
+  let isIpv6 = false;
 
   if (authority.startsWith('[')) {
     if (domainWildcard) {
@@ -96,11 +122,12 @@ function parseContentSettingsPattern(pattern, mode = 'extension') {
       throw new Error(`Invalid IPv6 host in pattern: ${pattern}`);
     }
     host = authority.slice(0, closeIdx + 1).toLowerCase();
+    isIpv6 = true;
     const rest = authority.slice(closeIdx + 1);
     if (rest.startsWith(':')) {
       portSpec = rest.slice(1);
     } else if (rest) {
-      throw new Error(`Invalid authority in pattern: ${pattern}`);
+      throw new Error(`Invalid primaryPattern (authority): ${pattern}`);
     }
   } else {
     const colonIdx = authority.indexOf(':');
@@ -112,8 +139,8 @@ function parseContentSettingsPattern(pattern, mode = 'extension') {
     }
   }
 
-  if (!host) {
-    throw new Error(`Empty host in pattern: ${pattern}`);
+  if (!isValidPatternHostname(host, isIpv6)) {
+    throw new Error(`Invalid primaryPattern (host): ${pattern}`);
   }
 
   let port = '*';
@@ -143,12 +170,6 @@ function parseContentSettingsPattern(pattern, mode = 'extension') {
     }
   }
 
-  // Specificity: exact scheme > wildcard scheme; exact host > [*.]domain > *; exact port > wildcard port
-  const schemeScore = scheme === '*' ? 0 : 100;
-  const hostScore = host === '*' ? 0 : (domainWildcard ? 20 + host.length : 50 + host.length);
-  const portScore = port === '*' ? 0 : 5;
-  const specificity = schemeScore + hostScore + portScore;
-
   const key = `${scheme}://${domainWildcard ? '[*.]' : ''}${host}:${port}/*`;
   return {
     key,
@@ -156,9 +177,42 @@ function parseContentSettingsPattern(pattern, mode = 'extension') {
     scheme,
     host,
     domainWildcard,
-    port,
-    specificity
+    port
   };
+}
+
+/**
+ * Compare two parsed ContentSettingsPatterns by Chromium's exact precedence order
+ * (`ContentSettingsPattern::Compare` in `components/content_settings/core/common/content_settings_pattern.cc`):
+ * 1. Host specificity: exact host > `[*.]domain` (more labels / longer host wins) > `*` > `<all_urls>`
+ * 2. Scheme specificity: explicit scheme (`http`/`https`) > wildcard scheme (`*`)
+ * 3. Port specificity: explicit port > wildcard port (`*`)
+ * Returns > 0 if `a` is more specific than `b`, < 0 if less specific, 0 if equal specificity.
+ */
+function comparePatternPrecedence(a, b) {
+  const hostRank = (p) => {
+    if (p.isAllUrls) return 0;
+    if (p.host === '*') return 1;
+    return p.domainWildcard ? 2 : 3;
+  };
+  const hrA = hostRank(a);
+  const hrB = hostRank(b);
+  if (hrA !== hrB) return hrA - hrB;
+
+  if (hrA === 2) {
+    const labelsA = a.host.split('.').length;
+    const labelsB = b.host.split('.').length;
+    if (labelsA !== labelsB) return labelsA - labelsB;
+    if (a.host.length !== b.host.length) return a.host.length - b.host.length;
+  }
+
+  const schemeRankA = a.scheme === '*' ? 0 : 1;
+  const schemeRankB = b.scheme === '*' ? 0 : 1;
+  if (schemeRankA !== schemeRankB) return schemeRankA - schemeRankB;
+
+  const portRankA = a.port === '*' ? 0 : 1;
+  const portRankB = b.port === '*' ? 0 : 1;
+  return portRankA - portRankB;
 }
 
 function patternMatchesTarget(parsedRule, target) {
@@ -185,7 +239,7 @@ function findMostSpecificMatch(ruleMap, target) {
   let bestEntry = null;
   for (const entry of ruleMap.values()) {
     if (patternMatchesTarget(entry.parsed, target)) {
-      if (!bestEntry || entry.parsed.specificity >= bestEntry.parsed.specificity) {
+      if (!bestEntry || comparePatternPrecedence(entry.parsed, bestEntry.parsed) >= 0) {
         bestEntry = entry;
       }
     }
@@ -218,9 +272,12 @@ function createChromeMock(options = {}) {
 
   const listeners = {
     onMessage: [],
+    onInstalled: [],
+    onStartup: [],
     onButtonClicked: [],
     onActivated: [],
-    onUpdated: []
+    onUpdated: [],
+    onStorageChanged: []
   };
 
   const chromeMock = {
@@ -266,6 +323,16 @@ function createChromeMock(options = {}) {
       onMessage: {
         addListener: (fn) => {
           listeners.onMessage.push(fn);
+        }
+      },
+      onInstalled: {
+        addListener: (fn) => {
+          listeners.onInstalled.push(fn);
+        }
+      },
+      onStartup: {
+        addListener: (fn) => {
+          listeners.onStartup.push(fn);
         }
       }
     },
@@ -328,14 +395,58 @@ function createChromeMock(options = {}) {
           return res;
         },
         set: async (items) => {
+          const changes = {};
           for (const [k, v] of Object.entries(items)) {
-            storageState[k] = JSON.parse(JSON.stringify(v));
+            const hasOld = Object.prototype.hasOwnProperty.call(storageState, k);
+            const oldVal = hasOld ? JSON.parse(JSON.stringify(storageState[k])) : undefined;
+            const newVal = JSON.parse(JSON.stringify(v));
+            storageState[k] = newVal;
+            if (!hasOld || JSON.stringify(oldVal) !== JSON.stringify(newVal)) {
+              changes[k] = {
+                ...(hasOld ? { oldValue: oldVal } : {}),
+                newValue: JSON.parse(JSON.stringify(newVal))
+              };
+            }
+          }
+          if (Object.keys(changes).length > 0) {
+            for (const fn of listeners.onStorageChanged) {
+              await fn(changes, 'local');
+            }
+          }
+        },
+        remove: async (keys) => {
+          const keyList = Array.isArray(keys) ? keys : [keys];
+          const changes = {};
+          for (const k of keyList) {
+            if (Object.prototype.hasOwnProperty.call(storageState, k)) {
+              changes[k] = {
+                oldValue: JSON.parse(JSON.stringify(storageState[k]))
+              };
+              delete storageState[k];
+            }
+          }
+          if (Object.keys(changes).length > 0) {
+            for (const fn of listeners.onStorageChanged) {
+              await fn(changes, 'local');
+            }
           }
         },
         clear: async () => {
+          const changes = {};
           for (const k of Object.keys(storageState)) {
+            changes[k] = { oldValue: JSON.parse(JSON.stringify(storageState[k])) };
             delete storageState[k];
           }
+          if (Object.keys(changes).length > 0) {
+            for (const fn of listeners.onStorageChanged) {
+              await fn(changes, 'local');
+            }
+          }
+        }
+      },
+      onChanged: {
+        addListener: (fn) => {
+          listeners.onStorageChanged.push(fn);
         }
       }
     },
@@ -379,7 +490,22 @@ function createChromeMock(options = {}) {
     },
 
     history: {
-      search: async () => [...historyItems]
+      search: async (query) => {
+        if (!query || typeof query !== 'object' || typeof query.text !== 'string') {
+          throw new TypeError('chrome.history.search requires { text: string }');
+        }
+        const needle = query.text.toLowerCase();
+        let results = historyItems.filter((item) => {
+          if (!needle) return true;
+          const url = String(item.url || '').toLowerCase();
+          const title = String(item.title || '').toLowerCase();
+          return url.includes(needle) || title.includes(needle);
+        });
+        if (typeof query.maxResults === 'number' && query.maxResults >= 0) {
+          results = results.slice(0, query.maxResults);
+        }
+        return results.map(item => ({ ...item }));
+      }
     },
 
     bookmarks: {
@@ -456,6 +582,7 @@ function createChromeMock(options = {}) {
 module.exports = {
   createChromeMock,
   parseContentSettingsPattern,
+  comparePatternPrecedence,
   parseUrlTarget,
   EXT_DIR,
   MANIFEST,

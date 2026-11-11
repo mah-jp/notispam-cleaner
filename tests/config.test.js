@@ -41,6 +41,13 @@ describe('config.js — Domain, URL, Pattern, and Storage Helpers', () => {
       assert.equal(config.normalizeDomain('example.com/path:443'), '');
       assert.equal(config.normalizeDomain('bad host.com:443'), '');
       assert.equal(config.normalizeDomain('[not-ipv6]:443'), '');
+      assert.equal(config.normalizeDomain('[1:::2]:443'), '');
+      assert.equal(config.normalizeDomain('[1:2:3:4:5:6:7:8:9]:443'), '');
+      assert.equal(config.normalizeDomain('*.example.com:443'), '');
+      assert.equal(config.normalizeDomain('example..com:443'), '');
+      assert.equal(config.normalizeDomain('-leading.example.com:443'), '');
+      assert.equal(config.normalizeDomain('trailing-.example.com:443'), '');
+      assert.equal(config.normalizeDomain('foo%20bar.com:443'), '');
       assert.equal(config.getCleanHostname(''), '');
       assert.equal(config.getCleanHostname(null), '');
     });
@@ -191,6 +198,35 @@ describe('config.js — Domain, URL, Pattern, and Storage Helpers', () => {
       assert.equal(config.getDomainFromPattern('https://*/*'), '');
       assert.equal(config.getDomainFromPattern('*://*/*'), '');
       assert.equal(config.getDomainFromPattern(''), '');
+
+      // Wildcard-scheme (*://) or schemeless patterns must NOT overwrite known HTTP protocol cache with synthesized https
+      config.rememberDomainProtocol('custom-http.local:3000', 'http');
+      assert.equal(config.getDomainFromPattern('*://custom-http.local:3000/*'), 'custom-http.local:3000');
+      assert.equal(config.getProtocolForDomain('custom-http.local:3000'), 'http');
+      assert.equal(config.getDomainFromPattern('custom-http.local:3000'), 'custom-http.local:3000');
+      assert.equal(config.getProtocolForDomain('custom-http.local:3000'), 'http');
+    });
+  });
+
+  describe('normalizeDomainList & matchesDomainRuleList', () => {
+    it('matches exact host:port and cross-port domains sharing the same Chrome port-wildcard primaryPattern without cross-scheme false positives', () => {
+      config.rememberDomainProtocol('localhost:3000', 'http');
+      config.rememberDomainProtocol('localhost:8080', 'http');
+      // localhost:8443 defaults to https
+
+      const list = config.normalizeDomainList(['Localhost:3000', '  ', null, 'Localhost:3000']);
+      assert.deepEqual(list, ['localhost:3000']);
+
+      // Same HTTP scheme -> shares http://localhost/* rule in Chrome
+      assert.equal(config.matchesDomainRuleList('localhost:3000', list), true);
+      assert.equal(config.matchesDomainRuleList('localhost:8080', list), true);
+      assert.equal(config.matchesDomainRuleList('localhost:80', list), true);
+
+      // Different HTTPS scheme -> https://localhost/* is independent
+      assert.equal(config.matchesDomainRuleList('localhost:8443', list), false);
+      assert.equal(config.matchesDomainRuleList('localhost:443', list), false);
+      assert.equal(config.matchesDomainRuleList('', list), false);
+      assert.equal(config.matchesDomainRuleList('localhost:3000', null), false);
     });
   });
 
@@ -329,6 +365,37 @@ describe('config.js — Domain, URL, Pattern, and Storage Helpers', () => {
       await config.resetBlockedCount();
       const afterReset = await config.incrementBlockedCount();
       assert.equal(afterReset, 1);
+    });
+
+    it('blockAndRecordDomains batches multiple domains into a single storage write and removes matching whitelist entries', async () => {
+      await config.allowAndTrustDomain('was-trusted.example:443');
+
+      let storageSetCalls = 0;
+      const origStorageSet = chrome.storage.local.set;
+      chrome.storage.local.set = async (items) => {
+        storageSetCalls++;
+        return origStorageSet(items);
+      };
+
+      await config.blockAndRecordDomains([
+        'batch-one.example:443',
+        'Batch-Two.Example:80',
+        'was-trusted.example:443',
+        'batch-one.example:443',
+        '*.invalid-wildcard.example:443'
+      ]);
+
+      assert.equal(storageSetCalls, 1, 'Batch block should perform exactly 1 chrome.storage.local.set call');
+      const data = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [] });
+      assert.deepEqual(data.blocked_domains, [
+        'batch-one.example:443',
+        'batch-two.example:80',
+        'was-trusted.example:443'
+      ]);
+      assert.deepEqual(data.user_whitelist, []);
+      assert.equal((await chrome.contentSettings.notifications.get({ primaryUrl: 'https://batch-one.example/' })).setting, 'block');
+      assert.equal((await chrome.contentSettings.notifications.get({ primaryUrl: 'http://batch-two.example/' })).setting, 'block');
+      assert.equal((await chrome.contentSettings.notifications.get({ primaryUrl: 'https://was-trusted.example/' })).setting, 'block');
     });
   });
 });
