@@ -4,9 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <title>NotiSpam Cleaner</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="popup.css">
 </head>
 
@@ -23,12 +20,12 @@
         <div class="logo-text">
           <div class="logo-title-row">
             <h1 data-i18n="appTitle">NotiSpam Cleaner</h1>
-            <span class="version-tag">v1.0</span>
+            <span class="version-tag">v1.0.6</span>
           </div>
-          <span class="app-subtitle" data-i18n="appSubtitle">通知スパムクリーナー</span>
+          <span class="app-subtitle" data-i18n="appSubtitle">Notification Spam Blocker</span>
         </div>
       </div>
-      <button id="help-btn" class="icon-btn-secondary" title="Help">
+      <button id="help-btn" class="icon-btn-secondary" title="Help" aria-label="Help" data-i18n-title="helpTitle">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10" />
@@ -122,7 +119,7 @@
         </div>
 
         <!-- Silent Guardian Toggle -->
-        <div class="setting-row toggle-row">
+        <div id="silent-guardian-row" class="setting-row toggle-row">
           <div class="guard-title-container">
             <span class="guard-label">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
@@ -223,8 +220,8 @@
       <!-- System settings link notice -->
       <div class="settings-link-card card">
         <div class="settings-link-content">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;">
+          <svg class="settings-info-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="16" x2="12" y2="12"></line>
             <line x1="12" y1="8" x2="12.01" y2="8"></line>
@@ -266,7 +263,7 @@
       <div class="card help-card">
         <div class="help-header">
           <h3 data-i18n="helpTitle">What is Notification Abuse?</h3>
-          <button id="close-help-btn" class="close-btn">&times;</button>
+          <button id="close-help-btn" class="close-btn" aria-label="Close">&times;</button>
         </div>
         <div class="help-body">
           <p data-i18n="helpDesc">Detailed info on notification spam.</p>

@@ -1,0 +1,704 @@
+{
+  "ar": {
+    "locale": "ar",
+    "languageNames": [
+      "Arabic",
+      "アラビア語",
+      "العربية",
+      "ar"
+    ],
+    "extName": "NotiSpam Cleaner: مانع إشعارات السبام",
+    "extDesc": "يقوم بفحص وتطهير أذونات الإشعارات للمواقع المشبوهة لحمايتك من السبام والإعلانات الاحتيالية في الوقت الفعلي.",
+    "detailedDescription": "هل سئمت من تلقي تنبيهات الفيروسات المزيفة والإعلانات الاحتيالية وإشعارات السبام المزعجة على سطح المكتب؟ غالباً ما تخدعك المواقع المشبوهة للنقر على زر \"سماح\" باستخدام اختبارات كابتشا مزيفة أو تحذيرات أمنية عاجلة. بمجرد السماح لها، تغرق شاشتك بنوافذ الإشعارات المزعجة حتى عند إغلاق المتصفح.\n\nNotiSpam Cleaner هي أداة خفيفة تركز على الخصوصية أولاً، مصممة لفحص وتنظيف إعدادات الإشعارات في Google Chrome لحمايتك من إساءة استخدام الإشعارات.\n\n【الميزات والفوائد الرئيسية】\n■ 1. خصوصية 100% ومفتوح المصدر (الأمان والشفافية)\nتتم جميع عمليات الفحص والحظر محلياً على جهازك بالكامل. لا يتم جمع أي بيانات أو إرسال سجل التصفح إلى أي خادم خارجي إطلاقاً. كإضافة مفتوحة المصدر بالكامل (رخصة MIT)، يتوفر الكود المصدري علناً على GitHub ليتمكن أي شخص من مراجعته والتحقق من أمانه.\nمستودع GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. فحص سريع وحظر جماعي بنقرة واحدة\nافحص قائمة المواقع المسموح لها بإرسال الإشعارات فوراً. تفصل الإضافة تلقائياً بين المواقع الموثوقة (مثل Google وSlack وTeams) والمواقع \"غير موثوقة / مجهولة\"، مما يتيح لك إلغاء أذونات جميع المواقع المشبوهة دفعة واحدة مع الحفاظ على مواقعك الموثوقة.\n\n■ 3. الحماية في الوقت الفعلي والحارس الصامت (وضع العائلة)\nيراقب تغييرات أذونات الإشعارات بشكل فوري. عندما يحصل موقع غير موثوق على إذن الإشعارات، تكتشفه الإضافة فوراً وتحظره تلقائياً. يتضمن أيضاً وضع \"الحارس الصامت (وضع العائلة)\" لحظر الإشعارات بهدوء في الخلفية دون إزعاج المستخدم بنوافذ تنبيه — وهو مثالي لحماية أجهزة أفراد العائلة.\n\n【طريقة الاستخدام】\n1. انقر على أيقونة \"NotiSpam Cleaner\" في شريط أدوات المتصفح.\n2. اضغط على زر \"فحص المواقع المسموح لها (السجل/التبويبات)\" لتحليل أذونات الإشعارات الحالية.\n3. راجع قائمة المواقع \"غير موثوقة / مجهولة\" وانقر على \"حظر جميع المواقع غير الموثوقة\".\n4. أبقِ خيار \"الحماية في الوقت الفعلي\" مفعّلاً لمنع أي سماح خاطئ في المستقبل.\n\n【ملاحظات هامة وقيود تقنية】\n■ ليس مانع إعلانات صفحات الويب (Adblocker)\nتتخصص هذه الإضافة في حظر إشعارات سطح المكتب المزعجة التي تستغل نظام إشعارات المتصفح، ولا تقوم بإخفاء الإعلانات العادية داخل صفحات الويب (مثل اللافتات أو إعلانات الفيديو).\n\n■ القيود التقنية للفحص\nبسبب قيود الأمان في Chrome، لا تتوفر واجهة برمجية تتيح للإضافات جلب قائمة شاملة بجميع إعدادات الإشعارات دفعة واحدة. يكتشف NotiSpam Cleaner المواقع عبر مطابقة النطاقات الموجودة في سجل التصفح المحلي والإشارات المرجعية والتبويبات المفتوحة. المواقع القديمة جداً التي لم تعد موجودة في السجل أو الإشارات المرجعية قد لا تظهر في الفحص (ويمكنك دائماً إدارتها يدوياً عبر رابط \"فتح إعدادات إشعارات المتصفح\" داخل الإضافة).",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_ar.png",
+      "images/notispam-cleaner_screen-2_ar.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "bg": {
+    "locale": "bg",
+    "languageNames": [
+      "Bulgarian",
+      "ブルガリア語",
+      "Български",
+      "bg"
+    ],
+    "extName": "NotiSpam Cleaner: Блокиране на спам известия",
+    "extDesc": "Сканира и изчиства разрешенията за известия от подозрителни сайтове. Защитава в реално време от спам и измамни реклами.",
+    "detailedDescription": "Омръзна ли ви да получавате фалшиви сигнали за вируси, подвеждащи реклами и спам известия на работния плот? Измамните уебсайтове често ви подлъгват да щракнете върху „Разрешаване“ чрез фалшиви CAPTCHA проверки или спешни предупреждения за сигурност. Веднъж разрешени, те заливат екрана ви с досадни известия дори когато браузърът е затворен.\n\nNotiSpam Cleaner е лек инструмент с приоритет върху поверителността, създаден да сканира и изчиства настройките за известия в Google Chrome, предпазвайки ви от злоупотреба с известия.\n\n【ОСНОВНИ ФУНКЦИИ И ПРЕДИМСТВА】\n■ 1. 100% поверителност и отворен код (Сигурност и прозрачност)\nВсички сканирания и блокирания се извършват изцяло локално на вашето устройство. Никакви данни или история на сърфиране не се събират и не се изпращат към външни сървъри. Като разширение с напълно отворен код (MIT лиценз), изходният код е публично достъпен в GitHub за проверка от всеки.\nGitHub хранилище: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Бързо сканиране и масово блокиране с един клик\nПроверете мигновено списъка със сайтове с разрешени известия. Разширението автоматично отделя „Доверени сайтове“ (като Google, Slack, Teams) от „Непроверени / Неизвестни“, позволявайки ви да блокирате всички подозрителни сайтове наведнъж.\n\n■ 3. Защита в реално време и Тих пазител (Семеен режим)\nСледи активно промените в разрешенията за известия. Когато подозрителен сайт получи разрешение, разширението го открива мигновено и го блокира. Включва и режим „Тих пазител (Семеен режим)“ за тихо автоматично блокиране във фонов режим без изскачащи предупреждения — идеално за компютрите на вашето семейство.\n\n【КАК ДА ИЗПОЛЗВАТЕ】\n1. Щракнете върху иконата на NotiSpam Cleaner в лентата с инструменти.\n2. Натиснете „Сканиране на разрешени сайтове (История/Раздели)“, за да анализирате разрешенията.\n3. Прегледайте „Непроверени / Неизвестни“ сайтове и щракнете върху „Блокиране на всички непроверени сайтове“.\n4. Оставете включена опцията „Защита в реално време“, за да се предпазите от случайно разрешаване в бъдеще.\n\n【ВАЖНИ БЕЛЕЖКИ И ОГРАНИЧЕНИЯ】\n■ Не е стандартен рекламен блокер (Adblocker)\nТова разширение блокира конкретно спам известията на работния плот, генерирани чрез системните известия на Chrome. То не скрива банери или видео реклами вътре в самите уеб страници.\n\n■ Техническо ограничение при сканиране\nПоради ограниченията за сигурност на Chrome, разширенията нямат директен достъп до пълния списък с всички правила за известия. NotiSpam Cleaner открива сайтовете чрез проверка на домейните във вашата локална история, отметки и отворени раздели. Много стари разрешения, които вече не фигурират в историята или отметките, могат да бъдат прегледани ръчно чрез връзката „Отваряне на настройките за известия на браузъра“ в разширението.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_bg.png",
+      "images/notispam-cleaner_screen-2_bg.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "cs": {
+    "locale": "cs",
+    "languageNames": [
+      "Czech",
+      "チェコ語",
+      "Čeština",
+      "cs"
+    ],
+    "extName": "NotiSpam Cleaner: Blokování nevyžádaných oznámení",
+    "extDesc": "Skenuje a čistí oprávnění k oznámením u podezřelých webů. Chrání v reálném čase před spamem a podvodnými reklamami.",
+    "detailedDescription": "Už vás nebaví falešná varování před viry, podvodné reklamy a nevyžádaná oznámení na ploše? Klamavé webové stránky vás často přimějí kliknout na „Povolit“ pomocí falešných ověření CAPTCHA nebo naléhavých bezpečnostních výstrah. Jakmile je povolíte, zahltí vaši obrazovku obtěžujícím spamem, i když je prohlížeč zavřený.\n\nNotiSpam Cleaner je lehký nástroj zaměřený na soukromí, který skenuje a čistí nastavení oznámení v prohlížeči Google Chrome a chrání vás před zneužíváním oznámení.\n\n【HLAVNÍ FUNKCE A VÝHODY】\n■ 1. 100% soukromí na prvním místě a Open-Source (Bezpečnost a transparentnost)\nVeškeré skenování a blokování probíhá výhradně lokálně na vašem zařízení. Žádná data ani historie prohlížení se nikdy neodesílají na externí servery. Jako plně open-source rozšíření (licence MIT) máme zdrojový kód veřejně dostupný na GitHubu, kde si jej může kdokoli zkontrolovat.\nGitHub repozitář: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Rychlé skenování a hromadné blokování jedním kliknutím\nOkamžitě zkontrolujte seznam povolených oznámení. Rozšíření automaticky oddělí „Důvěryhodné weby“ (např. Google, Slack, Teams) od „Neověřené / Neznámé“, takže můžete podezřelé weby zablokovat jedním kliknutím a důvěryhodné ponechat beze změny.\n\n■ 3. Ochrana v reálném čase a Tichý strážce (Rodinný režim)\nAktivně sleduje změny oprávnění k oznámením. Jakmile podezřelý web získá povolení, rozšíření jej okamžitě rozpozná a zablokuje. Obsahuje také režim „Tichý strážce (Rodinný režim)“, který tiše blokuje oznámení na pozadí bez vyskakovacích upozornění — ideální pro počítače rodinných příslušníků.\n\n【JAK POUŽÍVAT】\n1. Klikněte na ikonu NotiSpam Cleaner na panelu nástrojů.\n2. Klikněte na „Skenovat povolené weby (Historie/Karty)“ pro analýzu oprávnění.\n3. Zkontrolujte „Neověřené / Neznámé“ weby a klikněte na „Zablokovat všechny neověřené weby“.\n4. Ponechte zapnutý přepínač „Ochrana v reálném čase“, abyste předešli nechtěnému povolení v budoucnu.\n\n【DŮLEŽITÉ POZNÁMKY A OMEZENÍ】\n■ Nejedná se o blokátor reklam na webu (Adblocker)\nToto rozšíření se specializuje na blokování nevyžádaných oznámení na ploše zneužívajících nativní oznámení prohlížeče Chrome. Neslouží k blokování běžných reklam (bannerů či videí) přímo na webových stránkách.\n\n■ Technické omezení skenování\nKvůli bezpečnostním omezením prohlížeče Chrome nemohou rozšíření přímo načíst kompletní seznam všech vlastních pravidel oznámení. NotiSpam Cleaner zjišťuje weby porovnáním povolených pravidel s vaší lokální historií, záložkami a otevřenými kartami. Velmi stará povolení, která již nejsou v historii ani záložkách, lze spravovat ručně přes odkaz „Otevřít nastavení oznámení prohlížeče“ uvnitř rozšíření.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_cs.png",
+      "images/notispam-cleaner_screen-2_cs.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "da": {
+    "locale": "da",
+    "languageNames": [
+      "Danish",
+      "デンマーク語",
+      "Dansk",
+      "da"
+    ],
+    "extName": "NotiSpam Cleaner: Blokering af spam-notifikationer",
+    "extDesc": "Scanner og rydder notifikationstilladelser fra mistænkelige websteder. Beskytter i realtid mod spam og falske annoncer.",
+    "detailedDescription": "Er du træt af falske virusadvarsler, clickbait-reklamer og uønskede spam-notifikationer på dit skrivebord? Vildledende websteder narrer dig ofte til at klikke på \"Tillad\" ved hjælp af falske CAPTCHA-bekræftelser eller falske sikkerhedsadvarsler. Når de først er tilladt, oversvømmer de din skærm med irriterende pop op-beskeder.\n\nNotiSpam Cleaner er et letvægtsværktøj med fokus på privatlivets fred, der er udviklet til at scanne og rydde op i notifikationsindstillingerne i Google Chrome og beskytte dig mod misbrug af notifikationer.\n\n【VIGTIGSTE FUNKTIONER OG FORDELE】\n■ 1. 100% privatliv i fokus & Open Source (Sikkerhed og gennemsigtighed)\nAlle scanninger og blokeringer behandles udelukkende lokalt på din computer. Ingen data eller browserhistorik indsamles eller sendes til eksterne servere. Som en fuldt open source-udvidelse (MIT-licens) ligger vores kildekode offentligt på GitHub, så alle kan kontrollere den.\nGitHub-arkiv: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Nem scanning & blokering med ét klik\nGennemgå hurtigt dine tilladte notifikationer. Udvidelsen adskiller automatisk \"Betroede websteder\" (som Google, Slack, Teams) fra \"Uverificerede / Ukendte\", så du kan fjerne tilladelser fra alle mistænkelige websteder på én gang.\n\n■ 3. Realtidsbeskyttelse & Stille vogter (Familietilstand)\nOvervåger aktivt ændringer i notifikationstilladelser. Hvis et mistænkeligt websted får tilladelse, opdages og blokeres det øjeblikkeligt. Indeholder også \"Stille vogter (Familietilstand)\", som lydløst blokerer uønskede notifikationer i baggrunden uden advarsler — ideelt til familiemedlemmers pc'er.\n\n【SÅDAN BRUGES DET】\n1. Klik på NotiSpam Cleaner-ikonet på værktøjslinjen.\n2. Klik på \"Scan tilladte websteder (Historik/Faner)\" for at analysere dine tilladelser.\n3. Gennemgå \"Uverificerede / Ukendte\" websteder, og klik på \"Bloker alle uverificerede websteder\".\n4. Hold \"Realtidsbeskyttelse\" aktiveret for at forhindre fremtidige utilsigtede tilladelser.\n\n【VIGTIGE BEMÆRKNINGER OG BEGRÆNSNINGER】\n■ Ikke en traditionel annonceblokering (Adblocker)\nDenne udvidelse blokerer specifikt irriterende skrivebordsnotifikationer sendt via Chromes indbyggede notifikationssystem. Den blokerer ikke almindelige banner- eller videoannoncer inde på websteder.\n\n■ Teknisk scanningsbegrænsning\nPå grund af sikkerhedsbegrænsninger i Chrome kan udvidelser ikke hente en samlet liste over alle brugerdefinerede notifikationsindstillinger direkte. NotiSpam Cleaner finder websteder ved at sammenholde tilladelser med din lokale historik, bogmærker og åbne faner. Meget gamle tilladelser, der ikke længere er i historikken, kan administreres manuelt via linket \"Åbn browserens notifikationsindstillinger\" i udvidelsen.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_da.png",
+      "images/notispam-cleaner_screen-2_da.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "de": {
+    "locale": "de",
+    "languageNames": [
+      "German",
+      "ドイツ語",
+      "Deutsch",
+      "de"
+    ],
+    "extName": "NotiSpam Cleaner: Benachrichtigungs-Spam-Blocker",
+    "extDesc": "Scannt und löscht Benachrichtigungsberechtigungen verdächtiger Websites. Schützt in Echtzeit vor Spam und Betrugswerbung.",
+    "detailedDescription": "Sind Sie es leid, gefälschte Viruswarnungen, Clickbait-Werbung und aufdringliche Spam-Benachrichtigungen auf Ihrem Desktop zu erhalten? Betrügerische Websites verleiten Nutzer oft mit gefälschten Captcha-Abfragen oder dringenden Sicherheitswarnungen dazu, auf „Zulassen“ zu klicken. Einmal erlaubt, überfluten sie Ihren Bildschirm selbst bei geschlossenem Browser mit lästigen Popups.\n\nNotiSpam Cleaner ist ein datenschutzfreundliches, leichtgewichtiges Tool zum Scannen und Bereinigen von Benachrichtigungsberechtigungen in Google Chrome, das Sie zuverlässig vor Benachrichtigungs-Spam schützt.\n\n【HAUPTFUNKTIONEN & VORTEILE】\n■ 1. 100 % Datenschutz & Open-Source (Sicherheit & Transparenz)\nAlle Scans und Blockierungen erfolgen ausschließlich lokal auf Ihrem Gerät. Es werden keinerlei Browserdaten gesammelt oder an externe Server übertragen. Als vollständig quelloffene Erweiterung (MIT-Lizenz) ist unser Quellcode auf GitHub öffentlich einsehbar und überprüfbar.\nGitHub-Repository: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Schneller Scan & Ein-Klick-Bereinigung\nÜberprüfen Sie sofort alle Websites mit Benachrichtigungsberechtigung. Die Erweiterung trennt automatisch „Vertrauenswürdige Websites“ (wie Google, Slack, Teams) von „Nicht verifiziert / Unbekannt“, sodass Sie alle verdächtigen Websites mit einem einzigen Klick blockieren können.\n\n■ 3. Echtzeitschutz & Stiller Wächter (Familienmodus)\nÜberwacht Änderungen an Benachrichtigungsberechtigungen in Echtzeit. Sobald eine verdächtige Website eine Berechtigung erhält, wird sie sofort erkannt und blockiert. Enthält zudem den Modus „Stiller Wächter (Familienmodus)“, der unerwünschte Benachrichtigungen lautlos im Hintergrund blockiert, ohne Warn-Popups anzuzeigen — ideal für die PCs von Familienmitgliedern.\n\n【SO FUNKTIONIERT ES】\n1. Klicken Sie in der Symbolleiste auf das Symbol von NotiSpam Cleaner.\n2. Klicken Sie auf „Zugelassene Websites scannen (Verlauf/Tabs)“, um die aktuellen Berechtigungen zu analysieren.\n3. Prüfen Sie die Liste „Nicht verifiziert / Unbekannt“ und klicken Sie auf „Alle nicht verifizierten Websites blockieren“.\n4. Lassen Sie „Echtzeitschutz“ aktiviert, um sich dauerhaft vor versehentlichen Freigaben zu schützen.\n\n【WICHTIGE HINWEISE & EINSCHRÄNKUNGEN】\n■ Kein herkömmlicher Werbeblocker (Adblocker)\nDiese Erweiterung blockiert gezielt Desktop-Spam-Popups, die über die native Push-Benachrichtigungsfunktion von Chrome gesendet werden. Allgemeine Werbung innerhalb von Webseiten (wie Banner- oder Videowerbung) wird nicht ausgeblendet.\n\n■ Technische Scan-Einschränkung\nAufgrund von Sicherheitsbeschränkungen in Chrome können Erweiterungen keine Gesamtliste aller Benachrichtigungsregeln direkt abrufen. NotiSpam Cleaner gleicht daher Domains aus Ihrem lokalen Browserverlauf, Ihren Lesezeichen und offenen Tabs ab. Sehr alte Berechtigungen, die nicht mehr im Verlauf oder in den Lesezeichen enthalten sind, können über den Link „Browsereinstellungen für Benachrichtigungen öffnen“ in der Erweiterung manuell verwaltet werden.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_de.png",
+      "images/notispam-cleaner_screen-2_de.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "el": {
+    "locale": "el",
+    "languageNames": [
+      "Greek",
+      "ギリシャ語",
+      "Ελληνικά",
+      "el"
+    ],
+    "extName": "NotiSpam Cleaner: Αποκλεισμός ανεπιθύμητων ειδοποιήσεων",
+    "extDesc": "Σαρώνει και καθαρίζει δικαιώματα ειδοποιήσεων ύποπτων ιστοτόπων. Προστατεύει σε πραγματικό χρόνο από spam και απάτες.",
+    "detailedDescription": "Έχετε κουραστεί να λαμβάνετε ψεύτικες ειδοποιήσεις ιών, παραπλανητικές διαφημίσεις και ανεπιθύμητες ειδοποιήσεις spam στην επιφάνεια εργασίας σας; Οι κακόβουλοι ιστότοποι συχνά σας ξεγελούν ώστε να κάνετε κλικ στο κουμπί «Επιτρέπεται» χρησιμοποιώντας ψεύτικα CAPTCHA ή επείγουσες προειδοποιήσεις ασφαλείας. Μόλις δοθεί άδεια, κατακλύζουν την οθόνη σας με ενοχλητικά αναδυόμενα παράθυρα.\n\nΤο NotiSpam Cleaner είναι ένα ελαφρύ εργαλείο με απόλυτη προτεραιότητα στο απόρρητο, σχεδιασμένο να σαρώνει και να καθαρίζει τις ρυθμίσεις ειδοποιήσεων στο Google Chrome, προστατεύοντάς σας από την κατάχρηση ειδοποιήσεων.\n\n【ΚΥΡΙΑ ΧΑΡΑΚΤΗΡΙΣΤΙΚΑ & ΟΦΕΛΗ】\n■ 1. 100% Προτεραιότητα στο Απόρρητο & Ανοιχτός Κώδικας (Ασφάλεια & Διαφάνεια)\nΌλες οι σαρώσεις και οι αποκλεισμοί εκτελούνται αποκλειστικά τοπικά στη συσκευή σας. Κανένα απολύτως δεδομένο ή ιστορικό περιήγησης δεν συλλέγεται ούτε αποστέλλεται σε εξωτερικούς διακομιστές. Ως επέκταση ανοιχτού κώδικα (άδεια MIT), ο κώδικάς μας είναι δημόσια διαθέσιμος στο GitHub για έλεγχο και επαλήθευση.\nΑποθετήριο GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Άμεση Σάρωση & Μαζικός Αποκλεισμός με Ένα Κλικ\nΕλέγξτε αμέσως τους ιστοτόπους στους οποίους έχετε επιτρέψει ειδοποιήσεις. Η επέκταση διαχωρίζει αυτόματα τους «Αξιόπιστοι ιστότοποι» (όπως Google, Slack, Teams) από τους «Μη επαληθευμένοι / Άγνωστοι», επιτρέποντάς σας να ανακαλέσετε μαζικά τα δικαιώματα όλων των ύποπτων ιστοτόπων.\n\n■ 3. Προστασία σε πραγματικό χρόνο & Σιωπηλός φύλακας (Οικογενειακή λειτουργία)\nΠαρακολουθεί ενεργά τις αλλαγές δικαιωμάτων ειδοποιήσεων. Όταν ένας ύποπτος ιστότοπος αποκτήσει άδεια, η επέκταση τον εντοπίζει αμέσως και τον αποκλείει. Περιλαμβάνει επίσης τη λειτουργία «Σιωπηλός φύλακας (Οικογενειακή λειτουργία)» για αθόρυβο αποκλεισμό στο παρασκήνιο χωρίς ειδοποιήσεις — ιδανική για τους υπολογιστές των μελών της οικογένειας.\n\n【ΤΡΟΠΟΣ ΧΡΗΣΗΣ】\n1. Κάντε κλικ στο εικονίδιο του NotiSpam Cleaner στη γραμμή εργαλείων.\n2. Πατήστε «Σάρωση επιτρεπόμενων ιστοτόπων (Ιστορικό/Καρτέλες)» για ανάλυση των δικαιωμάτων.\n3. Ελέγξτε τη λίστα «Μη επαληθευμένοι / Άγνωστοι» και πατήστε «Αποκλεισμός όλων των μη επαληθευμένων ιστοτόπων».\n4. Διατηρήστε ενεργή την «Προστασία σε πραγματικό χρόνο» για συνεχή ασφάλεια.\n\n【ΣΗΜΑΝΤΙΚΕΣ ΣΗΜΕΙΩΣΕΙΣ & ΠΕΡΙΟΡΙΣΜΟΙ】\n■ Δεν είναι πρόγραμμα αποκλεισμού διαφημίσεων ιστοσελίδων (Adblocker)\nΑυτή η επέκταση αποκλείει ειδικά τα ανεπιθύμητα αναδυόμενα παράθυρα που αποστέλλονται μέσω των εγγενών ειδοποιήσεων του Chrome. Δεν αποκλείει διαφημίσεις banner ή βίντεο μέσα στις ιστοσελίδες.\n\n■ Τεχνικός Περιορισμός Σάρωσης\nΛόγω περιορισμών ασφαλείας του Chrome, οι επεκτάσεις δεν μπορούν να ανακτήσουν απευθείας πλήρη λίστα όλων των ρυθμίσεων ειδοποιήσεων. Το NotiSpam Cleaner εντοπίζει ιστοτόπους διασταυρώνοντας το τοπικό ιστορικό, τους σελιδοδείκτες και τις ανοιχτές καρτέλες σας. Πολύ παλιές άδειες που δεν υπάρχουν πλέον στο ιστορικό μπορούν να ελεγχθούν χειροκίνητα μέσω του συνδέσμου «Άνοιγμα ρυθμίσεων ειδοποιήσεων προγράμματος περιήγησης» στην επέκταση.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_el.png",
+      "images/notispam-cleaner_screen-2_el.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "en": {
+    "locale": "en",
+    "languageNames": [
+      "English",
+      "English (United States)",
+      "English (US)",
+      "英語",
+      "英語（米国）",
+      "英語 (米国)",
+      "英語（アメリカ合衆国）",
+      "英語 (アメリカ合衆国)",
+      "en",
+      "en-US",
+      "en_US"
+    ],
+    "extName": "NotiSpam Cleaner: Notification Spam Blocker",
+    "extDesc": "Scans and cleans suspicious website notification permissions. Protects against spam and scam ads in real-time.",
+    "detailedDescription": "Are you tired of receiving fake virus alerts, click-bait advertisements, and adult content notifications on your desktop? Deceptive websites often trick you into clicking \"Allow Notifications\" using fake captcha prompts or urgent security warnings. Once allowed, they flood you with annoying spam popups.\n\nNotiSpam Cleaner is a privacy-first, lightweight tool designed to scan and clean notification settings in Google Chrome, protecting you from notification abuse.\n\nKEY FEATURES & BENEFITS\n■ 1. 100% Privacy-First & Open-Source (Security & Transparency)\nAll scans and blocks are processed strictly on your local machine. Absolutely zero data is collected or sent off-device. As a fully open-source extension (MIT License), our code is publicly hosted on GitHub for anyone to audit and verify.\nGitHub Repository: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Scan & One-Click Clean\nInstantly audit your allowed notifications list. The extension automatically separates \"Trusted Sites\" (like Google, Slack, Teams) from \"Unverified / Unknown\" ones, letting you revoke permissions from all suspicious sites at once while keeping your trusted ones intact.\n\n■ 3. Real-Time Guard & Silent Protection\nActively monitors notification permission changes. When a suspicious site gets allowed, the extension detects it instantly and blocks it. Includes a \"Silent Guardian (Family Mode)\" to auto-block notifications in the background without showing any alerts—ideal for family members' PCs.\n\nHOW TO USE IT\n1. Click the NotiSpam Cleaner icon in your toolbar.\n2. Click \"Scan Allowed Sites (History/Tabs)\" to analyze notification permissions.\n3. Review \"Unverified / Unknown\" sites and click \"Block All Unverified Sites\" to block them.\n4. Keep the \"Real-time Protection\" toggle active to protect your browser if you accidentally allow a suspicious site in the future.\n\nIMPORTANT NOTES & LIMITATIONS\n■ Not an Adblocker\nThis extension specifically blocks annoying popups generated through Chrome's native push notifications. It is not designed to block general web page advertisements (like banners or video ads).\n\n■ Technical Scanning Limitation\nDue to Chrome security constraints, extensions cannot retrieve a bulk list of all custom notification settings. NotiSpam Cleaner discovers sites by cross-referencing allowed rules with your local history, bookmarks, and open tabs. Very old allowed sites that are no longer in your history or bookmarks may not be scanned (you can open Chrome's native notification settings via the \"Open Notification Settings\" link inside the extension to review all rules manually).",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_en.png",
+      "images/notispam-cleaner_screen-2_en.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "es": {
+    "locale": "es",
+    "languageNames": [
+      "Spanish",
+      "Spanish (Spain)",
+      "スペイン語",
+      "スペイン語（スペイン）",
+      "スペイン語 (スペイン)",
+      "Español",
+      "Español (España)",
+      "es",
+      "es-ES",
+      "es_ES"
+    ],
+    "extName": "NotiSpam Cleaner: Bloqueador de Spam de Notificaciones",
+    "extDesc": "Escanea y limpia los permisos de notificación de sitios web sospechosos. Protege contra spam y anuncios fraudulentos en tiempo real.",
+    "detailedDescription": "¿Estás cansado de recibir falsas alertas de virus, anuncios engañosos y notificaciones de spam en tu escritorio? Los sitios web fraudulentos suelen engañarte para que hagas clic en \"Permitir notificaciones\" mediante falsos controles CAPTCHA o advertencias de seguridad urgentes. Una vez permitidos, inundan tu pantalla con molestas ventanas emergentes incluso cuando el navegador está cerrado.\n\nNotiSpam Cleaner es una herramienta ligera y centrada en la privacidad, diseñada para escanear y limpiar los permisos de notificaciones en Google Chrome, protegiéndote del abuso de notificaciones.\n\n【CARACTERÍSTICAS Y BENEFICIOS PRINCIPALES】\n■ 1. 100% Privacidad Primero y Código Abierto (Seguridad y Transparencia)\nTodos los escaneos y bloqueos se procesan estrictamente de forma local en tu dispositivo. No se recopila ni se envía ningún dato ni historial de navegación a servidores externos. Como extensión de código abierto (Licencia MIT), nuestro código está disponible públicamente en GitHub para que cualquiera pueda auditarlo y verificarlo.\nRepositorio en GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Escaneo Rápido y Limpieza con Un Clic\nAudita al instante tu lista de notificaciones permitidas. La extensión separa automáticamente los \"Sitios de confianza\" (como Google, Slack, Teams) de los sitios \"No verificados / Desconocidos\", permitiéndote revocar los permisos de todos los sitios sospechosos a la vez mientras conservas intactos tus sitios de confianza.\n\n■ 3. Protección en Tiempo Real y Guardián Silencioso (Modo Familiar)\nSupervisa activamente los cambios en los permisos de notificación. Cuando un sitio sospechoso obtiene permiso, la extensión lo detecta al instante y lo bloquea. Incluye el modo \"Guardián silencioso (Modo familiar)\" para bloquear notificaciones automáticamente en segundo plano sin mostrar alertas, ideal para los ordenadores de la familia.\n\n【CÓMO USARLO】\n1. Haz clic en el icono de NotiSpam Cleaner en la barra de herramientas.\n2. Haz clic en \"Escanear sitios permitidos (Historial/Pestañas)\" para analizar los permisos de notificación.\n3. Revisa los sitios \"No verificados / Desconocidos\" y haz clic en \"Bloquear todos los sitios no verificados\".\n4. Mantén activada la opción \"Protección en tiempo real\" para evitar permisos accidentales en el futuro.\n\n【NOTAS IMPORTANTES Y LIMITACIONES TÉCNICAS】\n■ No es un bloqueador de anuncios web (Adblocker)\nEsta extensión bloquea específicamente el spam de notificaciones emergentes del escritorio generadas a través de las notificaciones nativas de Chrome. No está diseñada para ocultar anuncios generales dentro de las páginas web (como banners o anuncios de vídeo).\n\n■ Limitación Técnica de Escaneo\nDebido a restricciones de seguridad de Chrome, las extensiones no pueden obtener directamente una lista masiva de todas las configuraciones de notificaciones. NotiSpam Cleaner descubre sitios cruzando las reglas permitidas con tu historial local, marcadores y pestañas abiertas. Los sitios antiguos que ya no estén en tu historial o marcadores pueden revisarse manualmente mediante el enlace \"Abrir ajustes de notificaciones del navegador\" dentro de la extensión.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_es.png",
+      "images/notispam-cleaner_screen-2_es.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "fa": {
+    "locale": "fa",
+    "languageNames": [
+      "Persian",
+      "ペルシア語",
+      "ペルシャ語",
+      "فارسی",
+      "fa"
+    ],
+    "extName": "NotiSpam Cleaner: مسدودکننده هرزنامه اعلان‌ها",
+    "extDesc": "مجوزهای اعلان وب‌سایت‌های مشکوک را بررسی و پاک‌سازی می‌کند. محافظت بلادرنگ در برابر هرزنامه و تبلیغات جعلی.",
+    "detailedDescription": "آیا از دریافت هشدارهای جعلی ویروس، تبلیغات فریبنده و هرزنامه‌های اعلان روی دسکتاپ خود خسته شده‌اید؟ وب‌سایت‌های فریبکار اغلب با نمایش کپچاهای ساختگی یا هشدارهای امنیتی فوری، شما را وادار به کلیک روی دکمه «Allow / اجازه دادن» می‌کنند. پس از مجوز دادن، حتی زمانی که مرورگر بسته است، صفحه شما را پر از اعلان‌های مزاحم می‌کنند.\n\nNotiSpam Cleaner یک ابزار سبک و متمرکز بر حریم خصوصی است که برای بررسی و پاک‌سازی تنظیمات اعلان در Google Chrome طراحی شده و از مرورگر شما در برابر سوءاستفاده از اعلان‌ها محافظت می‌کند.\n\n【ویژگی‌ها و مزایای کلیدی】\n■ ۱. ۱۰۰٪ حفظ حریم خصوصی و متن‌باز (امنیت و شفافیت)\nتمامی بررسی‌ها و مسدودسازی‌ها کاملاً به صورت محلی روی دستگاه شما انجام می‌شوند. هیچ داده‌ای یا تاریخچه مرورگری جمع‌آوری یا به سرورهای خارجی ارسال نمی‌شود. به عنوان یک افزونه کاملاً متن‌باز (با مجوز MIT)، کد منبع ما به صورت عمومی در GitHub قرار دارد تا هر کسی بتواند آن را بررسی و تایید کند.\nمخزن GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ ۲. بررسی سریع و مسدودسازی گروهی با یک کلیک\nفهرست سایت‌های دارای مجوز اعلان را فوراً بررسی کنید. این افزونه به طور خودکار «سایت‌های مورد اعتماد» (مانند Google، Slack، Teams) را از سایت‌های «تاییدنشده / ناشناس» جدا می‌کند تا بتوانید با یک کلیک مجوز تمام سایت‌های مشکوک را لغو کنید.\n\n■ ۳. محافظت در زمان واقعی و محافظ خاموش (حالت خانواده)\nتغییرات مجوز اعلان‌ها را به صورت زنده پایش می‌کند. به محض اینکه یک سایت مشکوک مجوز بگیرد، افزونه فوراً آن را شناسایی و مسدود می‌کند. همچنین دارای «محافظ خاموش (حالت خانواده)» است که اعلان‌های مزاحم را بی‌صدا در پس‌زمینه و بدون نمایش هشدار مسدود می‌کند — ایده‌آل برای رایانه اعضای خانواده.\n\n【نحوه استفاده】\n۱. روی آیکون NotiSpam Cleaner در نوار ابزار مرورگر کلیک کنید.\n۲. دکمه «بررسی سایت‌های مجاز (تاریخچه/تب‌ها)» را بزنید تا مجوزها تحلیل شوند.\n۳. فهرست سایت‌های «تاییدنشده / ناشناس» را بررسی کرده و روی «مسدود کردن همه سایت‌های تاییدنشده» کلیک کنید.\n۴. گزینه «محافظت در زمان واقعی» را فعال نگه دارید تا در آینده از مجوزهای ناخواسته جلوگیری شود.\n\n【نکات مهم و محدودیت‌های فنی】\n■ مسدودکننده تبلیغات صفحات وب (Adblocker) نیست\nاین افزونه به طور اختصاصی اعلان‌های هرزنامه دسکتاپ را که از سیستم اعلان‌های مرورگر Chrome سوءاستفاده می‌کنند مسدود می‌نماید و تبلیغات معمولی داخل صفحات وب (مانند بنرها یا تبلیغات ویدیویی) را پنهان نمی‌کند.\n\n■ محدودیت فنی در بررسی\nبه دلیل محدودیت‌های امنیتی Chrome، افزونه‌ها نمی‌توانند مستقیماً فهرست کامل تمام قوانین اعلان را دریافت کنند. NotiSpam Cleaner سایت‌ها را با تطبیق دامنههای موجود در تاریخچه محلی، نشانک‌ها و تب‌های باز شناسایی می‌کند. سایت‌های بسیار قدیمی که دیگر در تاریخچه یا نشانک‌ها نیستند را می‌توانید از طریق پیوند «باز کردن تنظیمات اعلان مرورگر» در داخل افزونه به صورت دستی مدیریت کنید.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_fa.png",
+      "images/notispam-cleaner_screen-2_fa.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "fi": {
+    "locale": "fi",
+    "languageNames": [
+      "Finnish",
+      "フィンランド語",
+      "Suomi",
+      "fi"
+    ],
+    "extName": "NotiSpam Cleaner: Roskaposti-ilmoitusten esto",
+    "extDesc": "Tarkistaa ja puhdistaa epäilyttävien sivustojen ilmoitusluvat. Suojaa reaaliaikaisesti roskapostilta ja huijausmainoksilta.",
+    "detailedDescription": "Oletko kyllästynyt väärennettyihin virushälytyksiin, klikkiotsikkomainoksiin ja työpöydälle ilmestyviin roskaposti-ilmoituksiin? Huijaussivustot huijaavat käyttäjiä napsauttamaan \"Salli\"-painiketta tekaistujen CAPTCHA-varmistusten tai kiireellisten tietoturvavaroitusten avulla. Kun lupa on annettu, ne täyttävät ruudun häiritsevillä ponnahdusikkunoilla, vaikka selain olisi suljettu.\n\nNotiSpam Cleaner on yksityisyyttä kunnioittava ja kevyt työkalu, joka tarkistaa ja puhdistaa Google Chromen ilmoitusasetukset sekä suojaa selaintasi ilmoitusten väärinkäytöltä.\n\n【TÄRKEIMMÄT OMINAISUUDET JA EDUT】\n■ 1. 100 % yksityisyys ensin & avoin lähdekoodi (Turvallisuus ja läpinäkyvyys)\nKaikki tarkistukset ja estot suoritetaan täysin paikallisesti omalla laitteellasi. Mitään tietoja tai selaushistoriaa ei kerätä eikä lähetetä ulkopuolisille palvelimille. Täysin avoimen lähdekoodin laajennuksena (MIT-lisenssi) lähdekoodimme on julkisesti tarkasteltavissa GitHubissa.\nGitHub-tietovarasto: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Nopea tarkistus & yhden napsautuksen esto\nTarkista sallittujen ilmoitusten lista hetkessä. Laajennus erottaa automaattisesti \"Luotetut sivustot\" (kuten Google, Slack, Teams) ja \"Vahvistamattomat / Tuntemattomat\" sivustot, jolloin voit poistaa kaikkien epäilyttävien sivustojen luvat yhdellä napsautuksella.\n\n■ 3. Reaaliaikainen suojaus & Hiljainen vartija (Perhetila)\nValvoo ilmoituslupien muutoksia reaaliajassa. Kun epäilyttävä sivusto saa ilmoitusluvan, laajennus havaitsee ja estää sen välittömästi. Sisältää myös \"Hiljainen vartija (Perhetila)\" -toiminnon, joka estää ilmoitukset äänettömästi taustalla ilman ponnahdusikkunoita — erinomainen valinta perheenjäsenten tietokoneille.\n\n【KÄYTTÖOHJEET】\n1. Napsauta työkalupalkin NotiSpam Cleaner -kuvaketta.\n2. Napsauta \"Tarkista sallitut sivustot (Historia/Välilehdet)\" analysoidaksesi ilmoitusluvat.\n3. Tarkista \"Vahvistamattomat / Tuntemattomat\" -sivustot ja napsauta \"Estä kaikki vahvistamattomat sivustot\".\n4. Pidä \"Reaaliaikainen suojaus\" päällä estääksesi vahingossa annetut luvat tulevaisuudessa.\n\n【TÄRKEÄÄ TIETOA JA RAJOITUKSET】\n■ Ei ole tavallinen mainostenesto-ohjelma (Adblocker)\nTämä laajennus estää nimenomaan Chromen omien push-ilmoitusten kautta lähetetyt työpöydän roskaposti-ilmoitukset. Se ei piilota verkkosivujen sisäisiä banneri- tai videomainoksia.\n\n■ Tekninen tarkistusrajoitus\nChromen tietoturvarajoitusten vuoksi laajennukset eivät voi hakea suoraan täydellistä listaa kaikista ilmoitusasetuksista. NotiSpam Cleaner etsii sivustot vertaamalla lupia paikalliseen selaushistoriaan, kirjanmerkkeihin ja avoimiin välilehtiin. Hyvin vanhat luvat, jotka eivät enää ole historiassa tai kirjanmerkeissä, voidaan tarkistaa manuaalisesti laajennuksen \"Avaa selaimen ilmoitusasetukset\" -linkin kautta.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_fi.png",
+      "images/notispam-cleaner_screen-2_fi.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "fr": {
+    "locale": "fr",
+    "languageNames": [
+      "French",
+      "フランス語",
+      "Français",
+      "fr"
+    ],
+    "extName": "NotiSpam Cleaner: Bloqueur de spam de notifications",
+    "extDesc": "Scanne et nettoie les notifications des sites suspects. Protège en temps réel contre le spam et les publicités frauduleuses.",
+    "detailedDescription": "Vous en avez assez de recevoir de fausses alertes de virus, des publicités trompeuses et des notifications de spam sur votre bureau ? Les sites web malveillants vous incitent souvent à cliquer sur « Autoriser les notifications » à l'aide de faux CAPTCHA ou d'alertes de sécurité urgentes. Une fois autorisés, ils inondent votre écran de fenêtres intempestives, même lorsque le navigateur est fermé.\n\nNotiSpam Cleaner est un outil léger et respectueux de la vie privée, conçu pour scanner et nettoyer les paramètres de notification dans Google Chrome afin de vous protéger contre l'abus de notifications.\n\n【FONCTIONNALITÉS ET AVANTAGES CLÉS】\n■ 1. 100 % Respectueux de la Vie Privée & Open-Source (Sécurité et Transparence)\nToutes les analyses et tous les blocages sont effectués strictement en local sur votre appareil. Aucune donnée ni aucun historique de navigation n'est collecté ou envoyé vers des serveurs externes. En tant qu'extension entièrement open-source (licence MIT), notre code est hébergé publiquement sur GitHub pour que chacun puisse l'auditer et le vérifier.\nDépôt GitHub : https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Analyse Rapide & Nettoyage en Un Clic\nAuditez instantanément la liste des sites autorisés à envoyer des notifications. L'extension sépare automatiquement les « Sites de confiance » (comme Google, Slack, Teams) des sites « Non vérifiés / Inconnus », vous permettant de révoquer les permissions de tous les sites suspects en un seul clic.\n\n■ 3. Protection en Temps Réel & Gardien Silencieux (Mode Famille)\nSurveille activement les modifications des permissions de notification. Lorsqu'un site suspect obtient l'autorisation, l'extension le détecte instantanément et le bloque. Inclut également le mode « Gardien silencieux (Mode famille) » pour bloquer automatiquement les notifications en arrière-plan sans afficher d'alertes — idéal pour les ordinateurs des membres de votre famille.\n\n【COMMENT L'UTILISER】\n1. Cliquez sur l'icône NotiSpam Cleaner dans votre barre d'outils.\n2. Cliquez sur « Scanner les sites autorisés (Historique/Onglets) » pour analyser les permissions.\n3. Vérifiez les sites « Non vérifiés / Inconnus » et cliquez sur « Bloquer tous les sites non vérifiés ».\n4. Gardez l'option « Protection en temps réel » activée pour vous protéger en cas d'autorisation accidentelle à l'avenir.\n\n【NOTES IMPORTANTES & LIMITATIONS TECHNIQUES】\n■ Ce n'est pas un bloqueur de publicités web (Adblocker)\nCette extension bloque spécifiquement les notifications push intempestives générées via le système de notifications natif de Chrome. Elle n'est pas conçue pour masquer les publicités classiques au sein des pages web (bannières ou publicités vidéo).\n\n■ Limitation Technique d'Analyse\nEn raison des contraintes de sécurité de Chrome, les extensions ne peuvent pas récupérer directement la liste complète de toutes les règles de notification. NotiSpam Cleaner détecte les sites en croisant les autorisations avec votre historique local, vos favoris et vos onglets ouverts. Les autorisations très anciennes qui ne figurent plus dans votre historique ou vos favoris peuvent être gérées manuellement via le lien « Ouvrir les paramètres de notification du navigateur » intégré à l'extension.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_fr.png",
+      "images/notispam-cleaner_screen-2_fr.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "he": {
+    "locale": "he",
+    "languageNames": [
+      "Hebrew",
+      "ヘブライ語",
+      "עברית",
+      "he",
+      "iw"
+    ],
+    "extName": "NotiSpam Cleaner: חוסם ספאם של התראות",
+    "extDesc": "סורק ומנקה הרשאות התראה של אתרים חשודים. מגן מפני ספאם ופרסומות הונאה בזמן אמת.",
+    "detailedDescription": "נמאס לכם לקבל התראות וירוסים מזויפות, פרסומות פיתיון (Click-bait) והתראות ספאם מטרידות על שולחן העבודה? אתרים זדוניים מרמים משתמשים ללחוץ על \"אפשר התראות\" באמצעות מסכי אימות (CAPTCHA) מזויפים או אזהרות אבטחה דחופות. ברגע שניתן להם אישור, הם מציפים את המסך בחלונות קופצים מטרידים גם כשהדפדפן סגור.\n\nNotiSpam Cleaner הוא כלי קל משקל המעמיד את הפרטיות במקום הראשון, שנועד לסרוק ולנקות את הגדרות ההתראות ב-Google Chrome ולהגן עליכם מפני ניצול לרעה של התראות.\n\n【תכונות ויתרונות מרכזיים】\n■ 1. 100% פרטיות במקום הראשון וקוד פתוח (אבטחה ושקיפות)\nכל הסריקות והחסימות מתבצעות באופן מקומי לחלוטין על המחשב שלכם. אפס נתונים או היסטוריית גלישה נאספים או נשלחים לשרתים חיצוניים. כתוסף בקוד פתוח מלא (רישיון MIT), קוד המקור שלנו זמין לציבור ב-GitHub כדי שכל אחד יוכל לבדוק ולאמת אותו.\nמאגר GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. סריקה מהירה וחסימה גורפת בלחיצה אחת\nבדקו מיד את רשימת האתרים המורשים לשלוח התראות. התוסף מפריד אוטומטית בין \"אתרים מהימנים\" (כגון Google, Slack, Teams) לבין אתרים \"לא מאומתים / לא מוכרים\", ומאפשר לכם לבטל הרשאות מכל האתרים החשודים בבת אחת.\n\n■ 3. הגנה בזמן אמת ושומר שקט (מצב משפחתי)\nמנטר באופן פעיל שינויים בהרשאות התראה. כאשר אתר חשוד מקבל הרשאה, התוסף מזהה זאת מיד וחוסם אותו. כולל גם מצב \"שומר שקט (מצב משפחתי)\" לחסימה אוטומטית ושקטה ברקע ללא הצגת התראות קופצות — אידיאלי למחשבים של בני משפחה.\n\n【איך משתמשים】\n1. לחצו על סמל NotiSpam Cleaner בסרגל הכלים של הדפדפן.\n2. לחצו על \"סרוק אתרים מאושרים (היסטוריה/לשוניות)\" כדי לנתח את הרשאות ההתראה.\n3. עברו על רשימת האתרים המסומנים כ-\"לא מאומתים / לא מוכרים\" ולחצו על \"חסום את כל האתרים הלא מאומתים\".\n4. השאירו את מתג \"הגנה בזמן אמת\" פעיל כדי למנוע אישור שגוי בעתיד.\n\n【הערות חשובות ומגבלות טכניות】\n■ אינו חוסם פרסומות בדפי אינטרנט (Adblocker)\nתוסף זה מתמחה בחסימת התראות ספאם לשולחן העבודה המנצלות את מנגנון ההתראות המובנה של Chrome. הוא אינו מיועד לחסום פרסומות רגילות בתוך דפי אינטרנט (כגון באנרים או פרסומות וידאו).\n\n■ מגבלת סריקה טכנית\nבשל מגבלות האבטחה של Chrome, תוספים אינם יכולים לשלוף ישירות רשימה מלאה של כל הגדרות ההתראות. NotiSpam Cleaner מאתר אתרים על ידי הצלבת הרשאות עם היסטוריית הגלישה המקומית, הסימניות והלשוניות הפתוחות שלכם. אתרים ישנים מאוד שכבר אינם מופיעים בהיסטוריה או בסימניות ניתנים לניהול ידני דרך הקישור \"פתח הגדרות התראה של הדפדפן\" בתוך התוסף.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_he.png",
+      "images/notispam-cleaner_screen-2_he.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "hr": {
+    "locale": "hr",
+    "languageNames": [
+      "Croatian",
+      "クロアチア語",
+      "Hrvatski",
+      "hr"
+    ],
+    "extName": "NotiSpam Cleaner: Blokator neželjenih obavijesti",
+    "extDesc": "Skenira i čisti dopuštenja obavijesti sumnjivih web-mjesta. Štiti u stvarnom vremenu od spama i lažnih oglasa.",
+    "detailedDescription": "Dosta vam je lažnih upozorenja o virusima, prevarantskih oglasa i neželjenih spam obavijesti na radnoj površini? Sumnjiva web-mjesta često vas prevare da kliknete „Dopusti“ pomoću lažnih CAPTCHA provjera ili hitnih sigurnosnih upozorenja. Nakon što im dopustite, preplavljuju vaš zaslon napornim skočnim obavijestima čak i kada je preglednik zatvoren.\n\nNotiSpam Cleaner je lagan alat usmjeren na privatnost, dizajniran za skeniranje i čišćenje postavki obavijesti u pregledniku Google Chrome, štiteći vas od zloupotrebe obavijesti.\n\n【GLAVNE ZNAČAJKE I PREDNOSTI】\n■ 1. 100% privatnost na prvom mjestu i otvoreni kod (Sigurnost i transparentnost)\nSva skeniranja i blokiranja obrađuju se isključivo lokalno na vašem uređaju. Nikakvi podaci niti povijest pregledavanja nikada se ne prikupljaju niti šalju na vanjske poslužitelje. Kao proširenje potpuno otvorenog koda (MIT licenca), naš izvorni kod javno je dostupan na GitHubu kako bi ga svatko mogao provjeriti.\nGitHub repozitorij: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Brzo skeniranje i blokiranje jednim klikom\nTrenutačno provjerite popis dopuštenih obavijesti. Proširenje automatski odvaja „Pouzdana web-mjesta“ (poput Googlea, Slacka, Teamsa) od „Neprovjereno / Nepoznato“, omogućujući vam da jednim klikom opozovete dopuštenja svim sumnjivim stranicama.\n\n■ 3. Zaštita u stvarnom vremenu i Tihi čuvar (Obiteljski način)\nAktivno prati promjene dopuštenja za obavijesti. Kada sumnjivo web-mjesto dobije dopuštenje, proširenje ga odmah prepoznaje i blokira. Uključuje i način „Tihi čuvar (Obiteljski način)“ za tiho automatsko blokiranje u pozadini bez prikazivanja upozorenja — idealno za računala članova obitelji.\n\n【KAKO KORISTITI】\n1. Kliknite ikonu NotiSpam Cleaner na alatnoj traci.\n2. Kliknite „Skeniraj dopuštena web-mjesta (Povijest/Kartice)“ za analizu dopuštenja.\n3. Pregledajte web-mjesta pod „Neprovjereno / Nepoznato“ i kliknite „Blokiraj sva neprovjerena web-mjesta“.\n4. Držite uključenom opciju „Zaštita u stvarnom vremenu“ kako biste spriječili slučajna dopuštenja u budućnosti.\n\n【VAŽNE NAPOMENE I OGRANIČENJA】\n■ Nije klasični blokator oglasa (Adblocker)\nOvo proširenje ciljano blokira neželjene obavijesti na radnoj površini koje zloupotrebljavaju Chromeove izvorne obavijesti. Nije namijenjeno skrivanju uobičajenih banner ili video oglasa unutar samih web-stranica.\n\n■ Tehničko ograničenje skeniranja\nZbog sigurnosnih ograničenja preglednika Chrome, proširenja ne mogu izravno dohvatiti cjelovit popis svih pravila obavijesti. NotiSpam Cleaner pronalazi web-mjesta usporedbom dopuštenih pravila s vašom lokalnom poviješću, oznakama i otvorenim karticama. Vrlo stara dopuštenja koja više nisu u povijesti ili oznakama možete ručno pregledati putem poveznice „Otvori postavke obavijesti preglednika“ unutar proširenja.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_hr.png",
+      "images/notispam-cleaner_screen-2_hr.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "hu": {
+    "locale": "hu",
+    "languageNames": [
+      "Hungarian",
+      "ハンガリー語",
+      "Magyar",
+      "hu"
+    ],
+    "extName": "NotiSpam Cleaner: Kéretlen értesítések blokkolója",
+    "extDesc": "Átvizsgálja és megtisztítja a gyanús webhelyek értesítési engedélyeit. Valós időben véd a spamek és csaló hirdetések ellen.",
+    "detailedDescription": "Elege van a hamis vírusriasztásokból, a kattintásvadász hirdetésekből és az asztalon felugró kéretlen értesítésekből? A megtévesztő webhelyek gyakran hamis CAPTCHA-ellenőrzésekkel vagy sürgős biztonsági figyelmeztetésekkel veszik rá a felhasználókat az „Engedélyezés” gomb megnyomására. Az engedélyezés után még zárt böngésző mellett is elárasztják a képernyőt bosszantó spam üzenetekkel.\n\nA NotiSpam Cleaner egy adatvédelem-központú, pehelykönnyű eszköz, amely átvizsgálja és megtisztítja a Google Chrome értesítési beállításait, megvédve Önt az értesítési visszaélésektől.\n\n【FŐBB JELLEMZŐK ÉS ELŐNYÖK】\n■ 1. 100% adatvédelem és nyílt forráskód (Biztonság és átláthatóság)\nMinden vizsgálat és blokkolás kizárólag helyileg, az Ön eszközén történik. Semmilyen adatot vagy böngészési előzményt nem gyűjtünk és nem küldünk külső szerverekre. Teljesen nyílt forráskódú bővítményként (MIT licenc) a kódunk nyilvánosan elérhető a GitHubon, így bárki ellenőrizheti.\nGitHub adattár: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Gyors vizsgálat és egykattintásos tisztítás\nAzonnal ellenőrizheti az engedélyezett értesítések listáját. A bővítmény automatikusan szétválasztja a „Megbízható webhelyek” (pl. Google, Slack, Teams) és a „Nem ellenőrzött / Ismeretlen” elemeket, így egyetlen kattintással visszavonhatja az összes gyanús webhely engedélyét.\n\n■ 3. Valós idejű védelem és Csendes őrszem (Családi mód)\nAktívan figyeli az értesítési engedélyek változásait. Amikor egy gyanús webhely engedélyt szerez, a bővítmény azonnal észleli és blokkolja. Tartalmazza a „Csendes őrszem (Családi mód)” funkciót is, amely figyelmeztető ablakok nélkül, a háttérben némán blokkolja a kéretlen értesítéseket — ideális családtagok számítógépeihez.\n\n【HASZNÁLAT】\n1. Kattintson a NotiSpam Cleaner ikonra az eszköztáron.\n2. Kattintson az „Engedélyezett webhelyek vizsgálata (Előzmények/Lapok)” gombra az engedélyek elemzéséhez.\n3. Tekintse át a „Nem ellenőrzött / Ismeretlen” webhelyeket, majd kattintson az „Összes nem ellenőrzött webhely blokkolása” gombra.\n4. Tartsa bekapcsolva a „Valós idejű védelem” kapcsolót a jövőbeli véletlen engedélyezések megelőzéséhez.\n\n【FONTOS MEGJEGYZÉSEK ÉS KORLÁTOZÁSOK】\n■ Nem hagyományos reklámblokkoló (Adblocker)\nEz a bővítmény kifejezetten a Chrome natív push-értesítésein keresztül érkező asztali spam üzeneteket blokkolja. Nem a weboldalakon belüli normál banner- vagy videóhirdetések elrejtésére szolgál.\n\n■ Technikai vizsgálati korlátozás\nA Chrome biztonsági korlátozásai miatt a bővítmények nem tudják közvetlenül lekérdezni az összes értesítési szabály teljes listáját. A NotiSpam Cleaner a helyi böngészési előzményekben, könyvjelzőkben és nyitott lapokon található domainek összevetésével fedezi fel a webhelyeket. A nagyon régi, előzményekben már nem szereplő engedélyeket a bővítményben található „Böngésző értesítési beállításainak megnyitása” hivatkozással kezelheti manuálisan.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_hu.png",
+      "images/notispam-cleaner_screen-2_hu.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "id": {
+    "locale": "id",
+    "languageNames": [
+      "Indonesian",
+      "インドネシア語",
+      "Bahasa Indonesia",
+      "id",
+      "in"
+    ],
+    "extName": "NotiSpam Cleaner: Pemblokir Spam Notifikasi",
+    "extDesc": "Memindai dan membersihkan izin notifikasi situs web mencurigakan. Melindungi dari spam dan iklan penipuan secara real-time.",
+    "detailedDescription": "Apakah Anda lelah menerima peringatan virus palsu, iklan jebakan klik (click-bait), dan notifikasi spam yang mengganggu di layar desktop Anda? Situs web penipu sering mengelabui Anda agar mengeklik \"Izinkan Notifikasi\" menggunakan CAPTCHA palsu atau peringatan keamanan mendesak. Setelah diizinkan, situs tersebut membanjiri layar Anda dengan popup spam meskipun browser sudah ditutup.\n\nNotiSpam Cleaner adalah alat ringan yang mengutamakan privasi, dirancang untuk memindai dan membersihkan pengaturan notifikasi di Google Chrome serta melindungi Anda dari penyalahgunaan notifikasi.\n\n【FITUR & MANFAAT UTAMA】\n■ 1. 100% Mengutamakan Privasi & Sumber Terbuka (Keamanan & Transparansi)\nSemua pemindaian dan pemblokiran diproses sepenuhnya secara lokal di perangkat Anda. Sama sekali tidak ada data atau riwayat penjelajahan yang dikumpulkan atau dikirim ke server eksternal. Sebagai ekstensi sumber terbuka sepenuhnya (Lisensi MIT), kode kami tersedia secara publik di GitHub untuk diaudit dan diverifikasi oleh siapa saja.\nRepositori GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Pemindaian Cepat & Pemblokiran Massal Satu Klik\nPeriksa daftar situs yang diizinkan mengirim notifikasi secara instan. Ekstensi ini secara otomatis memisahkan \"Situs Tepercaya\" (seperti Google, Slack, Teams) dari situs \"Belum diverifikasi / Tidak dikenal\", sehingga Anda dapat mencabut izin semua situs mencurigakan sekaligus dengan satu klik.\n\n■ 3. Perlindungan Real-Time & Penjaga Senyap (Mode Keluarga)\nMemantau perubahan izin notifikasi secara aktif. Saat situs mencurigakan mendapatkan izin, ekstensi langsung mendeteksi dan memblokirnya. Dilengkapi juga dengan \"Penjaga Senyap (Mode Keluarga)\" untuk memblokir notifikasi secara otomatis di latar belakang tanpa menampilkan peringatan — sangat cocok untuk PC anggota keluarga.\n\n【CARA MENGGUNAKAN】\n1. Klik ikon NotiSpam Cleaner di bilah alat browser Anda.\n2. Klik \"Pindai situs yang diizinkan (Riwayat/Tab)\" untuk menganalisis izin notifikasi.\n3. Tinjau situs \"Belum diverifikasi / Tidak dikenal\" lalu klik \"Blokir semua situs tak terverifikasi\".\n4. Biarkan opsi \"Perlindungan real-time\" tetap aktif untuk mencegah pemberian izin yang tidak disengaja di masa mendatang.\n\n【CATATAN PENTING & BATASAN TEKNIS】\n■ Bukan Pemblokir Iklan Halaman Web (Adblocker)\nEkstensi ini secara khusus memblokir popup spam desktop yang dikirim melalui fitur notifikasi bawaan Chrome. Ekstensi ini tidak dirancang untuk menyembunyikan iklan umum di dalam halaman web (seperti iklan banner atau video).\n\n■ Batasan Teknis Pemindaian\nKarena batasan keamanan Chrome, ekstensi tidak dapat mengambil daftar lengkap seluruh aturan notifikasi secara langsung. NotiSpam Cleaner menemukan situs dengan mencocokkan domain dari riwayat penjelajahan lokal, bookmark, dan tab yang sedang terbuka. Izin situs yang sangat lama dan tidak lagi ada di riwayat atau bookmark dapat dikelola secara manual melalui tautan \"Buka pengaturan notifikasi browser\" di dalam ekstensi.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_id.png",
+      "images/notispam-cleaner_screen-2_id.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "it": {
+    "locale": "it",
+    "languageNames": [
+      "Italian",
+      "イタリア語",
+      "Italiano",
+      "it"
+    ],
+    "extName": "NotiSpam Cleaner: Blocco notifiche spam",
+    "extDesc": "Scansiona e pulisce i permessi di notifica dei siti sospetti. Protegge in tempo reale da spam e annunci truffaldini.",
+    "detailedDescription": "Sei stanco di ricevere falsi avvisi di virus, pubblicità ingannevoli e fastidiose notifiche spam sul desktop? I siti web malevoli spesso ti inducono con l'inganno a fare clic su \"Consenti notifiche\" mostrando falsi controlli CAPTCHA o avvisi di sicurezza urgenti. Una volta autorizzati, inondano lo schermo di popup fastidiosi anche quando il browser è chiuso.\n\nNotiSpam Cleaner è uno strumento leggero e attento alla privacy, progettato per scansionare e ripulire le impostazioni di notifica in Google Chrome, proteggendoti dagli abusi delle notifiche.\n\n【CARATTERISTICHE E VANTAGGI PRINCIPALI】\n■ 1. 100% Privacy al Primo Posto & Open-Source (Sicurezza e Trasparenza)\nTutte le scansioni e i blocchi vengono elaborati esclusivamente in locale sul tuo dispositivo. Nessun dato o cronologia di navigazione viene mai raccolto o inviato a server esterni. Essendo un'estensione completamente open-source (Licenza MIT), il nostro codice è disponibile pubblicamente su GitHub affinché chiunque possa verificarlo.\nRepository GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Scansione Rapida e Pulizia con Un Clic\nControlla all'istante l'elenco dei siti autorizzati a inviare notifiche. L'estensione separa automaticamente i \"Siti attendibili\" (come Google, Slack, Teams) da quelli \"Non verificati / Sconosciuti\", permettendoti di revocare i permessi a tutti i siti sospetti con un solo clic.\n\n■ 3. Protezione in Tempo Reale e Guardiano Silenzioso (Modalità Famiglia)\nMonitora attivamente le modifiche ai permessi di notifica. Quando un sito sospetto ottiene l'autorizzazione, l'estensione lo rileva istantaneamente e lo blocca. Include anche la modalità \"Guardiano silenzioso (Modalità famiglia)\" per bloccare automaticamente le notifiche in background senza mostrare avvisi — ideale per i PC dei familiari.\n\n【COME USARLO】\n1. Fai clic sull'icona di NotiSpam Cleaner nella barra degli strumenti.\n2. Fai clic su \"Scansiona siti consentiti (Cronologia/Schede)\" per analizzare i permessi di notifica.\n3. Controlla i siti \"Non verificati / Sconosciuti\" e fai clic su \"Blocca tutti i siti non verificati\".\n4. Mantieni attiva la \"Protezione in tempo reale\" per proteggerti da autorizzazioni accidentali future.\n\n【NOTE IMPORTANTI E LIMITAZIONI TECNICHE】\n■ Non è un Adblocker per pagine web\nQuesta estensione blocca specificamente i popup di spam sul desktop generati tramite le notifiche push native di Chrome. Non è progettata per bloccare le normali pubblicità all'interno delle pagine web (come banner o annunci video).\n\n■ Limitazione Tecnica di Scansione\nA causa dei vincoli di sicurezza di Chrome, le estensioni non possono recuperare direttamente un elenco completo di tutte le impostazioni di notifica personalizzate. NotiSpam Cleaner individua i siti incrociando i permessi con la cronologia locale, i preferiti e le schede aperte. I siti autorizzati molto tempo fa che non sono più presenti nella cronologia o nei preferiti possono essere gestiti manualmente tramite il link \"Apri impostazioni notifiche del browser\" all'interno dell'estensione.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_it.png",
+      "images/notispam-cleaner_screen-2_it.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "ja": {
+    "locale": "ja",
+    "languageNames": [
+      "Japanese",
+      "日本語",
+      "ja",
+      "ja-JP",
+      "ja_JP"
+    ],
+    "extName": "NotiSpam Cleaner: 通知スパムクリーナー",
+    "extDesc": "詐欺広告や迷惑通知を送るサイトを履歴等から発見し、簡単な操作で一括ブロック。リアルタイムでブラウザを保護します。",
+    "detailedDescription": "悪質な詐欺広告や、画面に表示される迷惑な通知スパム (偽のウイルス警告やアダルト広告など) にうんざりしていませんか？\n不審なウェブサイトは、嘘の警告やロボット認証などを悪用して、ユーザーに「許可」ボタンをクリックさせようとします。一度許可してしまうと、ブラウザを閉じていても、画面上に不適切な広告や詐欺の警告が大量に届くようになります。\n\nNotiSpam Cleaner は、Google Chrome 内の通知許可設定をスキャン・クリーンアップし、不要な通知スパムからあなたのブラウザを安全に守る、プライバシー優先の軽量ツールです。\n\n【主な機能と特徴】\n■ 1. 100%プライバシー第一 ＆ オープンソース (安全性と透明性)\nすべての処理はローカルで完結し、閲覧履歴やデータが外部サーバーに送信されることは一切ありません。また、完全なオープンソースソフトウェアとしてGitHubでソースコードを公開しており、プログラムの動作や安全性をどなたでも検証できます。\nGitHub リポジトリ: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. 簡単スキャン ＆ ワンクリック一括ブロック\n現在通知を許可しているサイトをスキャンし、「信頼するサイト」 (Google、Slackなど) と、「要確認・未検証のサイト」に自動分類。見覚えのないサイトだけをワンクリックで一括ブロックできます。\n\n■ 3. リアルタイム監視 ＆ サイレント保護\n不審なサイトが通知許可を取得した瞬間に自動検知してブロック。警告ポップアップを表示するモードに加え、警告を表示せずバックグラウンドで自動ブロックする「サイレント保護 (ファミリーモード)」も搭載し、PC操作に不慣れなご家族の保護にも最適です。\n\n【使い方】\n1. ツールバーの「NotiSpam Cleaner」アイコンをクリックします。\n2. 「通知許可サイトをスキャン (履歴・タブ等)」ボタンを押して、現在の許可設定を分析します。\n3. 検出された「要確認・未検証のサイト」を確認し、「未検証のサイトを一括ブロック」をクリックします。\n4. 今後の誤許可を防ぐため、「リアルタイム保護」をオンにしておきましょう。\n\n【ご利用上の注意・技術的制限】\n■ 広告ブロッカー (Adblocker) ではありません\n本拡張機能は、ブラウザの「通知機能」を悪用したデスクトップ通知スパムをブロックすることに特化しています。ウェブページ内に表示される一般的な広告 (バナー広告や動画広告など) を非表示にする機能はありません。\n\n■ 技術的なスキャン制限について\nChrome の安全上の仕様により、拡張機能側からすべての通知許可サイト一覧を直接取得する API は提供されていません。本拡張機能では、お使いの端末の閲覧履歴、ブックマーク、現在開いているタブからドメインを抽出し、それらの通知許可設定をスキャン・照合します。履歴やブックマークにない非常に古い許可ルールはスキャンで検出できない場合があります (その場合は、アプリ内の「ブラウザの通知設定を開く」リンクからブラウザ標準の設定画面を開き、手動で確認・管理することができます)。",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_ja.png",
+      "images/notispam-cleaner_screen-2_ja.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner.png"
+  },
+  "ko": {
+    "locale": "ko",
+    "languageNames": [
+      "Korean",
+      "韓国語",
+      "한국어",
+      "ko",
+      "ko-KR",
+      "ko_KR"
+    ],
+    "extName": "NotiSpam Cleaner: 알림 스팸 차단기",
+    "extDesc": "의심스러운 웹사이트의 알림 권한을 스캔하고 정리합니다. 스팸 및 사기성 광고로부터 실시간으로 보호합니다.",
+    "detailedDescription": "바탕화면에 뜨는 가짜 바이러스 경고, 낚시성 광고, 성인 광고 등 성가신 알림 스팸 때문에 불편하신가요? 악성 웹사이트는 가짜 로봇 인증(CAPTCHA)이나 긴급 보안 경고를 띄워 사용자가 '알림 허용'을 누르도록 유도합니다. 한 번 허용하면 브라우저를 닫아도 화면에 수많은 스팸 알림이 쏟아집니다.\n\nNotiSpam Cleaner는 Google Chrome의 알림 권한 설정을 스캔하고 정리하여 알림 스팸으로부터 브라우저를 안전하게 보호하는 개인정보 보호 중심의 가벼운 도구입니다.\n\n【주요 기능 및 특징】\n■ 1. 100% 개인정보 보호 우선 & 오픈소스 (안전성 및 투명성)\n모든 스캔 및 차단 작업은 사용자 기기 내부(로컬)에서만 처리되며, 방문 기록이나 데이터가 외부 서버로 전송되는 일은 절대 없습니다. 또한 완전한 오픈소스 확장 프로그램(MIT 라이선스)으로서 누구나 코드의 안전성을 직접 검증할 수 있도록 GitHub에 소스 코드를 투명하게 공개하고 있습니다.\nGitHub 저장소: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. 간편한 스캔 & 원클릭 일괄 차단\n현재 알림이 허용된 사이트를 즉시 점검합니다. 신뢰할 수 있는 사이트(Google, Slack, Teams 등)와 '확인 필요 / 미검증' 사이트를 자동으로 분류하여, 의심스러운 사이트의 권한만 원클릭으로 한 번에 차단할 수 있습니다.\n\n■ 3. 실시간 보호 & 자동 보호 (패밀리 모드)\n알림 권한 변경을 실시간으로 감지합니다. 의심스러운 사이트에 알림 권한이 부여되는 즉시 이를 감지하여 차단합니다. 경고 알림창 없이 백그라운드에서 조용히 차단하는 '자동 보호 (패밀리 모드)'도 제공하여 부모님이나 가족의 PC를 보호하는 데에도 최적입니다.\n\n【사용 방법】\n1. 툴바에서 'NotiSpam Cleaner' 아이콘을 클릭합니다.\n2. '알림 허용 사이트 스캔 (방문 기록/탭 등)' 버튼을 눌러 현재 알림 권한을 분석합니다.\n3. 검색된 '확인 필요 / 미검증' 사이트를 확인하고 '미검증 사이트 일괄 차단'을 클릭합니다.\n4. 앞으로 실수로 허용하는 것을 방지하기 위해 '실시간 보호'를 켜 둡니다.\n\n【이용 시 주의사항 및 기술적 제한】\n■ 웹페이지 광고 차단기(Adblocker)가 아닙니다\n본 확장 프로그램은 브라우저의 '알림 기능'을 악용한 데스크톱 푸시 알림 스팸을 차단하는 데 특화되어 있습니다. 웹페이지 내부의 일반 배너 광고나 동영상 광고를 숨기는 기능은 포함되어 있지 않습니다.\n\n■ 기술적 스캔 제한 안내\nChrome 보안 정책상 확장 프로그램이 모든 알림 허용 사이트 목록을 직접 가져오는 API는 제공되지 않습니다. 따라서 NotiSpam Cleaner는 기기의 로컬 방문 기록, 북마크, 현재 열려 있는 탭에서 도메인을 추출하여 알림 권한 여부를 대조합니다. 방문 기록이나 북마크에 남아 있지 않은 아주 오래된 허용 사이트는 확장 프로그램 하단의 '브라우저 알림 설정 열기' 링크를 통해 직접 확인하고 관리하실 수 있습니다.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_ko.png",
+      "images/notispam-cleaner_screen-2_ko.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "lt": {
+    "locale": "lt",
+    "languageNames": [
+      "Lithuanian",
+      "リトアニア語",
+      "Lietuvių",
+      "lt"
+    ],
+    "extName": "NotiSpam Cleaner: Šlamšto pranešimų blokavimas",
+    "extDesc": "Nuskaito ir išvalo įtartinų svetainių pranešimų leidimus. Realiuoju laiku saugo nuo šlamšto ir sukčių reklamų.",
+    "detailedDescription": "Pavargote nuo netikrų virusų įspėjimų, apgaulingų reklamų ir įkyrių šlamšto pranešimų darbalaukyje? Apgaulingos svetainės dažnai apgaule priverčia spustelėti „Leisti“ naudodamos netikras CAPTCHA patikras arba skubius saugumo įspėjimus. Kai tik suteikiate leidimą, jos užtvindo ekraną erzinančiais pranešimais net tada, kai naršyklė uždaryta.\n\nNotiSpam Cleaner yra privatumą tausojantis, lengvas įrankis, skirtas nuskaityti ir išvalyti pranešimų nustatymus „Google Chrome“ naršyklėje bei apsaugoti jus nuo piktnaudžiavimo pranešimais.\n\n【PAGRINDINĖS FUNKCIJOS IR PRIVALUMAI】\n■ 1. 100 % privatumas ir atvirasis kodas (Saugumas ir skaidrumas)\nVisi nuskaitymai ir blokavimai vykdomi tik vietoje, jūsų įrenginyje. Jokie duomenys ar naršymo istorija nėra renkami ar siunčiami į išorinius serverius. Kaip visiškai atvirojo kodo plėtinys (MIT licencija), mūsų kodas yra viešai prieinamas „GitHub“, kad kiekvienas galėtų jį patikrinti.\nGitHub saugykla: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Greitas nuskaitymas ir blokavimas vienu spustelėjimu\nAkimirksniu patikrinkite leidžiamų pranešimų sąrašą. Plėtinys automatiškai atskiria „Patikimos svetainės“ (pvz., Google, Slack, Teams) nuo „Nepatvirtintos / Nežinomos“, todėl galite vienu spustelėjimu atšaukti visų įtartinų svetainių leidimus.\n\n■ 3. Apsauga realiuoju laiku ir Tylusis sargas (Šeimos režimas)\nAktyviai stebi pranešimų leidimų pakeitimus. Kai įtartina svetainė gauna leidimą, plėtinys ją iš karto aptinka ir užblokuoja. Taip pat yra „Tylusis sargas (Šeimos režimas)“, kuris tyliai blokuoja pranešimus fone be jokių įspėjamųjų langų — puikiai tinka šeimos narių kompiuteriams.\n\n【KAIP NAUDOTI】\n1. Spustelėkite NotiSpam Cleaner piktogramą įrankių juostoje.\n2. Spustelėkite „Nuskaityti leidžiamas svetaines (Istorija/Kortelės)“, kad išanalizuotumėte leidimus.\n3. Peržiūrėkite „Nepatvirtintos / Nežinomos“ svetaines ir spustelėkite „Blokuoti visas nepatvirtintas svetaines“.\n4. Palikite įjungtą „Apsauga realiuoju laiku“, kad apsisaugotumėte nuo atsitiktinių leidimų ateityje.\n\n【SVARBIOS PASTABOS IR APRIBOJIMAI】\n■ Tai nėra tinklalapių reklamų blokatorius (Adblocker)\nŠis plėtinys specializuojasi blokuojant darbalaukio šlamšto pranešimus, siunčiamus per „Chrome“ pranešimų sistemą. Jis nėra skirtas blokuoti įprastas reklamjuostes ar vaizdo reklamas pačiuose tinklalapiuose.\n\n■ Techninis nuskaitymo apribojimas\nDėl „Chrome“ saugumo apribojimų plėtiniai negali tiesiogiai gauti viso visų pranešimų taisyklių sąrašo. NotiSpam Cleaner aptinka svetaines lygindamas leidimus su jūsų vietine naršymo istorija, žymėmis ir atidarytomis kortelėmis. Labai senus leidimus, kurių nebėra istorijoje ar žymėse, galite peržiūrėti rankiniu būdu per nuorodą „Atidaryti naršyklės pranešimų nustatymus“ plėtinyje.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_lt.png",
+      "images/notispam-cleaner_screen-2_lt.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "ms": {
+    "locale": "ms",
+    "languageNames": [
+      "Malay",
+      "マレー語",
+      "Bahasa Melayu",
+      "ms"
+    ],
+    "extName": "NotiSpam Cleaner: Penyekat Spam Pemberitahuan",
+    "extDesc": "Mengimbas dan membersihkan kebenaran pemberitahuan laman web mencurigakan. Melindungi daripada spam dan iklan penipuan.",
+    "detailedDescription": "Adakah anda bosan menerima amaran virus palsu, iklan umpan klik, dan pemberitahuan spam yang mengganggu di skrin desktop anda? Laman web penipuan sering memperdaya anda untuk mengklik \"Benarkan\" dengan memaparkan pengesahan CAPTCHA palsu atau amaran keselamatan kecemasan. Sebaik sahaja dibenarkan, ia membanjiri skrin anda dengan tetingkap timbul spam walaupun pelayar telah ditutup.\n\nNotiSpam Cleaner ialah alat ringan yang mengutamakan privasi, direka untuk mengimbas dan membersihkan tetapan pemberitahuan dalam Google Chrome bagi melindungi anda daripada penyalahgunaan pemberitahuan.\n\n【CIRI-CIRI & MANFAAT UTAMA】\n■ 1. 100% Mengutamakan Privasi & Sumber Terbuka (Keselamatan & Ketelusan)\nSemua imbasan dan sekatan diproses sepenuhnya secara tempatan pada peranti anda. Tiada sebarang data atau sejarah pelayaran dikumpul atau dihantar ke pelayan luaran. Sebagai sambungan sumber terbuka sepenuhnya (Lesen MIT), kod sumber kami dihoskan secara terbuka di GitHub untuk diaudit dan disahkan oleh sesiapa sahaja.\nRepositori GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Imbasan Pantas & Sekatan Pukal Satu Klik\nSemak senarai pemberitahuan yang dibenarkan dengan serta-merta. Sambungan ini secara automatik mengasingkan \"Laman Dipercayai\" (seperti Google, Slack, Teams) daripada laman \"Tidak disahkan / Tidak diketahui\", membolehkan anda membatalkan kebenaran semua laman mencurigakan sekaligus dengan satu klik.\n\n■ 3. Perlindungan Masa Nyata & Penjaga Senyap (Mod Keluarga)\nMemantau perubahan kebenaran pemberitahuan secara aktif. Apabila laman mencurigakan mendapat kebenaran, sambungan mengesannya serta-merta dan menyekatnya. Turut menyertakan \"Penjaga Senyap (Mod Keluarga)\" untuk menyekat pemberitahuan secara automatik di latar belakang tanpa memaparkan amaran — sesuai untuk PC ahli keluarga.\n\n【CARA PENGGUNAAN】\n1. Klik ikon NotiSpam Cleaner pada bar alat pelayar anda.\n2. Klik \"Imbas laman dibenarkan (Sejarah/Tab)\" untuk menganalisis kebenaran pemberitahuan.\n3. Semak laman \"Tidak disahkan / Tidak diketahui\" dan klik \"Sekat semua laman tidak disahkan\".\n4. Pastikan togol \"Perlindungan masa nyata\" kekal aktif untuk mengelakkan kebenaran tidak sengaja pada masa hadapan.\n\n【NOTA PENTING & HAD TEKNIKAL】\n■ Bukan Penyekat Iklan Halaman Web (Adblocker)\nSambungan ini khusus menyekat tetingkap timbul spam desktop yang dijana melalui pemberitahuan tolak asli Chrome. Ia tidak direka untuk menyembunyikan iklan halaman web biasa (seperti sepanduk atau iklan video).\n\n■ Had Imbasan Teknikal\nDisebabkan kekangan keselamatan Chrome, sambungan tidak dapat mengambil senarai pukal semua tetapan pemberitahuan secara terus. NotiSpam Cleaner mengesan laman dengan membuat rujukan silang antara peraturan yang dibenarkan dengan sejarah tempatan, penanda buku, dan tab terbuka anda. Laman lama yang tiada lagi dalam sejarah atau penanda buku boleh diuruskan secara manual melalui pautan \"Buka tetapan pemberitahuan pelayar\" di dalam sambungan.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_ms.png",
+      "images/notispam-cleaner_screen-2_ms.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "nl": {
+    "locale": "nl",
+    "languageNames": [
+      "Dutch",
+      "オランダ語",
+      "Nederlands",
+      "nl"
+    ],
+    "extName": "NotiSpam Cleaner: Meldingsspamblokkering",
+    "extDesc": "Scant en verwijdert meldingsrechten van verdachte websites. Beschermt in realtime tegen spam en nep-advertenties.",
+    "detailedDescription": "Bent u die valse virusmeldingen, clickbait-advertenties en ongewenste spammeldingen op uw bureaublad ook zo zat? Misleidende websites verleiden u vaak om op 'Toestaan' te klikken via neppe CAPTCHA-controles of dringende beveiligingswaarschuwingen. Zodra u toestemming geeft, overspoelen ze uw scherm met irritante pop-ups, zelfs wanneer uw browser gesloten is.\n\nNotiSpam Cleaner is een lichtgewicht, privacygerichte tool die is ontworpen om meldingsinstellingen in Google Chrome te scannen en op te schonen, zodat u beschermd bent tegen meldingsmisbruik.\n\n【BELANGRIJKSTE FUNCTIES & VOORDELEN】\n■ 1. 100% Privacy-First & Open-Source (Veiligheid & Transparantie)\nAlle scans en blokkades worden uitsluitend lokaal op uw eigen apparaat uitgevoerd. Er worden absoluut geen gegevens of browsergeschiedenis verzameld of naar externe servers verzonden. Als volledig open-source extensie (MIT-licentie) staat onze broncode openbaar op GitHub, zodat iedereen deze kan controleren.\nGitHub-repository: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Snel Scannen & Opschonen met Één Klik\nControleer direct uw lijst met toegestane meldingen. De extensie scheidt automatisch 'Vertrouwde sites' (zoals Google, Slack, Teams) van 'Niet-geverifieerd / Onbekend', zodat u met één klik de rechten van alle verdachte websites kunt intrekken terwijl uw vertrouwde sites behouden blijven.\n\n■ 3. Realtime Bescherming & Stille Beschermer (Gezinsmodus)\nHoudt wijzigingen in meldingsrechten actief in de gaten. Wanneer een verdachte site toestemming krijgt, detecteert en blokkeert de extensie deze onmiddellijk. Bevat ook een 'Stille beschermer (Gezinsmodus)' om meldingen stil op de achtergrond te blokkeren zonder waarschuwingspop-ups — ideaal voor de pc's van gezinsleden.\n\n【HOE GEBRUIKT U HET】\n1. Klik op het NotiSpam Cleaner-pictogram in uw werkbalk.\n2. Klik op 'Toegestane sites scannen (Geschiedenis/Tabbladen)' om uw meldingsrechten te analyseren.\n3. Controleer de lijst 'Niet-geverifieerd / Onbekend' en klik op 'Alle niet-geverifieerde sites blokkeren'.\n4. Houd 'Realtime bescherming' ingeschakeld om te voorkomen dat u in de toekomst per ongeluk een verdachte site toestaat.\n\n【BELANGRIJKE OPMERKINGEN & BEPERKINGEN】\n■ Geen traditionele Adblocker\nDeze extensie blokkeert specifiek irritante bureaubladmeldingen die via het ingebouwde pushmeldingssysteem van Chrome worden verzonden. Het is niet bedoeld om gewone banner- of videoadvertenties binnen webpagina's te verbergen.\n\n■ Technische Scanbeperking\nVanwege beveiligingsbeperkingen in Chrome kunnen extensies geen volledige lijst van alle aangepaste meldingsinstellingen rechtstreeks opvragen. NotiSpam Cleaner spoort websites op door toegestane regels te vergelijken met uw lokale geschiedenis, bladwijzers en geopende tabbladen. Zeer oude toestemmingen die niet meer in uw geschiedenis of bladwijzers staan, kunt u handmatig beheren via de link 'Meldingsinstellingen van browser openen' in de extensie.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_nl.png",
+      "images/notispam-cleaner_screen-2_nl.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "no": {
+    "locale": "no",
+    "languageNames": [
+      "Norwegian",
+      "Norwegian (Bokmål)",
+      "ノルウェー語",
+      "ノルウェー語（ブークモール）",
+      "ノルウェー語 (ブークモール)",
+      "Norsk",
+      "Norsk (Bokmål)",
+      "no",
+      "nb",
+      "nb-NO",
+      "nb_NO"
+    ],
+    "extName": "NotiSpam Cleaner: Blokkering av søppelvarsler",
+    "extDesc": "Skanner og rydder varslingstillatelser fra mistenkelige nettsteder. Beskytter i sanntid mot spam og svindelannonser.",
+    "detailedDescription": "Er du lei av falske virusvarsler, klikkagn-annonser og påtrengende søppelvarsler på skrivebordet? Villedende nettsteder lurer deg ofte til å klikke «Tillat» ved hjelp av falske CAPTCHA-kontroller eller akutte sikkerhetsadvarsler. Når de først har fått tillatelse, oversvømmer de skjermen med irriterende sprettoppvarsler selv når nettleseren er lukket.\n\nNotiSpam Cleaner er et lettvektsverktøy med personvern i fokus, utviklet for å skanne og rydde opp i varslingsinnstillingene i Google Chrome og beskytte deg mot misbruk av varsler.\n\n【VIKTIGSTE FUNKSJONER OG FORDELER】\n■ 1. 100 % personvern først & Åpen kildekode (Sikkerhet og åpenhet)\nAlle skanninger og blokkeringer behandles utelukkende lokalt på din egen maskin. Ingen data eller nettleserlogg samles inn eller sendes til eksterne servere. Som en fullstendig åpen kildekode-utvidelse (MIT-lisens) ligger kilden åpent på GitHub slik at alle kan revidere og bekrefte den.\nGitHub-pakkebrønn: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Rask skanning & blokkering med ett klikk\nGå gjennom listen over tillatte varsler på sekunder. Utvidelsen skiller automatisk «Klarerte nettsteder» (som Google, Slack, Teams) fra «Uverifiserte / Ukjente», slik at du kan trekke tilbake tillatelser fra alle mistenkelige nettsteder samtidig.\n\n■ 3. Sanntidsbeskyttelse & Stille vokter (Familiemodus)\nOvervåker endringer i varslingstillatelser kontinuerlig. Når et mistenkelig nettsted får tillatelse, oppdages og blokkeres det umiddelbart. Inkluderer også «Stille vokter (Familiemodus)» for å blokkere varsler stille i bakgrunnen uten varselbokser — ideelt for familiemedlemmers PC-er.\n\n【SLIK BRUKER DU DEN】\n1. Klikk på NotiSpam Cleaner-ikonet i verktøylinjen.\n2. Klikk på «Skann tillatte nettsteder (Logg/Faner)» for å analysere varslingstillatelsene.\n3. Se gjennom «Uverifiserte / Ukjente» nettsteder og klikk på «Blokker alle uverifiserte nettsteder».\n4. Hold «Sanntidsbeskyttelse» aktivert for å hindre utilsiktede tillatelser i fremtiden.\n\n【VIKTIGE MERKNADER OG BEGRENSNINGER】\n■ Ikke en vanlig annonseblokkerer (Adblocker)\nDenne utvidelsen blokkerer spesifikt plagsomme skrivebords-sprettoppvarsler sendt gjennom Chromes innebygde push-varsler. Den er ikke laget for å fjerne vanlige banner- eller videoannonser inne på nettsider.\n\n■ Teknisk skannebegrensning\nPå grunn av sikkerhetsbegrensninger i Chrome kan ikke utvidelser hente ut en samlet liste over alle varslingsregler direkte. NotiSpam Cleaner finner nettsteder ved å kryssjekke tillatte regler mot din lokale logg, bokmerker og åpne faner. Svært gamle tillatelser som ikke lenger finnes i loggen eller bokmerkene, kan administreres manuelt via lenken «Åpne varslingsinnstillinger i nettleseren» i utvidelsen.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_no.png",
+      "images/notispam-cleaner_screen-2_no.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "pl": {
+    "locale": "pl",
+    "languageNames": [
+      "Polish",
+      "ポーランド語",
+      "Polski",
+      "pl"
+    ],
+    "extName": "NotiSpam Cleaner: Blokada spamu powiadomień",
+    "extDesc": "Skanuje i czyści uprawnienia powiadomień podejrzanych stron. Chroni w czasie rzeczywistym przed spamem i oszustwami.",
+    "detailedDescription": "Masz dość fałszywych alertów o wirusach, reklam typu clickbait i natrętnych powiadomień spamowych na pulpicie? Nieuczciwe strony internetowe często podstępem skłaniają do kliknięcia „Zezwalaj” za pomocą fałszywych testów CAPTCHA lub pilnych ostrzeżeń bezpieczeństwa. Po udzieleniu zgody zalewają ekran uciążliwymi wyskakującymi okienkami nawet wtedy, gdy przeglądarka jest zamknięta.\n\nNotiSpam Cleaner to lekkie, stawiające prywatność na pierwszym miejscu narzędzie do skanowania i czyszczenia ustawień powiadomień w Google Chrome, chroniące przed nadużyciami powiadomień.\n\n【GŁÓWNE FUNKCJE I ZALETY】\n■ 1. 100% prywatności i Open-Source (Bezpieczeństwo i przejrzystość)\nWszystkie skanowania i blokady są przetwarzane wyłącznie lokalnie na Twoim urządzeniu. Żadne dane ani historia przeglądania nie są gromadzone ani wysyłane na zewnętrzne serwery. Jako rozszerzenie w pełni open-source (licencja MIT), nasz kod źródłowy jest publicznie dostępny na GitHubie do wglądu i weryfikacji.\nRepozytorium GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Szybkie skanowanie i czyszczenie jednym kliknięciem\nBłyskawicznie sprawdź listę dozwolonych powiadomień. Rozszerzenie automatycznie oddziela „Zaufane witryny” (takie jak Google, Slack, Teams) od witryn „Niezweryfikowane / Nieznane”, pozwalając jednym kliknięciem cofnąć uprawnienia wszystkim podejrzanym stronom.\n\n■ 3. Ochrona w czasie rzeczywistym i Cichy strażnik (Tryb rodzinny)\nAktywnie monitoruje zmiany uprawnień powiadomień. Gdy podejrzana witryna uzyska zgodę, rozszerzenie natychmiast ją wykrywa i blokuje. Zawiera również tryb „Cichy strażnik (Tryb rodzinny)” do automatycznego, cichego blokowania powiadomień w tle bez wyświetlania alertów — idealny na komputery członków rodziny.\n\n【JAK UŻYWAĆ】\n1. Kliknij ikonę NotiSpam Cleaner na pasku narzędzi.\n2. Kliknij „Skanuj dozwolone witryny (Historia/Karty)”, aby przeanalizować uprawnienia powiadomień.\n3. Przejrzyj witryny „Niezweryfikowane / Nieznane” i kliknij „Zablokuj wszystkie niezweryfikowane witryny”.\n4. Pozostaw włączoną opcję „Ochrona w czasie rzeczywistym”, aby chronić się przed przypadkowym udzieleniem zgody w przyszłości.\n\n【WAŻNE UWAGI I OGRANICZENIA TECHNICZNE】\n■ To nie jest bloker reklam na stronach (Adblocker)\nTo rozszerzenie blokuje konkretnie uciążliwe powiadomienia spamowe na pulpicie generowane przez natywny system powiadomień Chrome. Nie służy do ukrywania zwykłych banerów ani reklam wideo wewnątrz stron internetowych.\n\n■ Techniczne ograniczenie skanowania\nZe względu na ograniczenia bezpieczeństwa Chrome rozszerzenia nie mogą pobrać bezpośrednio pełnej listy wszystkich niestandardowych reguł powiadomień. NotiSpam Cleaner wykrywa witryny, porównując uprawnienia z lokalną historią przeglądania, zakładkami i otwartymi kartami. Bardzo stare uprawnienia, których nie ma już w historii ani zakładkach, można sprawdzić ręcznie za pomocą linku „Otwórz ustawienia powiadomień przeglądarki” wewnątrz rozszerzenia.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_pl.png",
+      "images/notispam-cleaner_screen-2_pl.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "pt_BR": {
+    "locale": "pt_BR",
+    "languageNames": [
+      "Portuguese (Brazil)",
+      "ポルトガル語（ブラジル）",
+      "ポルトガル語 (ブラジル)",
+      "Português (Brasil)",
+      "pt_BR",
+      "pt-BR"
+    ],
+    "extName": "NotiSpam Cleaner: Bloqueador de Spam de Notificações",
+    "extDesc": "Verifica e limpa permissões de notificação de sites suspeitos. Protege contra spam e anúncios enganosos em tempo real.",
+    "detailedDescription": "Você está cansado de receber falsos alertas de vírus, anúncios enganosos (click-bait) e notificações de spam na sua área de trabalho? Sites maliciosos frequentemente enganam você para clicar em \"Permitir notificações\" usando falsas verificações CAPTCHA ou avisos urgentes de segurança. Uma vez permitidos, eles inundam sua tela com pop-ups irritantes mesmo quando o navegador está fechado.\n\nO NotiSpam Cleaner é uma ferramenta leve e focada em privacidade, projetada para verificar e limpar as configurações de notificação no Google Chrome, protegendo você contra o abuso de notificações.\n\n【PRINCIPAIS RECURSOS E BENEFÍCIOS】\n■ 1. 100% Privacidade em Primeiro Lugar e Código Aberto (Segurança e Transparência)\nTodas as verificações e bloqueios são processados estritamente no seu dispositivo local. Absolutamente nenhum dado ou histórico de navegação é coletado ou enviado para servidores externos. Como uma extensão totalmente de código aberto (Licença MIT), nosso código está hospedado publicamente no GitHub para qualquer pessoa auditar e verificar.\nRepositório no GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Verificação Rápida e Limpeza com Um Clique\nAudite instantaneamente sua lista de notificações permitidas. A extensão separa automaticamente os \"Sites confiáveis\" (como Google, Slack, Teams) dos \"Não verificados / Desconhecidos\", permitindo revogar as permissões de todos os sites suspeitos de uma só vez.\n\n■ 3. Proteção em Tempo Real e Guardião Silencioso (Modo Familiar)\nMonitora ativamente alterações nas permissões de notificação. Quando um site suspeito obtém permissão, a extensão o detecta instantaneamente e o bloqueia. Inclui também o \"Guardião silencioso (Modo familiar)\" para bloquear notificações automaticamente em segundo plano sem exibir alertas — ideal para os computadores da família.\n\n【COMO USAR】\n1. Clique no ícone do NotiSpam Cleaner na barra de ferramentas.\n2. Clique em \"Verificar sites permitidos (Histórico/Abas)\" para analisar as permissões de notificação.\n3. Revise os sites \"Não verificados / Desconhecidos\" e clique em \"Bloquear todos os sites não verificados\".\n4. Mantenha a opção \"Proteção em tempo real\" ativada para evitar permissões acidentais no futuro.\n\n【NOTAS IMPORTANTES E LIMITAÇÕES TÉCNICAS】\n■ Não é um bloqueador de anúncios de páginas (Adblocker)\nEsta extensão bloqueia especificamente pop-ups irritantes gerados através das notificações push nativas do Chrome. Ela não foi projetada para ocultar anúncios comuns dentro de páginas da web (como banners ou anúncios em vídeo).\n\n■ Limitação Técnica de Verificação\nDevido a restrições de segurança do Chrome, as extensões não podem obter diretamente uma lista completa de todas as configurações de notificação. O NotiSpam Cleaner descobre sites cruzando as regras permitidas com seu histórico local, favoritos e abas abertas. Sites permitidos muito antigos que não estão mais no histórico ou nos favoritos podem ser gerenciados manualmente pelo link \"Abrir configurações de notificação do navegador\" dentro da extensão.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_pt_BR.png",
+      "images/notispam-cleaner_screen-2_pt_BR.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "pt_PT": {
+    "locale": "pt_PT",
+    "languageNames": [
+      "Portuguese (Portugal)",
+      "ポルトガル語（ポルトガル）",
+      "ポルトガル語 (ポルトガル)",
+      "Português (Portugal)",
+      "pt_PT",
+      "pt-PT"
+    ],
+    "extName": "NotiSpam Cleaner: Bloqueador de Notificações de Spam",
+    "extDesc": "Analisa e limpa permissões de notificação de sites suspeitos. Protege contra spam e anúncios fraudulentos em tempo real.",
+    "detailedDescription": "Está cansado de receber falsos alertas de vírus, anúncios enganosos e notificações de spam no seu ambiente de trabalho? Os sites maliciosos enganam frequentemente os utilizadores para clicarem em \"Permitir notificações\" através de falsos desafios CAPTCHA ou avisos de segurança urgentes. Uma vez autorizados, inundam o ecrã com pop-ups irritantes mesmo quando o navegador está fechado.\n\nO NotiSpam Cleaner é uma ferramenta leve que dá prioridade à privacidade, concebida para analisar e limpar as definições de notificação no Google Chrome, protegendo-o contra o abuso de notificações.\n\n【PRINCIPAIS FUNCIONALIDADES E VANTAGENS】\n■ 1. 100% Privacidade em Primeiro Lugar e Código Aberto (Segurança e Transparência)\nTodas as análises e bloqueios são processados estritamente de forma local no seu dispositivo. Nenhum dado ou histórico de navegação é recolhido ou enviado para servidores externos. Como extensão totalmente open-source (Licença MIT), o nosso código está disponível publicamente no GitHub para que qualquer pessoa o possa auditar e verificar.\nRepositório GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Análise Rápida e Limpeza com Um Clique\nReveja instantaneamente a sua lista de notificações permitidas. A extensão separa automaticamente os \"Sites fidedignos\" (como Google, Slack, Teams) dos \"Não verificados / Desconhecidos\", permitindo-lhe revogar as permissões de todos os sites suspeitos de uma só vez.\n\n■ 3. Proteção em Tempo Real e Guardião Silencioso (Modo Familiar)\nMonitoriza ativamente as alterações às permissões de notificação. Quando um site suspeito obtém permissão, a extensão deteta-o instantaneamente e bloqueia-o. Inclui também o modo \"Guardião silencioso (Modo familiar)\" para bloquear automaticamente notificações em segundo plano sem mostrar alertas — ideal para os computadores de familiares.\n\n【COMO UTILIZAR】\n1. Clique no ícone do NotiSpam Cleaner na barra de ferramentas.\n2. Clique em \"Analisar sites permitidos (Histórico/Separadores)\" para analisar as permissões de notificação.\n3. Reveja os sites \"Não verificados / Desconhecidos\" e clique em \"Bloquear todos os sites não verificados\".\n4. Mantenha a opção \"Proteção em tempo real\" ativa para evitar autorizações acidentais no futuro.\n\n【NOTAS IMPORTANTES E LIMITAÇÕES TÉCNICAS】\n■ Não é um bloqueador de anúncios web (Adblocker)\nEsta extensão bloqueia especificamente pop-ups de spam gerados através das notificações push nativas do Chrome. Não se destina a ocultar anúncios gerais dentro das páginas web (como banners ou anúncios de vídeo).\n\n■ Limitação Técnica de Análise\nDevido a restrições de segurança do Chrome, as extensões não conseguem obter diretamente uma lista global de todas as definições de notificação. O NotiSpam Cleaner descobre sites cruzando as regras permitidas com o seu histórico local, marcadores e separadores abertos. Autorizações muito antigas que já não constem do histórico ou dos marcadores podem ser geridas manualmente através da ligação \"Abrir definições de notificações do navegador\" dentro da extensão.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_pt_PT.png",
+      "images/notispam-cleaner_screen-2_pt_PT.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "ro": {
+    "locale": "ro",
+    "languageNames": [
+      "Romanian",
+      "ルーマニア語",
+      "Română",
+      "ro"
+    ],
+    "extName": "NotiSpam Cleaner: Blocant de notificări spam",
+    "extDesc": "Scanează și curăță permisiunile de notificare ale site-urilor suspecte. Protejează în timp real împotriva spamului și reclamelor.",
+    "detailedDescription": "V-ați săturat să primiți alerte false de viruși, reclame înșelătoare și notificări spam pe desktop? Site-urile web înșelătoare vă păcălesc adesea să faceți clic pe „Permiteți” folosind verificări CAPTCHA false sau avertismente urgente de securitate. Odată permise, acestea vă inundă ecranul cu ferestre pop-up enervante chiar și atunci când browserul este închis.\n\nNotiSpam Cleaner este un instrument ușor, axat pe confidențialitate, conceput pentru a scana și curăța setările de notificare din Google Chrome, protejându-vă împotriva abuzului de notificări.\n\n【CARACTERISTICI ȘI BENEFICII PRINCIPALE】\n■ 1. 100% Confidențialitate pe Primul Loc & Open-Source (Securitate și Transparență)\nToate scanările și blocările sunt procesate strict local pe dispozitivul dvs. Absolut niciun fel de date sau istoric de navigare nu este colectat sau trimis către servere externe. Fiind o extensie complet open-source (Licență MIT), codul nostru este găzduit public pe GitHub pentru ca oricine să îl poată verifica.\nDepozit GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Scanare Rapidă & Curățare cu Un Singur Clic\nVerificați instantaneu lista site-urilor cu notificări permise. Extensia separă automat „Site-uri de încredere” (precum Google, Slack, Teams) de cele „Neverificate / Necunoscute”, permițându-vă să revocați permisiunile tuturor site-urilor suspecte dintr-o dată.\n\n■ 3. Protecție în Timp Real & Gardian Silențios (Mod Familie)\nMonitorizează activ modificările permisiunilor de notificare. Când un site suspect primește permisiunea, extensia îl detectează instantaneu și îl blochează. Include și modul „Gardian silențios (Mod familie)” pentru a bloca automat notificările în fundal fără a afișa alerte — ideal pentru calculatoarele membrilor familiei.\n\n【CUM SE UTILIZEAZĂ】\n1. Faceți clic pe pictograma NotiSpam Cleaner din bara de instrumente.\n2. Apăsați pe „Scanează site-urile permise (Istoric/File)” pentru a analiza permisiunile de notificare.\n3. Verificați site-urile „Neverificate / Necunoscute” și faceți clic pe „Blochează toate site-urile neverificate”.\n4. Păstrați activată opțiunea „Protecție în timp real” pentru a preveni permisiunile accidentale pe viitor.\n\n【NOTE IMPORTANTE ȘI LIMITĂRI TEHNICE】\n■ Nu este un Adblocker pentru pagini web\nAceastă extensie blochează în mod specific ferestrele pop-up spam generate prin notificările push native din Chrome. Nu este concepută pentru a ascunde reclamele obișnuite din interiorul paginilor web (cum ar fi bannerele sau reclamele video).\n\n■ Limitare Tehnică de Scanare\nDin cauza restricțiilor de securitate din Chrome, extensiile nu pot prelua direct o listă completă cu toate setările de notificare. NotiSpam Cleaner descoperă site-urile prin corelarea regulilor permise cu istoricul local, marcajele și filele deschise. Site-urile permise foarte vechi care nu mai apar în istoric sau marcaje pot fi gestionate manual prin linkul „Deschide setările de notificare ale browserului” din extensie.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_ro.png",
+      "images/notispam-cleaner_screen-2_ro.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "ru": {
+    "locale": "ru",
+    "languageNames": [
+      "Russian",
+      "Russian (Russia)",
+      "ロシア語",
+      "ロシア語（ロシア）",
+      "ロシア語 (ロシア)",
+      "Русский",
+      "Русский (Россия)",
+      "ru",
+      "ru-RU",
+      "ru_RU"
+    ],
+    "extName": "NotiSpam Cleaner: Блокировщик спам-уведомлений",
+    "extDesc": "Сканирует и очищает разрешения на уведомления от подозрительных сайтов. Защита от спама и мошеннической рекламы в реальном времени.",
+    "detailedDescription": "Устали от поддельных предупреждений о вирусах, кликбейтной рекламы и назойливых спам-уведомлений на рабочем столе? Мошеннические сайты часто обманом заставляют нажать «Разрешить уведомления», используя фальшивые проверки CAPTCHA или срочные предупреждения системы безопасности. Получив разрешение, они заваливают экран всплывающими окнами даже при закрытом браузере.\n\nNotiSpam Cleaner — это легкий инструмент с приоритетом конфиденциальности, созданный для сканирования и очистки настроек уведомлений в Google Chrome и надежной защиты от спам-рассылок.\n\n【ОСНОВНЫЕ ВОЗМОЖНОСТИ И ПРЕИМУЩЕСТВА】\n■ 1. 100% конфиденциальность и открытый исходный код (Безопасность и прозрачность)\nВсе операции сканирования и блокировки выполняются исключительно локально на вашем устройстве. Никакие данные или история браузера не собираются и не передаются на внешние серверы. Расширение имеет полностью открытый исходный код (лицензия MIT), опубликованный на GitHub для свободной проверки.\nРепозиторий GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Быстрое сканирование и очистка в один клик\nМгновенно проверяйте список сайтов, которым разрешена отправка уведомлений. Расширение автоматически отделяет «Доверенные сайты» (например, Google, Slack, Teams) от категории «Непроверенные / Неизвестные», позволяя одним нажатием заблокировать все подозрительные ресурсы.\n\n■ 3. Защита в реальном времени и Тихий страж (Семейный режим)\nАктивно отслеживает изменения разрешений на уведомления. Если подозрительный сайт получает разрешение, расширение мгновенно обнаруживает и блокирует его. Также включает режим «Тихий страж (Семейный режим)» для автоматической фоновой блокировки без показа всплывающих предупреждений — идеально подходит для компьютеров членов семьи.\n\n【КАК ПОЛЬЗОВАТЬСЯ】\n1. Нажмите на значок NotiSpam Cleaner на панели инструментов браузера.\n2. Нажмите «Сканировать разрешенные сайты (История/Вкладки)» для анализа текущих разрешений.\n3. Проверьте список «Непроверенные / Неизвестные» и нажмите «Заблокировать все непроверенные сайты».\n4. Оставьте включенной функцию «Защита в реальном времени», чтобы предотвратить случайные разрешения в будущем.\n\n【ВАЖНЫЕ ПРИМЕЧАНИЯ И ТЕХНИЧЕСКИЕ ОГРАНИЧЕНИЯ】\n■ Это не блокировщик рекламы на веб-страницах (Adblocker)\nРасширение специализируется именно на блокировке спам-уведомлений рабочего стола, отправляемых через встроенную систему push-уведомлений Chrome. Оно не скрывает обычные баннеры или видеорекламу внутри веб-страниц.\n\n■ Техническое ограничение сканирования\nИз-за ограничений безопасности Chrome расширения не могут напрямую запросить полный список всех пользовательских настроек уведомлений. NotiSpam Cleaner находит сайты, сопоставляя разрешения с вашей локальной историей просмотров, закладками и открытыми вкладками. Очень старые разрешения, которых больше нет в истории или закладках, можно проверить вручную по ссылке «Открыть настройки уведомлений браузера» внутри расширения.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_ru.png",
+      "images/notispam-cleaner_screen-2_ru.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "sk": {
+    "locale": "sk",
+    "languageNames": [
+      "Slovak",
+      "スロバキア語",
+      "Slovenčina",
+      "sk"
+    ],
+    "extName": "NotiSpam Cleaner: Blokovanie nevyžiadaných upozornení",
+    "extDesc": "Skenuje a čistí povolenia upozornení podozrivých webov. Chráni v reálnom čase pred spamom a podvodnými reklamami.",
+    "detailedDescription": "Už vás nebavia falošné varovania pred vírusmi, podvodné reklamy a nevyžiadané upozornenia na pracovnej ploche? Klamavé webové stránky vás často prinútia kliknúť na „Povoliť“ pomocou falošných kontrol CAPTCHA alebo naliehavých bezpečnostných výstrah. Keď im udelíte povolenie, zaplavia vašu obrazovku otravným spamom, aj keď je prehliadač zatvorený.\n\nNotiSpam Cleaner je ľahký nástroj zameraný na súkromie, ktorý skenuje a čistí nastavenia upozornení v prehliadači Google Chrome a chráni vás pred zneužívaním upozornení.\n\n【HLAVNÉ FUNKCIE A VÝHODY】\n■ 1. 100 % súkromie na prvom mieste a Open-Source (Bezpečnosť a transparentnosť)\nVšetko skenovanie a blokovanie prebieha výlučne lokálne vo vašom zariadení. Žiadne údaje ani história prehliadania sa nikdy nezhromažďujú ani neodosielajú na externé servery. Ako plne open-source rozšírenie (licencia MIT) máme zdrojový kód verejne dostupný na GitHube, kde si ho môže ktokoľvek skontrolovať.\nRepozitár GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Rýchle skenovanie a hromadné blokovanie jedným kliknutím\nOkamžite skontrolujte zoznam povolených upozornení. Rozšírenie automaticky oddelí „Dôveryhodné weby“ (ako Google, Slack, Teams) od kategórie „Neoverené / Neznáme“, takže môžete podozrivé weby zablokovať jedným kliknutím.\n\n■ 3. Ochrana v reálnom čase a Tichý strážca (Rodinný režim)\nAktívne sleduje zmeny povolení upozornení. Keď podozrivý web získa povolenie, rozšírenie ho okamžite rozpozná a zablokuje. Zahŕňa aj režim „Tichý strážca (Rodinný režim)“ na tiché automatické blokovanie upozornení na pozadí bez vyskakovacích varovaní — ideálne pre počítače rodinných príslušníkov.\n\n【AKO POUŽÍVAŤ】\n1. Kliknite na ikonu NotiSpam Cleaner na paneli s nástrojmi.\n2. Kliknite na „Skenovať povolené weby (História/Karty)“ na analýzu povolení.\n3. Skontrolujte weby v časti „Neoverené / Neznáme“ a kliknite na „Zablokovať všetky neoverené weby“.\n4. Ponechajte zapnutú možnosť „Ochrana v reálnom čase“, aby ste predišli nechcenému povoleniu v budúcnosti.\n\n【DÔLEŽITÉ POZNÁMKY A OBMEDZENIA】\n■ Nie je to blokovač reklám na webových stránkach (Adblocker)\nToto rozšírenie sa špecializuje na blokovanie nevyžiadaných upozornení na ploche generovaných cez natívne upozornenia prehliadača Chrome. Neslúži na blokovanie bežných bannerových alebo videoreklám priamo na webových stránkach.\n\n■ Technické obmedzenie skenovania\nKvôli bezpečnostným obmedzeniam prehliadača Chrome nemôžu rozšírenia priamo načítať kompletný zoznam všetkých vlastných pravidiel upozornení. NotiSpam Cleaner zisťuje weby porovnaním povolených pravidiel s vašou lokálnou históriou, záložkami a otvorenými kartami. Veľmi staré povolenia, ktoré už nie sú v histórii ani záložkách, môžete spravovať ručne cez odkaz „Otvoriť nastavenia upozornení prehliadača“ v rozšírení.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_sk.png",
+      "images/notispam-cleaner_screen-2_sk.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "sl": {
+    "locale": "sl",
+    "languageNames": [
+      "Slovenian",
+      "スロベニア語",
+      "Slovenščina",
+      "sl"
+    ],
+    "extName": "NotiSpam Cleaner: Zaviralnik neželenih obvestil",
+    "extDesc": "Pregleda in počisti dovoljenja za obvestila sumljivih spletnih mest. V realnem času ščiti pred vsiljeno pošto in prevarami.",
+    "detailedDescription": "Ste naveličani lažnih opozoril o virusih, zavajajočih oglasov in neželenih obvestil na namizju? Prevarantska spletna mesta vas pogosto zavedejo v klik na »Dovoli« z lažnimi preverjanji CAPTCHA ali nujnimi varnostnimi opozorili. Ko jim enkrat dovolite, zasujejo vaš zaslon z nadležnimi pojavnimi okni, tudi ko je brskalnik zaprt.\n\nNotiSpam Cleaner je lahek pripomoček, ki daje prednost zasebnosti ter je zasnovan za pregledovanje in čiščenje nastavitev obvestil v brskalniku Google Chrome, s čimer vas ščiti pred zlorabo obvestil.\n\n【GLAVNE ZNAČILNOSTI IN PREDNOSTI】\n■ 1. 100-% zasebnost na prvem mestu in odprta koda (Varnost in preglednost)\nVsi pregledi in blokade se izvajajo izključno lokalno v vaši napravi. Nobeni podatki ali zgodovina brskanja se ne zbirajo in ne pošiljajo na zunanje strežnike. Kot popolnoma odprtokodna razširitev (licenca MIT) je naša izvorna koda javno objavljena na GitHubu, kjer jo lahko vsakdo preveri.\nGitHub repozitorij: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Hiter pregled in čiščenje z enim klikom\nTakoj preverite seznam dovoljenih obvestil. Razširitev samodejno loči »Zaupanja vredna mesta« (kot so Google, Slack, Teams) od »Nepreverjena / Neznana«, kar vam omogoča, da z enim klikom prekličete dovoljenja vsem sumljivim spletnim mestom.\n\n■ 3. Zaščita v realnem času in Tihi varuh (Družinski način)\nDejavno spremlja spremembe dovoljenj za obvestila. Ko sumljivo spletno mesto pridobi dovoljenje, ga razširitev takoj zazna in blokira. Vključuje tudi način »Tihi varuh (Družinski način)« za tiho samodejno blokiranje obvestil v ozadju brez opozorilnih oken — idealno za računalnike družinskih članov.\n\n【KAKO UPORABLJATI】\n1. Kliknite ikono NotiSpam Cleaner v orodni vrstici.\n2. Kliknite »Preglej dovoljena mesta (Zgodovina/Zavihki)« za analizo dovoljenj za obvestila.\n3. Preglejte mesta pod »Nepreverjena / Neznana« in kliknite »Blokiraj vsa nepreverjena spletna mesta«.\n4. Pustite vklopljeno možnost »Zaščita v realnem času«, da preprečite nenamerna dovoljenja v prihodnosti.\n\n【POMEMBNE OPOMBE IN TEHNIČNE OMEJITVE】\n■ Ni običajen zaviralnik oglasov na spletnih straneh (Adblocker)\nTa razširitev namensko blokira nadležna pojavna obvestila na namizju, ki zlorabljajo vgrajena potisna obvestila brskalnika Chrome. Ni namenjena skrivanju običajnih pasic ali video oglasov znotraj spletnih strani.\n\n■ Tehnična omejitev pregledovanja\nZaradi varnostnih omejitev brskalnika Chrome razširitve ne morejo neposredno pridobiti celotnega seznama vseh nastavitev obvestil. NotiSpam Cleaner odkrije spletna mesta s primerjavo dovoljenih pravil z vašo lokalno zgodovino, zaznamki in odprtimi zavihki. Zelo stara dovoljenja, ki jih ni več v zgodovini ali zaznamkih, lahko ročno upravljate prek povezave »Odpri nastavitve obvestil brskalnika« v razširitvi.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_sl.png",
+      "images/notispam-cleaner_screen-2_sl.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "sv": {
+    "locale": "sv",
+    "languageNames": [
+      "Swedish",
+      "スウェーデン語",
+      "Svenska",
+      "sv"
+    ],
+    "extName": "NotiSpam Cleaner: Blockerare för skräppostaviseringar",
+    "extDesc": "Skannar och rensar aviseringsbehörigheter från misstänkta webbplatser. Skyddar i realtid mot spam och bluffannonser.",
+    "detailedDescription": "Är du trött på falska virusvarningar, klickbetsreklam och påträngande skräppostaviseringar på skrivbordet? Vilseledande webbplatser lurar dig ofta att klicka på \"Tillåt\" genom falska CAPTCHA-kontroller eller brådskande säkerhetsvarningar. När de väl har tillåtits översvämmar de din skärm med irriterande popup-meddelanden även när webbläsaren är stängd.\n\nNotiSpam Cleaner är ett lättviktigt verktyg med integritet i fokus, utformat för att skanna och rensa aviseringsinställningar i Google Chrome och skydda dig mot missbruk av aviseringar.\n\n【VIKTIGA FUNKTIONER OCH FÖRDELAR】\n■ 1. 100 % integritet först & Öppen källkod (Säkerhet och transparens)\nAlla skanningar och blockeringar bearbetas strikt lokalt på din enhet. Ingen data eller webbläsarhistorik samlas in eller skickas till externa servrar. Som ett tillägg med helt öppen källkod (MIT-licens) finns vår kod offentligt på GitHub för alla att granska och verifiera.\nGitHub-arkiv: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Snabb skanning & rensning med ett klick\nGranska omedelbart din lista över tillåtna aviseringar. Tillägget skiljer automatiskt \"Betrodda webbplatser\" (som Google, Slack, Teams) från \"Overifierade / Okända\", så att du kan återkalla behörigheter från alla misstänkta webbplatser på en gång.\n\n■ 3. Realtidsskydd & Tyst väktare (Familjeläge)\nÖvervakar aktivt ändringar i aviseringsbehörigheter. När en misstänkt webbplats får tillåtelse upptäcker och blockerar tillägget den direkt. Inkluderar även \"Tyst väktare (Familjeläge)\" för att tyst autoblockera aviseringar i bakgrunden utan att visa varningsrutor — perfekt för familjemedlemmars datorer.\n\n【SÅ HÄR ANVÄNDER DU DET】\n1. Klicka på NotiSpam Cleaner-ikonen i verktygsfältet.\n2. Klicka på \"Skanna tillåtna webbplatser (Historik/Flikar)\" för att analysera aviseringsbehörigheter.\n3. Granska \"Overifierade / Okända\" webbplatser och klicka på \"Blockera alla overifierade webbplatser\".\n4. Håll \"Realtidsskydd\" aktiverat för att förhindra oavsiktliga tillåtelser i framtiden.\n\n【VIKTIGA ANMÄRKNINGAR OCH BEGRÄNSNINGAR】\n■ Inte en vanlig annonsblockerare (Adblocker)\nDetta tillägg blockerar specifikt irriterande skrivbordsaviseringar som genereras via Chromes inbyggda push-aviseringar. Det är inte utformat för att dölja vanliga banner- eller videoannonser inne på webbsidor.\n\n■ Teknisk skanningsbegränsning\nPå grund av säkerhetsbegränsningar i Chrome kan tillägg inte hämta en komplett lista över alla anpassade aviseringsinställningar direkt. NotiSpam Cleaner hittar webbplatser genom att korsreferera tillåtna regler med din lokala historik, dina bokmärken och öppna flikar. Mycket gamla tillåtelser som inte längre finns i historiken eller bokmärkena kan hanteras manuellt via länken \"Öppna webbläsarens aviseringsinställningar\" i tillägget.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_sv.png",
+      "images/notispam-cleaner_screen-2_sv.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "tr": {
+    "locale": "tr",
+    "languageNames": [
+      "Turkish",
+      "トルコ語",
+      "Türkçe",
+      "tr"
+    ],
+    "extName": "NotiSpam Cleaner: Bildirim Spam Engelleyici",
+    "extDesc": "Şüpheli web sitelerinin bildirim izinlerini tarar ve temizler. Spam ve dolandırıcı reklamlara karşı gerçek zamanlı korur.",
+    "detailedDescription": "Masaüstünüzde sahte virüs uyarıları, tıklama tuzağı (click-bait) reklamlar ve istenmeyen bildirim spam'leri görmekten bıktınız mı? Aldatıcı web siteleri genellikle sahte CAPTCHA doğrulamaları veya acil güvenlik uyarıları göstererek sizi \"Bildirimlere İzin Ver\" düğmesine tıklamaya kandırır. Bir kez izin verildiğinde, tarayıcı kapalı olsa bile ekranınızı rahatsız edici açılır pencerelerle doldururlar.\n\nNotiSpam Cleaner, Google Chrome'daki bildirim ayarlarını taramak ve temizlemek için tasarlanmış, gizlilik odaklı ve hafif bir güvenlik aracıdır.\n\n【TEMEL ÖZELLİKLER VE AVANTAJLAR】\n■ 1. %100 Gizlilik Odaklı ve Açık Kaynak (Güvenlik ve Şeffaflık)\nTüm tarama ve engelleme işlemleri tamamen kendi cihazınızda yerel olarak gerçekleştirilir. Hiçbir veri veya tarama geçmişi toplanmaz ya da harici sunuculara gönderilmez. Tamamen açık kaynaklı bir uzantı (MIT Lisansı) olarak kaynak kodumuz herkesin incelemesi ve doğrulaması için GitHub'da herkese açıktır.\nGitHub Deposu: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Hızlı Tarama ve Tek Tıkla Toplu Engelleme\nBildirim izni olan siteleri anında denetleyin. Uzantı, \"Güvenilir Siteler\" (Google, Slack, Teams gibi) ile \"Doğrulanmamış / Bilinmeyen\" siteleri otomatik olarak ayırır ve tüm şüpheli sitelerin izinlerini tek tıkla iptal etmenizi sağlar.\n\n■ 3. Gerçek Zamanlı Koruma ve Sessiz Muhafız (Aile Modu)\nBildirim izni değişikliklerini gerçek zamanlı olarak izler. Şüpheli bir site izin aldığında uzantı bunu anında tespit eder ve engeller. Ayrıca hiçbir uyarı göstermeden arka planda bildirimleri sessizce engellemek için \"Sessiz Muhafız (Aile Modu)\" özelliğine sahiptir — aile üyelerinin bilgisayarları için idealdir.\n\n【NASIL KULLANILIR】\n1. Araç çubuğundaki NotiSpam Cleaner simgesine tıklayın.\n2. Bildirim izinlerini analiz etmek için \"İzin verilen siteleri tara (Geçmiş/Sekmeler)\" düğmesine tıklayın.\n3. \"Doğrulanmamış / Bilinmeyen\" siteleri inceleyin ve \"Tüm doğrulanmamış siteleri engelle\" düğmesine tıklayın.\n4. Gelecekte yanlışlıkla izin vermeyi önlemek için \"Gerçek zamanlı koruma\" seçeneğini açık tutun.\n\n【ÖNEMLİ NOTLAR VE TEKNİK SINIRLAMALAR】\n■ Bir Web Sayfası Reklam Engelleyicisi (Adblocker) Değildir\nBu uzantı özellikle Chrome'un yerleşik anlık bildirimleri üzerinden gönderilen masaüstü bildirim spam'lerini engeller. Web sayfalarının içindeki normal afiş (banner) veya video reklamlarını gizlemek için tasarlanmamıştır.\n\n■ Teknik Tarama Sınırlaması\nChrome güvenlik kısıtlamaları nedeniyle uzantılar tüm özel bildirim ayarlarının toplu listesini doğrudan alamaz. NotiSpam Cleaner, izin verilen kuralları yerel geçmişiniz, yer işaretleriniz ve açık sekmelerinizle karşılaştırarak siteleri tespit eder. Artık geçmişinizde veya yer işaretlerinizde bulunmayan çok eski izinleri uzantı içindeki \"Tarayıcı bildirim ayarlarını aç\" bağlantısı üzerinden manuel olarak yönetebilirsiniz.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_tr.png",
+      "images/notispam-cleaner_screen-2_tr.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "uk": {
+    "locale": "uk",
+    "languageNames": [
+      "Ukrainian",
+      "ウクライナ語",
+      "Українська",
+      "uk"
+    ],
+    "extName": "NotiSpam Cleaner: Блокувальник спам-сповіщень",
+    "extDesc": "Сканує та очищує дозволи на сповіщення від підозрілих сайтів. Захищає від спаму та шахрайської реклами в реальному часі.",
+    "detailedDescription": "Втомилися від фальшивих попереджень про віруси, клікбейтної реклами та нав’язливих спам-сповіщень на робочому столі? Шахрайські вебсайти часто обманом змушують вас натиснути «Дозволити сповіщення», використовуючи підроблені перевірки CAPTCHA або термінові попередження безпеки. Отримавши дозвіл, вони засипають ваш екран дратівливими спливаючими вікнами навіть тоді, коли браузер закритий.\n\nNotiSpam Cleaner — це легкий інструмент із пріоритетом конфіденційності, створений для сканування й очищення налаштувань сповіщень у Google Chrome та захисту від спаму.\n\n【ОСНОВНІ МОЖЛИВОСТІ ТА ПЕРЕВАГИ】\n■ 1. 100% конфіденційність та відкритий код (Безпека і прозорість)\nУсі операції сканування та блокування виконуються виключно локально на вашому пристрої. Жодні дані чи історія переглядів не збираються та не передаються на зовнішні сервери. Як повністю відкрите розширення (ліцензія MIT), наш вихідний код публічно доступний на GitHub для перевірки будь-ким.\nРепозиторій GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Швидке сканування та очищення в один клік\nМиттєво перевіряйте список дозволених сповіщень. Розширення автоматично відокремлює «Довірені сайти» (як-от Google, Slack, Teams) від категорії «Неперевірені / Невідомі», дозволяючи одним кліком заблокувати всі підозрілі сайти.\n\n■ 3. Захист у реальному часі та Тихий страж (Сімейний режим)\nАктивно відстежує зміни дозволів на сповіщення. Коли підозрілий сайт отримує дозвіл, розширення миттєво виявляє та блокує його. Також містить режим «Тихий страж (Сімейний режим)» для тихого автоматичного блокування у фоновому режимі без показу попереджень — ідеально для комп’ютерів членів родини.\n\n【ЯК КОРИСТУВАТИСЯ】\n1. Натисніть значок NotiSpam Cleaner на панелі інструментів.\n2. Натисніть «Сканувати дозволені сайти (Історія/Вкладки)», щоб проаналізувати дозволи на сповіщення.\n3. Перегляньте «Неперевірені / Невідомі» сайти та натисніть «Заблокувати всі неперевірені сайти».\n4. Залиште увімкненим перемикач «Захист у реальному часі», щоб уникнути випадкових дозволів у майбутньому.\n\n【ВАЖЛИВІ ПРИМІТКИ ТА ТЕХНІЧНІ ОБМЕЖЕННЯ】\n■ Це не блокувальник реклами на вебсторінках (Adblocker)\nЦе розширення спеціалізується саме на блокуванні спам-сповіщень робочого столу, що надсилаються через вбудовану систему push-сповіщень Chrome. Воно не призначене для приховування звичайних банерів чи відеореклами всередині вебсторінок.\n\n■ Технічне обмеження сканування\nЧерез обмеження безпеки Chrome розширення не можуть напряму отримати повний список усіх налаштувань сповіщень. NotiSpam Cleaner знаходить сайти шляхом зіставлення дозволів із вашою локальною історією, закладками та відкритими вкладками. Дуже старі дозволи, яких більше немає в історії чи закладках, можна перевірити вручну через посилання «Відкрити налаштування сповіщень браузера» у розширенні.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_uk.png",
+      "images/notispam-cleaner_screen-2_uk.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "vi": {
+    "locale": "vi",
+    "languageNames": [
+      "Vietnamese",
+      "ベトナム語",
+      "Tiếng Việt",
+      "vi"
+    ],
+    "extName": "NotiSpam Cleaner: Trình chặn thông báo rác",
+    "extDesc": "Quét và dọn dẹp quyền thông báo của các trang web đáng ngờ. Bảo vệ khỏi spam và quảng cáo lừa đảo theo thời gian thực.",
+    "detailedDescription": "Bạn đã quá mệt mỏi vì thường xuyên nhận phải cảnh báo vi-rút giả mạo, quảng cáo câu nhấp chuột (click-bait) và thông báo rác phiền phức trên màn hình máy tính? Các trang web lừa đảo thường đánh lừa bạn nhấn vào \"Cho phép thông báo\" bằng các bảng xác minh CAPTCHA giả hoặc cảnh báo bảo mật khẩn cấp. Một khi được cấp quyền, chúng sẽ làm ngập màn hình của bạn bằng các cửa sổ bật lên ngay cả khi trình duyệt đã đóng.\n\nNotiSpam Cleaner là công cụ gọn nhẹ, ưu tiên quyền riêng tư, được thiết kế để quét và dọn dẹp cài đặt thông báo trong Google Chrome, bảo vệ bạn khỏi nạn lạm dụng thông báo.\n\n【TÍNH NĂNG & LỢI ÍCH CHÍNH】\n■ 1. 100% Ưu Tiên Quyền Riêng Tư & Mã Nguồn Mở (An Toàn & Minh Bạch)\nMọi quá trình quét và chặn đều được xử lý hoàn toàn cục bộ trên thiết bị của bạn. Tuyệt đối không có dữ liệu hay lịch sử duyệt web nào bị thu thập hoặc gửi tới máy chủ bên ngoài. Là tiện ích mở rộng mã nguồn mở hoàn toàn (Giấy phép MIT), mã nguồn của chúng tôi được công khai trên GitHub để bất kỳ ai cũng có thể kiểm tra và xác minh.\nKho lưu trữ GitHub: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. Quét Nhanh & Chặn Hàng Loạt Chỉ Với Một Cú Nhấp\nKiểm tra ngay lập tức danh sách các trang web được phép gửi thông báo. Tiện ích tự động tách biệt \"Trang web đáng tin cậy\" (như Google, Slack, Teams) khỏi các trang \"Chưa xác minh / Không rõ\", giúp bạn thu hồi quyền của tất cả các trang đáng ngờ cùng lúc.\n\n■ 3. Bảo Vệ Theo Thời Gian Thực & Người Bảo Vệ Thầm Lặng (Chế Độ Gia Đình)\nChủ động theo dõi các thay đổi về quyền thông báo. Khi một trang web đáng ngờ được cấp quyền, tiện ích sẽ phát hiện ngay lập tức và chặn lại. Bao gồm cả chế độ \"Người bảo vệ thầm lặng (Chế độ gia đình)\" để tự động chặn thông báo âm thầm trong nền mà không hiển thị cảnh báo — lý tưởng cho máy tính của các thành viên trong gia đình.\n\n【CÁCH SỬ DỤNG】\n1. Nhấp vào biểu tượng NotiSpam Cleaner trên thanh công cụ trình duyệt.\n2. Nhấp vào \"Quét các trang được phép (Lịch sử/Thẻ)\" để phân tích quyền thông báo.\n3. Xem lại danh sách \"Chưa xác minh / Không rõ\" và nhấp vào \"Chặn tất cả trang chưa xác minh\".\n4. Giữ bật tùy chọn \"Bảo vệ theo thời gian thực\" để ngăn chặn việc vô tình cấp quyền trong tương lai.\n\n【LƯU Ý QUAN TRỌNG & GIỚI HẠN KỸ THUẬT】\n■ Không Phải Trình Chặn Quảng Cáo Trên Trang Web (Adblocker)\nTiện ích này chuyên chặn các thông báo rác trên màn hình nền được tạo qua hệ thống thông báo đẩy gốc của Chrome. Tiện ích không được thiết kế để ẩn các quảng cáo biểu ngữ (banner) hoặc video thông thường bên trong trang web.\n\n■ Giới Hạn Kỹ Thuật Khi Quét\nDo giới hạn bảo mật của Chrome, các tiện ích mở rộng không thể truy xuất trực tiếp toàn bộ danh sách cài đặt thông báo. NotiSpam Cleaner phát hiện trang web bằng cách đối chiếu quyền với lịch sử duyệt web cục bộ, dấu trang và các thẻ đang mở của bạn. Các trang web được cấp quyền từ rất lâu không còn nằm trong lịch sử hoặc dấu trang có thể được quản lý thủ công qua liên kết \"Mở cài đặt thông báo của trình duyệt\" bên trong tiện ích.",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_vi.png",
+      "images/notispam-cleaner_screen-2_vi.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "zh_CN": {
+    "locale": "zh_CN",
+    "languageNames": [
+      "Chinese (Simplified)",
+      "Chinese (China)",
+      "Chinese (PRC)",
+      "Chinese (Simplified, China)",
+      "Chinese (Simplified, PRC)",
+      "中国語（簡体）",
+      "中国語 (簡体)",
+      "中国語（簡体字）",
+      "中国語 (簡体字)",
+      "中国語（中国）",
+      "中国語 (中国)",
+      "中国語（中華人民共和国）",
+      "中国語 (中華人民共和国)",
+      "中国語（中国本土）",
+      "中国語 (中国本土)",
+      "中国語（中国大陸）",
+      "中国語 (中国大陸)",
+      "中国語 - 中国",
+      "中国語 - 簡体",
+      "中国語 - 簡体字",
+      "中国語（簡体、中国）",
+      "中国語 (簡体、中国)",
+      "中国語（簡体字、中国）",
+      "中国語 (簡体字、中国)",
+      "中国語（簡体字中国語）",
+      "中国語 (簡体字中国語)",
+      "簡体字中国語",
+      "中文（简体）",
+      "中文 (简体)",
+      "中文（中国）",
+      "中文 (中国)",
+      "中文（简体，中国）",
+      "中文 (简体, 中国)",
+      "简体中文",
+      "简体中文（中国）",
+      "简体中文 (中国)",
+      "zh_CN",
+      "zh-CN",
+      "zh-Hans",
+      "zh_Hans",
+      "zh-Hans-CN",
+      "zh_Hans_CN"
+    ],
+    "extName": "NotiSpam Cleaner: 通知垃圾广告清理器",
+    "extDesc": "扫描并清理可疑网站的通知权限。实时拦截垃圾通知和诈骗弹窗广告。",
+    "detailedDescription": "您是否厌倦了桌面上不断弹出的虚假病毒警报、标题党诱导广告和色情垃圾通知？恶意网站经常利用虚假的人机验证（CAPTCHA）或紧急安全警告，诱骗您点击“允许通知”。一旦允许，即使关闭浏览器，它们也会在您的屏幕上疯狂推送垃圾弹窗。\n\nNotiSpam Cleaner 是一款隐私至上、轻量高效的工具，专为扫描和清理 Google Chrome 中的通知权限而设计，全方位保护您的浏览器免受通知滥用侵扰。\n\n【核心功能与优势】\n■ 1. 100% 隐私至上 & 开源透明（安全可靠）\n所有扫描与拦截操作均严格在您的本地设备上完成，绝不收集或向外部服务器发送任何浏览历史或个人数据。作为一款完全开源的扩展程序（MIT 许可证），我们的源代码公开托管在 GitHub 上，任何人都可以审查和验证其安全性。\nGitHub 仓库: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. 快速扫描 & 一键批量清理\n立即审查已允许发送通知的网站列表。扩展程序会自动将“受信任网站”（如 Google、Slack、Teams 等）与“待确认 / 未验证”的可疑网站区分开来，让您只需点击一下即可批量撤销所有可疑网站的通知权限，同时保留常用受信任网站的正常通知。\n\n■ 3. 实时保护 & 无感守护（家庭模式）\n实时监控通知权限变更。当可疑网站获取通知权限的瞬间，扩展程序会立即检测并自动拦截。此外还内置“无感守护 (家庭模式)”，可在后台静默拦截可疑通知而不弹出任何打扰提示——非常适合安装在长辈或家人的电脑上。\n\n【使用方法】\n1. 点击浏览器工具栏中的“NotiSpam Cleaner”图标。\n2. 点击“扫描已允许通知的网站 (历史/标签页)”按钮，分析当前的通知权限设置。\n3. 查看检测出的“待确认 / 未验证”网站，点击“一键拦截所有未验证网站”。\n4. 保持开启“实时保护”开关，防止今后误点允许可疑网站。\n\n【重要说明与技术限制】\n■ 并非网页广告拦截器（Adblocker）\n本扩展程序专注于拦截利用浏览器原生“推送通知”功能发送的桌面弹窗垃圾广告，不具备屏蔽网页内部常规横幅广告或视频广告的功能。\n\n■ 技术扫描限制说明\n受限于 Chrome 浏览器的安全机制，扩展程序无法直接获取所有通知权限网站的完整底层列表。NotiSpam Cleaner 会从您设备本地的浏览历史、书签和当前打开的标签页中提取域名，并逐一核对通知权限。如果某些极早期授权的网站已不在历史记录或书签中，可能无法通过扫描发现（此时您可以通过扩展程序内的“打开浏览器通知设置”链接，在浏览器原生设置中手动查看和管理完整列表）。",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_zh_CN.png",
+      "images/notispam-cleaner_screen-2_zh_CN.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  },
+  "zh_TW": {
+    "locale": "zh_TW",
+    "languageNames": [
+      "Chinese (Traditional)",
+      "Chinese (Taiwan)",
+      "Chinese (Traditional, Taiwan)",
+      "中国語（繁体）",
+      "中国語 (繁体)",
+      "中国語（繁体字）",
+      "中国語 (繁体字)",
+      "中国語（台湾）",
+      "中国語 (台湾)",
+      "中国語（繁体、台湾）",
+      "中国語 (繁体、台湾)",
+      "中国語 - 台湾",
+      "中国語 - 繁体",
+      "中国語 - 繁体字",
+      "中国語（繁体字、台湾）",
+      "中国語 (繁体字、台湾)",
+      "中国語（繁体字中国語）",
+      "中国語 (繁体字中国語)",
+      "繁体字中国語",
+      "中文（繁體）",
+      "中文 (繁體)",
+      "中文（台灣）",
+      "中文 (台灣)",
+      "中文（台湾）",
+      "中文 (台湾)",
+      "中文（繁體，台灣）",
+      "中文 (繁體, 台灣)",
+      "繁體中文",
+      "繁體中文（台灣）",
+      "繁體中文 (台灣)",
+      "繁体中文",
+      "zh_TW",
+      "zh-TW",
+      "zh-Hant",
+      "zh_Hant",
+      "zh-Hant-TW",
+      "zh_Hant_TW"
+    ],
+    "extName": "NotiSpam Cleaner: 通知垃圾廣告清理器",
+    "extDesc": "掃描並清理可疑網站的通知權限。即時攔截垃圾通知與詐騙彈窗廣告。",
+    "detailedDescription": "您是否厭倦了桌面上不斷彈出的虛假病毒警報、誘餌式廣告與色情垃圾通知？惡意網站經常利用偽造的機器人驗證（CAPTCHA）或緊急安全警告，誘騙您點擊「允許通知」。一旦允許，即使關閉瀏覽器，它們也會在您的螢幕上瘋狂推送垃圾彈窗。\n\nNotiSpam Cleaner 是一款隱私至上、輕量高效的工具，專為掃描與清理 Google Chrome 中的通知權限而設計，全方位保護您的瀏覽器免受通知濫用侵擾。\n\n【核心功能與特色】\n■ 1. 100% 隱私至上 & 開源透明（安全可靠）\n所有掃描與攔截操作均嚴格在您的本機裝置上完成，絕不收集或向外部伺服器傳送任何瀏覽紀錄或個人資料。作為一款完全開源的擴充功能（MIT 授權條款），我們的原始碼公開託管於 GitHub 上，任何人都可以審查並驗證其安全性。\nGitHub 儲存庫: https://github.com/mah-jp/notispam-cleaner\n\n■ 2. 快速掃描 & 一鍵批次清理\n立即檢查已允許傳送通知的網站清單。擴充功能會自動將「受信任網站」（如 Google、Slack、Teams 等）與「待確認 / 未驗證」的可疑網站區分開來，讓您只需點擊一下即可批次撤銷所有可疑網站的通知權限，同時保留常用受信任網站的正常通知。\n\n■ 3. 即時保護 & 無感守護（家庭模式）\n即時監控通知權限變更。當可疑網站取得通知權限的瞬間，擴充功能會立即偵測並自動攔截。此外還內建「無感守護 (家庭模式)」，可在背景靜默攔截可疑通知而不彈出任何干擾提示——非常適合安裝在長輩或家人的電腦上。\n\n【使用方式】\n1. 點擊瀏覽器工具列中的「NotiSpam Cleaner」圖示。\n2. 點擊「掃描已允許通知的網站 (歷史/分頁)」按鈕，分析目前的通知權限設定。\n3. 檢視偵測出的「待確認 / 未驗證」網站，點擊「一鍵攔截所有未驗證網站」。\n4. 保持開啟「即時保護」開關，防止日後誤點允許未知的可疑網站。\n\n【重要說明與技術限制】\n■ 並非網頁廣告攔截器（Adblocker）\n本擴充功能專注於攔截濫用瀏覽器原生「推播通知」功能所發送的桌面彈窗垃圾廣告，不具備隱藏網頁內部一般橫幅廣告或影片廣告的功能。\n\n■ 技術掃描限制說明\n受限於 Chrome 瀏覽器的安全機制，擴充功能無法直接取得所有通知權限網站的完整底層清單。NotiSpam Cleaner 會從您裝置本機的瀏覽紀錄、書籤與目前開啟的分頁中擷取網域，並逐一比對通知權限。若某些極早期授權的網站已不在歷史紀錄或書籤中，可能無法透過掃描發現（此時您可以透過擴充功能內的「開啟瀏覽器通知設定」連結，在瀏覽器原生設定中手動檢視與管理完整清單）。",
+    "screenshots": [
+      "images/notispam-cleaner_screen-1_zh_TW.png",
+      "images/notispam-cleaner_screen-2_zh_TW.png"
+    ],
+    "promoBanner": "images/notispam-cleaner_banner_en.png"
+  }
+}

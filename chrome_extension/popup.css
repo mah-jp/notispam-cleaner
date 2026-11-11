@@ -1,5 +1,5 @@
 :root {
-  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", "Hiragino Sans", "Yu Gothic UI", Helvetica, Arial, sans-serif;
 
   /* Color Palette (Light Theme, Accessibility-first) */
   --bg-gradient: linear-gradient(135deg, hsl(210, 40%, 96%) 0%, hsl(215, 30%, 92%) 100%);
@@ -401,6 +401,17 @@ input:checked+.slider:before {
   transform: translateX(22px);
 }
 
+.setting-row.is-disabled {
+  opacity: 0.5;
+  transition: opacity var(--transition-speed);
+}
+
+.switch input:disabled+.slider {
+  cursor: not-allowed;
+  background-color: hsl(210, 20%, 85%);
+  border-color: hsl(214, 32%, 82%);
+}
+
 .slider.round {
   border-radius: 34px;
 }
@@ -529,6 +540,16 @@ input:checked+.slider:before {
 
 .btn-secondary:active {
   transform: translateY(0);
+}
+
+.btn:disabled,
+.btn-icon-danger:disabled,
+.btn-icon-secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
 }
 
 .app-footer {
@@ -875,6 +896,11 @@ input:checked+.slider:before {
   color: var(--text-secondary);
 }
 
+.settings-info-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
 .settings-link-text {
   font-size: 0.76rem;
   line-height: 1.4;
@@ -999,6 +1025,22 @@ input:checked+.slider:before {
     color: #f1f1f1;
   }
 
+  .status-value {
+    background: #2d2f31;
+  }
+
+  .icon-btn-secondary {
+    background: #28292a;
+    border-color: #3c4043;
+    color: #c4c7c5;
+  }
+
+  .icon-btn-secondary:hover {
+    background: #3c4043;
+    border-color: #8e918f;
+    color: #f1f1f1;
+  }
+
   .settings-link-card {
     background: rgba(40, 41, 42, 0.4);
     border-color: #3c4043;
@@ -1018,6 +1060,11 @@ input:checked+.slider:before {
   input:checked+.slider:before {
     background-color: #0b57d0;
     /* On state knob: Chrome standard dark blue */
+  }
+
+  .switch input:disabled+.slider {
+    background-color: #2d2f31;
+    border-color: #3c4043;
   }
 
 

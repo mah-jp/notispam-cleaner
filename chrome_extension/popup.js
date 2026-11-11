@@ -35,7 +35,7 @@ function detectTextDirection() {
   return 'ltr';
 }
 
-// Localize all elements with data-i18n attributes and apply text direction
+// Localize all elements with data-i18n / data-i18n-title attributes and apply text direction
 function localizeUI() {
   const dir = detectTextDirection();
   if (typeof document !== 'undefined') {
@@ -70,6 +70,15 @@ function localizeUI() {
       }
     }
   });
+
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const tag = el.getAttribute('data-i18n-title');
+    const msg = chrome.i18n.getMessage(tag);
+    if (msg) {
+      el.setAttribute('title', msg);
+      el.setAttribute('aria-label', msg);
+    }
+  });
 }
 
 // Update list count indicators in tabs
@@ -84,39 +93,37 @@ function updateListHeaders(allowedCount, blockedCount) {
   if (blockEl) blockEl.textContent = blockMsg.replace('{count}', blockedCount);
 }
 
-// Gather domains from History, Bookmarks, and Open Tabs
-async function gatherDomains() {
+// Gather domains and observed URL schemes from Bookmarks, History, and Open Tabs.
+// Ordered so live Open Tabs > Most Recent History > Older History > Bookmarks when recording custom-port protocols.
+async function gatherDomainCandidates() {
   const domains = new Set();
+  const observedProtocolsByDomain = new Map();
 
-  // 1. Scan History (limit to 5000 items)
-  try {
-    const historyItems = await chrome.history.search({
-      text: '',
-      maxResults: 5000,
-      startTime: 0
-    });
-    historyItems.forEach(item => {
-      if (item.url) {
-        const domainAndPort = getHostAndPortFromUrl(item.url);
-        if (domainAndPort) {
-          domains.add(domainAndPort);
-        }
+  const recordUrl = (url) => {
+    if (!url) return;
+    const proto = extractProtocolFromUrl(url);
+    const domainAndPort = getHostAndPortFromUrl(url);
+    if (!domainAndPort) return;
+    domains.add(domainAndPort);
+    if (proto === 'http' || proto === 'https') {
+      let schemeSet = observedProtocolsByDomain.get(domainAndPort);
+      if (!schemeSet) {
+        schemeSet = new Set();
+        observedProtocolsByDomain.set(domainAndPort, schemeSet);
       }
-    });
-  } catch (err) {
-    console.error('History scan failed:', err);
-  }
+      // Re-insert so the most recently prioritized scheme is always last
+      schemeSet.delete(proto);
+      schemeSet.add(proto);
+    }
+  };
 
-  // 2. Scan Bookmarks
+  // 1. Scan Bookmarks
   try {
     const bookmarkNodes = await chrome.bookmarks.getTree();
     function traverse(nodes) {
       nodes.forEach(node => {
         if (node.url) {
-          const domainAndPort = getHostAndPortFromUrl(node.url);
-          if (domainAndPort) {
-            domains.add(domainAndPort);
-          }
+          recordUrl(node.url);
         }
         if (node.children) traverse(node.children);
       });
@@ -126,27 +133,87 @@ async function gatherDomains() {
     console.error('Bookmarks scan failed:', err);
   }
 
-  // 3. Scan Open Tabs
+  // 2. Scan History (limit to 5000 items; process oldest-to-newest so newer scheme observations win)
+  try {
+    const historyItems = await chrome.history.search({
+      text: '',
+      maxResults: 5000,
+      startTime: 0
+    });
+    const orderedHistory = [...historyItems].reverse();
+    if (orderedHistory.some(item => item && typeof item.lastVisitTime === 'number')) {
+      orderedHistory.sort((a, b) => (Number(a.lastVisitTime) || 0) - (Number(b.lastVisitTime) || 0));
+    }
+    orderedHistory.forEach(item => {
+      if (item && item.url) {
+        recordUrl(item.url);
+      }
+    });
+  } catch (err) {
+    console.error('History scan failed:', err);
+  }
+
+  // 3. Scan Open Tabs (processed last so currently open tab URLs take highest protocol precedence)
   try {
     const tabs = await chrome.tabs.query({});
     tabs.forEach(tab => {
       if (tab.url) {
-        const domainAndPort = getHostAndPortFromUrl(tab.url);
-        if (domainAndPort) {
-          domains.add(domainAndPort);
-        }
+        recordUrl(tab.url);
       }
     });
   } catch (err) {
     console.error('Tabs scan failed:', err);
   }
 
-  return Array.from(domains);
+  return {
+    domains: Array.from(domains),
+    observedProtocolsByDomain
+  };
+}
+
+// Gather unique normalized domains from Bookmarks, History, and Open Tabs
+async function gatherDomains() {
+  const { domains } = await gatherDomainCandidates();
+  return domains;
+}
+
+// Notify background service worker to immediately refresh active tab toolbar icons
+function notifyActiveTabIconSync() {
+  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+    try {
+      const res = chrome.runtime.sendMessage({ action: 'update_active_tab_icon' });
+      if (res && typeof res.catch === 'function') {
+        res.catch(() => { });
+      }
+    } catch (e) { }
+  }
+}
+
+// Synchronize Real-time Guard and dependent Silent Guardian toggle UI states
+function syncGuardAndSilentUI(guardEnabled, silentEnabled) {
+  const isGuardOn = Boolean(guardEnabled);
+  const isSilentOn = isGuardOn && Boolean(silentEnabled);
+  const guardToggle = document.getElementById('guard-toggle');
+  const silentToggle = document.getElementById('silent-toggle');
+  const silentRow = document.getElementById('silent-guardian-row');
+
+  if (guardToggle) {
+    guardToggle.checked = isGuardOn;
+  }
+  if (silentToggle) {
+    silentToggle.checked = isSilentOn;
+    silentToggle.disabled = !isGuardOn;
+  }
+  if (silentRow) {
+    silentRow.classList.toggle('is-disabled', !isGuardOn);
+    silentRow.setAttribute('aria-disabled', isGuardOn ? 'false' : 'true');
+  }
+  return { guardEnabled: isGuardOn, silentEnabled: isSilentOn };
 }
 
 // Check notification setting for a specific domain
-async function getNotificationSetting(domain) {
-  const primaryUrl = getPrimaryUrlForDomain(domain);
+async function getNotificationSetting(domain, protocolsMap = null) {
+  const primaryUrl = getPrimaryUrlForDomain(domain, protocolsMap);
   if (!primaryUrl) return 'default';
   try {
     const details = await chrome.contentSettings.notifications.get({
@@ -160,29 +227,18 @@ async function getNotificationSetting(domain) {
 
 // Check the global default notification setting
 async function getGlobalDefaultSetting() {
-  try {
-    // Querying a nonexistent domain with no overrides returns default setting
-    const details = await chrome.contentSettings.notifications.get({
-      primaryUrl: 'https://nonexistent-dummy-domain-check-notification-default.com/'
-    });
-    return details ? details.setting : 'ask';
-  } catch (e) {
-    return 'ask';
-  }
+  return getGlobalNotificationDefault();
 }
 
 // Block notification permissions for a domain
-async function blockDomain(domain) {
+async function blockDomain(domain, explicitProtocol = null) {
   const cleanDomain = normalizeDomain(domain);
-  const primaryPattern = getPrimaryPatternForDomain(cleanDomain);
-  if (!cleanDomain || !primaryPattern) return;
+  if (!cleanDomain) return;
+  if (explicitProtocol) {
+    rememberDomainProtocol(cleanDomain, explicitProtocol);
+  }
   try {
-    await chrome.contentSettings.notifications.set({
-      primaryPattern,
-      setting: 'block'
-    });
-    await addBlockedDomain(cleanDomain);
-    await removeWhitelistedDomain(cleanDomain);
+    await blockAndRecordDomain(cleanDomain);
   } catch (e) {
     console.error(`Failed to block ${cleanDomain}:`, e);
   }
@@ -191,85 +247,16 @@ async function blockDomain(domain) {
 // Change global default setting
 async function setGlobalDefault(setting) {
   try {
-    await chrome.contentSettings.notifications.set({
-      primaryPattern: '<all_urls>',
-      setting: setting
-    });
+    await setGlobalNotificationDefault(setting);
   } catch (e) {
     console.error('Failed to set global notification setting:', e);
   }
 }
 
-// Re-apply extension rules after clearing chrome.contentSettings.notifications
-async function reapplyExtensionRules(blockedDomains, whitelistedDomains, previousGlobalDefault) {
-  // Restore global default if clearing extension rules altered it
-  if (previousGlobalDefault) {
-    const currentGlobalDefault = await getGlobalDefaultSetting();
-    if (currentGlobalDefault !== previousGlobalDefault) {
-      await setGlobalDefault(previousGlobalDefault);
-    }
-  }
-
-  // Re-apply remaining blocks (stripping ports for API calls)
-  const blockPromises = blockedDomains.map(async (d) => {
-    const primaryPattern = getPrimaryPatternForDomain(d);
-    if (!primaryPattern) return;
-    try {
-      await chrome.contentSettings.notifications.set({
-        primaryPattern,
-        setting: 'block'
-      });
-    } catch (e) {
-      console.error(`Failed to re-block ${d}:`, e);
-    }
-  });
-
-  // Re-apply remaining whitelisted allows (stripping ports for API calls)
-  const allowPromises = whitelistedDomains.map(async (d) => {
-    const primaryPattern = getPrimaryPatternForDomain(d);
-    if (!primaryPattern) return;
-    try {
-      await chrome.contentSettings.notifications.set({
-        primaryPattern,
-        setting: 'allow'
-      });
-    } catch (e) {
-      console.error(`Failed to re-allow ${d}:`, e);
-    }
-  });
-
-  await Promise.all([...blockPromises, ...allowPromises]);
-}
-
 // Reset notification settings for a domain to default (clears extension rules for it)
-async function resetDomain(domain) {
-  const cleanDomain = normalizeDomain(domain);
-  if (!cleanDomain) return;
-
+async function resetDomain(domain, explicitProtocol = null) {
   try {
-    const previousGlobalDefault = await getGlobalDefaultSetting();
-
-    // 1. Remove from local storage lists (serialized with other storage operations)
-    let newBlocked = [];
-    let newWhitelist = [];
-    await enqueueStorageOp(async () => {
-      const data = await chrome.storage.local.get({
-        blocked_domains: [],
-        user_whitelist: [],
-        domain_protocols: {}
-      });
-      syncDomainProtocols(data.domain_protocols);
-      newBlocked = (data.blocked_domains || []).map(d => normalizeDomain(d)).filter(d => d && d !== cleanDomain);
-      newWhitelist = (data.user_whitelist || []).map(d => normalizeDomain(d)).filter(d => d && d !== cleanDomain);
-      await chrome.storage.local.set({
-        blocked_domains: newBlocked,
-        user_whitelist: newWhitelist
-      });
-    });
-
-    // 2. Clear all content settings set by this extension and re-apply remaining rules
-    await chrome.contentSettings.notifications.clear({});
-    await reapplyExtensionRules(newBlocked, newWhitelist, previousGlobalDefault);
+    await resetDomainRules(domain, explicitProtocol);
   } catch (err) {
     console.error(`Failed to reset domain ${domain}:`, err);
   }
@@ -278,28 +265,14 @@ async function resetDomain(domain) {
 // Clear all blocked site rules created by the extension while preserving user whitelist and global default
 async function clearAllBlockedRules() {
   try {
-    const previousGlobalDefault = await getGlobalDefaultSetting();
-
-    await chrome.contentSettings.notifications.clear({});
-    let whitelist = [];
-    await enqueueStorageOp(async () => {
-      const data = await chrome.storage.local.get({
-        user_whitelist: [],
-        domain_protocols: {}
-      });
-      syncDomainProtocols(data.domain_protocols);
-      whitelist = (data.user_whitelist || []).map(d => normalizeDomain(d)).filter(Boolean);
-      await chrome.storage.local.set({ blocked_domains: [] });
-    });
-
-    await reapplyExtensionRules([], whitelist, previousGlobalDefault);
-
+    await clearAllExtensionBlockRules();
+  } catch (e) {
+    console.error('Failed to clear rules:', e);
+  } finally {
     if (currentDomain) {
       await updateCurrentSiteStatusUI(currentDomain);
     }
     await doScan();
-  } catch (e) {
-    console.error('Failed to clear rules:', e);
   }
 }
 
@@ -315,13 +288,8 @@ async function updateGlobalStatusUI(suspiciousCount = 0) {
     statusEl.className = 'status-value blocked';
     toggleEl.checked = false;
   } else if (globalSetting === 'ask') {
-    if (suspiciousCount > 0) {
-      statusEl.textContent = chrome.i18n.getMessage('statusAsk') || 'Ask (Standard)';
-      statusEl.className = 'status-value warning';
-    } else {
-      statusEl.textContent = chrome.i18n.getMessage('statusAsk') || 'Ask (Standard)';
-      statusEl.className = 'status-value normal';
-    }
+    statusEl.textContent = chrome.i18n.getMessage('statusAsk') || 'Ask (Standard)';
+    statusEl.className = suspiciousCount > 0 ? 'status-value warning' : 'status-value normal';
     toggleEl.checked = true;
   } else if (globalSetting === 'allow') {
     statusEl.textContent = chrome.i18n.getMessage('statusAllowed') || 'Allow All (Dangerous)';
@@ -337,29 +305,50 @@ async function updateCurrentSiteStatusUI(domain) {
   const statusEl = document.getElementById('current-site-status');
   if (!statusEl) return;
 
+  const isActiveCurrentDomain = Boolean(currentDomain && normalizeDomain(currentDomain) === normalizedDomain);
+  const explicitProto = isActiveCurrentDomain ? currentDomainProtocol : null;
+
   // Fetch lists and known protocols from storage before querying notification setting
   const storageData = await chrome.storage.local.get({
     user_whitelist: [],
     blocked_domains: [],
-    domain_protocols: {}
+    domain_protocols: null
   });
   syncDomainProtocols(storageData.domain_protocols);
-  const setting = await getNotificationSetting(normalizedDomain);
-  const userWhitelist = (storageData.user_whitelist || []).map(d => normalizeDomain(d)).filter(Boolean);
-  const blockedDomains = (storageData.blocked_domains || []).map(d => normalizeDomain(d)).filter(Boolean);
+  const siteProtoMap = explicitProto ? { [normalizedDomain]: explicitProto } : null;
+  const ruleProtoMap = storageData.domain_protocols;
+
+  const [setting, globalDefault] = await Promise.all([
+    getNotificationSetting(normalizedDomain, siteProtoMap),
+    getGlobalDefaultSetting()
+  ]);
+  const userWhitelist = normalizeDomainList(storageData.user_whitelist);
+  const blockedDomains = normalizeDomainList(storageData.blocked_domains);
+  const isUserWhitelisted = matchesDomainRuleList(normalizedDomain, userWhitelist, ruleProtoMap, explicitProto);
+  const isAppBlocked = matchesDomainRuleList(normalizedDomain, blockedDomains, ruleProtoMap, explicitProto);
+
+  const resetBtn = document.getElementById('current-site-reset');
+  if (resetBtn) {
+    resetBtn.disabled = !(isUserWhitelisted || isAppBlocked);
+  }
 
   if (setting === 'allow') {
     if (isDomainTrusted(normalizedDomain, userWhitelist)) {
       statusEl.textContent = chrome.i18n.getMessage('statusActiveAllowedTrusted') || 'Allowed (Trusted)';
-      statusEl.className = 'status-value normal'; // Green styling for trusted allow
+      statusEl.className = 'status-value normal';
+    } else if (globalDefault === 'allow') {
+      statusEl.textContent = chrome.i18n.getMessage('statusActiveAllowed') || 'Allowed (Caution)';
+      statusEl.className = 'status-value allowed';
     } else {
       statusEl.textContent = chrome.i18n.getMessage('statusActiveAllowedBrowser') || 'Allowed (By Browser)';
-      statusEl.className = 'status-value allowed'; // Red styling for unverified allow
+      statusEl.className = 'status-value allowed';
     }
   } else if (setting === 'block') {
-    const isAppBlocked = blockedDomains.includes(normalizedDomain);
     if (isAppBlocked) {
       statusEl.textContent = chrome.i18n.getMessage('statusActiveBlockedApp') || 'Blocked (By App)';
+      statusEl.className = 'status-value blocked';
+    } else if (globalDefault === 'block') {
+      statusEl.textContent = chrome.i18n.getMessage('statusActiveBlocked') || 'Blocked (Safe)';
       statusEl.className = 'status-value blocked';
     } else {
       statusEl.textContent = chrome.i18n.getMessage('statusActiveBlockedBrowser') || 'Blocked (By Browser)';
@@ -374,11 +363,13 @@ async function updateCurrentSiteStatusUI(domain) {
   }
 }
 
-// Global reference for current active website domain
+// Global reference for current active website domain and URL scheme
 let currentDomain = null;
+let currentDomainProtocol = null;
 
 // Global reference for current suspicious domains list (for one-click clean)
 let currentSuspiciousSites = [];
+let currentSuspiciousProtocols = {};
 
 // Serialization queue and timer for scanning
 let scanQueue = Promise.resolve();
@@ -409,86 +400,182 @@ async function performScan() {
 
   updateListHeaders('...', '...');
 
-  // Wait for any in-flight storage updates before reading storage
+  // Wait for any in-flight rule/storage updates before reading storage & Chrome settings
+  await enqueueRuleOp(async () => { });
   await enqueueStorageOp(async () => { });
 
-  const domains = await gatherDomains();
+  const { domains, observedProtocolsByDomain } = await gatherDomainCandidates();
   const globalDefault = await getGlobalDefaultSetting();
 
   // Retrieve whitelist, stored blocked domains, and custom port protocols from storage
   const storageData = await chrome.storage.local.get({
     user_whitelist: [],
     blocked_domains: [],
-    domain_protocols: {}
+    domain_protocols: null
   });
   syncDomainProtocols(storageData.domain_protocols);
 
-  const userWhitelist = Array.from(new Set(
-    (storageData.user_whitelist || []).map(d => normalizeDomain(d)).filter(Boolean)
-  ));
-  const storedBlockedDomains = Array.from(new Set(
-    (storageData.blocked_domains || []).map(d => normalizeDomain(d)).filter(Boolean)
-  ));
+  const storedRuleProtocols = storageData.domain_protocols;
+  const userWhitelist = normalizeDomainList(storageData.user_whitelist);
+  const storedBlockedDomains = normalizeDomainList(storageData.blocked_domains);
+  const storedBlockedSet = new Set(storedBlockedDomains);
+  const userWhitelistSet = new Set(userWhitelist);
 
   // Merge domains found by scanning with persisted blocked domains and whitelisted domains
-  // Ensure all domains are normalized to lowercase during merge
-  const allDomainsToCheck = Array.from(new Set([
-    ...domains.map(d => normalizeDomain(d)).filter(Boolean),
+  const allDomainsToCheck = normalizeDomainList([
+    ...domains,
     ...storedBlockedDomains,
     ...userWhitelist
-  ]));
+  ]);
 
   const suspiciousAllowed = [];
   const trustedAllowed = [];
   const blockedSites = [];
+  const seenAllowed = new Set();
+  const seenBlocked = new Set();
+  const allowedRowProtocols = {};
+  const blockedRowProtocols = {};
   const activeBlockedInChrome = [];
   const activeWhitelistInChrome = [];
+  const verifiedRuleProtocols = {};
 
-  // Scan all domains in parallel to improve performance and prevent UI freeze
+  // Scan all domains (and any distinct persisted vs live schemes on custom ports) in parallel
   const scanResults = await Promise.all(
     allDomainsToCheck.map(async (domain) => {
-      const setting = await getNotificationSetting(domain);
-      return { domain, setting };
+      const hasPersistedRule = storedBlockedSet.has(domain) || userWhitelistSet.has(domain);
+      const persistedProto = hasPersistedRule ? getProtocolForDomain(domain, storedRuleProtocols) : null;
+      const protosToCheck = [];
+      if (persistedProto) {
+        protosToCheck.push(persistedProto);
+      }
+      const observedSet = observedProtocolsByDomain.get(domain);
+      if (observedSet) {
+        const newestFirst = Array.from(observedSet).reverse();
+        for (const p of newestFirst) {
+          if (!protosToCheck.includes(p)) {
+            protosToCheck.push(p);
+          }
+        }
+      }
+      if (protosToCheck.length === 0) {
+        protosToCheck.push(getProtocolForDomain(domain, storedRuleProtocols));
+      }
+
+      const checks = await Promise.all(
+        protosToCheck.map(async (proto) => ({
+          proto,
+          setting: await getNotificationSetting(domain, { [domain]: proto })
+        }))
+      );
+      return { domain, persistedProto, checks };
     })
   );
 
-  for (const { domain, setting } of scanResults) {
-    if (setting === 'allow') {
-      if (userWhitelist.includes(domain)) {
-        activeWhitelistInChrome.push(domain);
-      }
-      if (globalDefault !== 'allow' || userWhitelist.includes(domain)) {
-        if (isDomainTrusted(domain, userWhitelist)) {
-          trustedAllowed.push(domain);
-        } else {
-          suspiciousAllowed.push(domain);
+  for (const { domain, persistedProto, checks } of scanResults) {
+    for (const { proto, setting } of checks) {
+      if (setting === 'allow') {
+        if (userWhitelistSet.has(domain) && proto === persistedProto) {
+          if (!activeWhitelistInChrome.includes(domain)) {
+            activeWhitelistInChrome.push(domain);
+          }
+          if (proto === 'http' && !domain.endsWith(':80')) {
+            verifiedRuleProtocols[domain] = 'http';
+          }
         }
-      }
-    } else if (setting === 'block') {
-      const isAppBlocked = storedBlockedDomains.includes(domain);
-      if (isAppBlocked) {
-        activeBlockedInChrome.push(domain);
-      }
-      // When globalDefault is 'block', avoid listing every history item as an individual browser block
-      if (globalDefault !== 'block' || isAppBlocked) {
-        blockedSites.push(domain);
+        const hasAppAllowRule = matchesDomainRuleList(domain, userWhitelist, storedRuleProtocols, proto);
+        if ((globalDefault !== 'allow' || hasAppAllowRule) && !seenAllowed.has(domain)) {
+          seenAllowed.add(domain);
+          allowedRowProtocols[domain] = proto;
+          if (isDomainTrusted(domain, userWhitelist)) {
+            trustedAllowed.push(domain);
+          } else {
+            suspiciousAllowed.push(domain);
+          }
+        }
+      } else if (setting === 'block') {
+        if (storedBlockedSet.has(domain) && proto === persistedProto) {
+          if (!activeBlockedInChrome.includes(domain)) {
+            activeBlockedInChrome.push(domain);
+          }
+          if (proto === 'http' && !domain.endsWith(':80')) {
+            verifiedRuleProtocols[domain] = 'http';
+          }
+        }
+        const hasAppBlockRule = matchesDomainRuleList(domain, storedBlockedDomains, storedRuleProtocols, proto);
+        // When globalDefault is 'block', avoid listing every history item as an individual browser block
+        if ((globalDefault !== 'block' || hasAppBlockRule) && !seenBlocked.has(domain)) {
+          seenBlocked.add(domain);
+          blockedRowProtocols[domain] = proto;
+          blockedSites.push(domain);
+        }
       }
     }
   }
 
-  // Self-healing storage sync: remove domains from blocked_domains / user_whitelist if no longer active in Chrome
+  // Self-healing storage sync: remove domains & stale protocols if no longer active in Chrome
   const staleBlocked = storedBlockedDomains.filter(d => !activeBlockedInChrome.includes(d));
   const staleWhitelisted = userWhitelist.filter(d => !activeWhitelistInChrome.includes(d));
-  if (staleBlocked.length > 0 || staleWhitelisted.length > 0) {
+  const mergedSnapshotProtocols = {
+    ...(storedRuleProtocols && typeof storedRuleProtocols === 'object' ? storedRuleProtocols : {}),
+    ...verifiedRuleProtocols
+  };
+  const prunedSnapshotProtocols = buildPrunedDomainProtocols(
+    mergedSnapshotProtocols,
+    activeBlockedInChrome,
+    activeWhitelistInChrome
+  );
+  const protocolsChanged = !shallowEqualStringMap(storedRuleProtocols, prunedSnapshotProtocols);
+
+  if (staleBlocked.length > 0 || staleWhitelisted.length > 0 || protocolsChanged) {
+    const staleBlockedSet = new Set(staleBlocked);
+    const staleWhitelistedSet = new Set(staleWhitelisted);
     await enqueueStorageOp(async () => {
+      const fresh = await chrome.storage.local.get({
+        blocked_domains: [],
+        user_whitelist: [],
+        domain_protocols: null
+      });
+      syncDomainProtocols(fresh.domain_protocols);
+      const currentBlocked = normalizeDomainList(fresh.blocked_domains);
+      const currentWhitelist = normalizeDomainList(fresh.user_whitelist);
+      const nextBlocked = staleBlockedSet.size > 0
+        ? currentBlocked.filter(d => !staleBlockedSet.has(d))
+        : currentBlocked;
+      const nextWhitelist = staleWhitelistedSet.size > 0
+        ? currentWhitelist.filter(d => !staleWhitelistedSet.has(d))
+        : currentWhitelist;
+      const mergedFreshProtocols = {
+        ...verifiedRuleProtocols,
+        ...(fresh.domain_protocols && typeof fresh.domain_protocols === 'object' ? fresh.domain_protocols : {})
+      };
+      const nextProtocols = buildPrunedDomainProtocols(
+        mergedFreshProtocols,
+        nextBlocked,
+        nextWhitelist
+      );
       const updates = {};
-      if (staleBlocked.length > 0) updates.blocked_domains = activeBlockedInChrome;
-      if (staleWhitelisted.length > 0) updates.user_whitelist = activeWhitelistInChrome;
-      await chrome.storage.local.set(updates);
+      if (nextBlocked.length !== currentBlocked.length) {
+        updates.blocked_domains = nextBlocked;
+      }
+      if (nextWhitelist.length !== currentWhitelist.length) {
+        updates.user_whitelist = nextWhitelist;
+      }
+      if (!shallowEqualStringMap(fresh.domain_protocols, nextProtocols)) {
+        updates.domain_protocols = nextProtocols;
+      }
+      if (Object.keys(updates).length > 0) {
+        await chrome.storage.local.set(updates);
+      }
     });
   }
 
   currentSuspiciousSites = suspiciousAllowed;
+  currentSuspiciousProtocols = {};
+  for (const d of suspiciousAllowed) {
+    if (allowedRowProtocols[d]) {
+      currentSuspiciousProtocols[d] = allowedRowProtocols[d];
+    }
+  }
 
   const allowedSites = [...suspiciousAllowed, ...trustedAllowed];
 
@@ -499,9 +586,17 @@ async function performScan() {
   // Update Health Status
   await updateGlobalStatusUI(suspiciousAllowed.length);
 
-  // Show/Hide Clean All button
-  if (cleanBtn && suspiciousAllowed.length > 0) {
-    cleanBtn.classList.remove('hidden');
+  // Show/Hide Clean All button & enable/disable Reset Blocked Sites button
+  if (cleanBtn) {
+    if (suspiciousAllowed.length > 0) {
+      cleanBtn.classList.remove('hidden');
+    } else {
+      cleanBtn.classList.add('hidden');
+    }
+  }
+  const clearAllRulesBtnEl = document.getElementById('clear-all-rules-btn');
+  if (clearAllRulesBtnEl) {
+    clearAllRulesBtnEl.disabled = activeBlockedInChrome.length === 0;
   }
 
   // Determine active tab list to render
@@ -518,21 +613,30 @@ async function performScan() {
 
   // Populate Lists
   if (allowedList) {
-    renderList(allowedList, allowedSites, 'allowed', activeWhitelistInChrome, activeBlockedInChrome);
+    renderList(
+      allowedList,
+      allowedSites,
+      'allowed',
+      activeWhitelistInChrome,
+      activeBlockedInChrome,
+      prunedSnapshotProtocols,
+      allowedRowProtocols
+    );
   }
   if (blockedList) {
-    renderList(blockedList, blockedSites, 'blocked', activeWhitelistInChrome, activeBlockedInChrome);
+    renderList(
+      blockedList,
+      blockedSites,
+      'blocked',
+      activeWhitelistInChrome,
+      activeBlockedInChrome,
+      prunedSnapshotProtocols,
+      blockedRowProtocols
+    );
   }
 
   // Trigger active tab icon update to sync popup actions
-  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
-    try {
-      const res = chrome.runtime.sendMessage({ action: 'update_active_tab_icon' });
-      if (res && typeof res.catch === 'function') {
-        res.catch(() => { });
-      }
-    } catch (e) { }
-  }
+  notifyActiveTabIconSync();
 
   // Update current site card status if active tab domain is known
   if (currentDomain) {
@@ -549,8 +653,53 @@ function doScan() {
   return next;
 }
 
+// Check whether a domain's extension rule matches any currently open tab across all browser windows
+async function isDomainRuleOpenInBrowser(domain, domainProto = null) {
+  const cleanDomain = normalizeDomain(domain);
+  if (!cleanDomain) return false;
+  const resolvedProto = domainProto || getProtocolForDomain(cleanDomain);
+  const targetPattern = getPrimaryPatternForDomain(cleanDomain, { [cleanDomain]: resolvedProto });
+  if (!targetPattern) return false;
+
+  if (typeof chrome !== 'undefined' && chrome.tabs && typeof chrome.tabs.query === 'function') {
+    try {
+      const openTabs = await chrome.tabs.query({});
+      if (Array.isArray(openTabs)) {
+        const matchedTab = openTabs.some((tab) => {
+          if (!tab || !tab.url) return false;
+          const tabDomain = extractHostAndPortFromUrl(tab.url);
+          const tabProto = extractProtocolFromUrl(tab.url);
+          if (!tabDomain || !tabProto) return false;
+          return getPrimaryPatternForDomain(tabDomain, { [tabDomain]: tabProto }) === targetPattern;
+        });
+        if (matchedTab) return true;
+      }
+    } catch (e) {
+      // Fall back to currentDomain below if tabs.query fails
+    }
+  }
+
+  if (currentDomain) {
+    return matchesDomainRuleList(
+      cleanDomain,
+      [currentDomain],
+      currentDomainProtocol ? { [currentDomain]: currentDomainProtocol } : null,
+      resolvedProto
+    );
+  }
+  return false;
+}
+
 // Render list helper
-function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomains = []) {
+function renderList(
+  listEl,
+  sites,
+  type,
+  userWhitelist = [],
+  storedBlockedDomains = [],
+  ruleProtocols = null,
+  rowProtocols = null
+) {
   listEl.innerHTML = '';
 
   if (sites.length === 0) {
@@ -579,7 +728,15 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
     return;
   }
 
+  const normalizedWhitelist = normalizeDomainList(userWhitelist);
+  const normalizedBlocked = normalizeDomainList(storedBlockedDomains);
+
   sites.forEach(domain => {
+    const normalizedItemDomain = normalizeDomain(domain);
+    const rowProto = (rowProtocols && normalizedItemDomain && rowProtocols[normalizedItemDomain])
+      ? rowProtocols[normalizedItemDomain]
+      : getProtocolForDomain(normalizedItemDomain, ruleProtocols);
+    const protoAttr = rowProto ? ` data-protocol="${escapeHtml(rowProto)}"` : '';
     const li = document.createElement('li');
     li.className = 'site-item';
 
@@ -593,18 +750,18 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
     let actionButtons = '';
 
     if (type === 'allowed') {
-      const isTrusted = isDomainTrusted(domain, userWhitelist);
+      const isTrusted = isDomainTrusted(domain, normalizedWhitelist);
       if (!isTrusted) {
         statusText = '★ ' + (chrome.i18n.getMessage('labelAllowedBrowser') || 'Allowed by Browser');
         statusClass = 'site-source warning';
         statusTooltip = chrome.i18n.getMessage('tooltipAllowedBrowser') || '';
         actionButtons = `
-          <button class="btn-icon-secondary trust-btn" data-domain="${escapeHtml(domain)}" title="${escapeHtml(trustTitle)}">
+          <button class="btn-icon-secondary trust-btn" data-domain="${escapeHtml(domain)}"${protoAttr} title="${escapeHtml(trustTitle)}">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
           </button>
-          <button class="btn-icon-danger block-btn" data-domain="${escapeHtml(domain)}" title="${escapeHtml(blockTitle)}">
+          <button class="btn-icon-danger block-btn" data-domain="${escapeHtml(domain)}"${protoAttr} title="${escapeHtml(blockTitle)}">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -614,14 +771,17 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
       } else {
         statusText = '✔ ' + (chrome.i18n.getMessage('labelAllowedTrusted') || 'Trusted by App');
         statusClass = 'site-source trusted';
-        actionButtons = `
-          <button class="btn-icon-secondary unblock-btn" data-domain="${escapeHtml(domain)}" title="${escapeHtml(unblockTitle)}">
+        const hasUserExtensionRule = matchesDomainRuleList(normalizedItemDomain, normalizedWhitelist, ruleProtocols, rowProto);
+        const resetButtonHtml = hasUserExtensionRule ? `
+          <button class="btn-icon-secondary unblock-btn" data-domain="${escapeHtml(domain)}"${protoAttr} title="${escapeHtml(unblockTitle)}">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 2v6h6"></path>
               <path d="M3 13a9 9 0 1 0 3-7.7L3 8"></path>
             </svg>
-          </button>
-          <button class="btn-icon-danger block-btn" data-domain="${escapeHtml(domain)}" title="${escapeHtml(blockTitle)}">
+          </button>` : '';
+        actionButtons = `
+          ${resetButtonHtml}
+          <button class="btn-icon-danger block-btn" data-domain="${escapeHtml(domain)}"${protoAttr} title="${escapeHtml(blockTitle)}">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -630,31 +790,33 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
         `;
       }
     } else if (type === 'blocked') {
-      const isAppBlocked = storedBlockedDomains.includes(normalizeDomain(domain));
+      const isAppBlocked = matchesDomainRuleList(normalizedItemDomain, normalizedBlocked, ruleProtocols, rowProto);
       if (isAppBlocked) {
         statusText = '✖ ' + (chrome.i18n.getMessage('labelBlockedApp') || 'Blocked by App');
       } else {
         statusText = '✖ ' + (chrome.i18n.getMessage('labelBlockedBrowser') || 'Blocked by Browser');
       }
       statusClass = 'site-source warning';
-      actionButtons = `
-        <button class="btn-icon-secondary trust-btn" data-domain="${escapeHtml(domain)}" title="${escapeHtml(trustTitle)}">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </button>
-        <button class="btn-icon-danger unblock-btn" data-domain="${escapeHtml(domain)}" title="${escapeHtml(unblockTitle)}">
+      const unblockButtonHtml = isAppBlocked ? `
+        <button class="btn-icon-danger unblock-btn" data-domain="${escapeHtml(domain)}"${protoAttr} title="${escapeHtml(unblockTitle)}">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 2v6h6"></path>
             <path d="M3 13a9 9 0 1 0 3-7.7L3 8"></path>
           </svg>
+        </button>` : '';
+      actionButtons = `
+        <button class="btn-icon-secondary trust-btn" data-domain="${escapeHtml(domain)}"${protoAttr} title="${escapeHtml(trustTitle)}">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
         </button>
+        ${unblockButtonHtml}
       `;
     }
 
     li.innerHTML = `
       <div class="site-info">
-        <span class="site-domain" title="${escapeHtml(domain)}" data-domain="${escapeHtml(domain)}">
+        <span class="site-domain" title="${escapeHtml(domain)}" data-domain="${escapeHtml(domain)}"${protoAttr}>
           ${escapeHtml(domain)}
           <svg class="external-link-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -676,8 +838,10 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
     if (domainEl) {
       domainEl.addEventListener('click', (e) => {
         const d = e.currentTarget.getAttribute('data-domain');
+        const p = e.currentTarget.getAttribute('data-protocol');
+        const cleanD = normalizeDomain(d);
         chrome.tabs.create({
-          url: getSiteDetailsUrl(d)
+          url: getSiteDetailsUrl(d, p && cleanD ? { [cleanD]: p } : null)
         });
       });
     }
@@ -692,13 +856,15 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
       blockBtn.addEventListener('click', async (e) => {
         const btn = e.currentTarget;
         const d = btn.getAttribute('data-domain');
+        const p = btn.getAttribute('data-protocol');
         disableRowButtons();
 
         li.style.transform = 'translateX(50px)';
         li.style.opacity = '0';
         li.style.transition = 'all 0.3s ease';
 
-        await blockDomain(d);
+        await blockDomain(d, p || null);
+        notifyActiveTabIconSync();
         scheduleDelayedScan(200);
       });
     }
@@ -709,13 +875,20 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
       trustBtn.addEventListener('click', async (e) => {
         const btn = e.currentTarget;
         const d = btn.getAttribute('data-domain');
+        const p = btn.getAttribute('data-protocol');
+        if (p) {
+          rememberDomainProtocol(d, p);
+        }
         disableRowButtons();
 
         li.style.transform = 'scale(0.95)';
         li.style.opacity = '0.5';
         li.style.transition = 'all 0.2s ease';
 
-        await allowAndTrustDomain(d);
+        const cleanD = normalizeDomain(d);
+        const customPat = p && cleanD ? getPatternWithPortForDomain(cleanD, { [cleanD]: p }) : null;
+        await allowAndTrustDomain(d, customPat);
+        notifyActiveTabIconSync();
         scheduleDelayedScan(200);
       });
     }
@@ -726,9 +899,10 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
       unblockBtn.addEventListener('click', async (e) => {
         const btn = e.currentTarget;
         const d = btn.getAttribute('data-domain');
+        const p = btn.getAttribute('data-protocol');
 
-        // If the domain is the active open tab, show a warning before resetting
-        if (currentDomain && normalizeDomain(d) === normalizeDomain(currentDomain)) {
+        // Warn if ANY open tab across browser windows matches the domain rule being reset
+        if (await isDomainRuleOpenInBrowser(d, p || null)) {
           const confirmMsg = chrome.i18n.getMessage('confirmResetActiveDomain') ||
             `This website is currently open in your browser. Resetting its notification settings in this state may cause the automatic block warning to reappear immediately. Please close the website's tab first, then perform the reset operation. Do you want to continue?`;
           if (!confirm(confirmMsg)) return;
@@ -740,7 +914,8 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
         li.style.opacity = '0';
         li.style.transition = 'all 0.3s ease';
 
-        await resetDomain(d);
+        await resetDomain(d, p || null);
+        notifyActiveTabIconSync();
         scheduleDelayedScan(200);
       });
     }
@@ -749,19 +924,33 @@ function renderList(listEl, sites, type, userWhitelist = [], storedBlockedDomain
   });
 }
 
-// Clean all suspicious allowed sites
+let isCleaningSuspicious = false;
+
+// Clean all suspicious allowed sites atomically in a single batch storage update
 async function cleanAllSuspicious() {
-  if (!currentSuspiciousSites || currentSuspiciousSites.length === 0) return;
+  if (isCleaningSuspicious || !currentSuspiciousSites || currentSuspiciousSites.length === 0) return;
 
   const confirmMsg = chrome.i18n.getMessage('confirmResetAll') || 'Revoke all suspicious permissions?';
   if (!confirm(confirmMsg)) return;
 
-  const sitesToBlock = [...currentSuspiciousSites];
-  for (const domain of sitesToBlock) {
-    await blockDomain(domain);
+  const cleanBtn = document.getElementById('reset-all-btn');
+  isCleaningSuspicious = true;
+  if (cleanBtn) cleanBtn.disabled = true;
+  try {
+    const sitesToBlock = [...currentSuspiciousSites];
+    for (const d of sitesToBlock) {
+      if (currentSuspiciousProtocols && currentSuspiciousProtocols[d]) {
+        rememberDomainProtocol(d, currentSuspiciousProtocols[d]);
+      }
+    }
+    await blockAndRecordDomains(sitesToBlock);
+    await doScan();
+  } catch (err) {
+    console.error('Failed to clean suspicious sites:', err);
+  } finally {
+    isCleaningSuspicious = false;
+    if (cleanBtn) cleanBtn.disabled = false;
   }
-
-  await doScan();
 }
 
 // Initialize Popup UI
@@ -780,43 +969,52 @@ async function initPopup() {
   const storageData = await chrome.storage.local.get({
     guard_enabled: true,
     silent_guardian_enabled: false,
-    domain_protocols: {},
+    domain_protocols: null,
     blocked_count: 0
   });
   syncDomainProtocols(storageData.domain_protocols);
 
   const guardToggle = document.getElementById('guard-toggle');
-  if (guardToggle) guardToggle.checked = storageData.guard_enabled;
-
   const silentToggle = document.getElementById('silent-toggle');
-  if (silentToggle) silentToggle.checked = storageData.silent_guardian_enabled;
+  const syncedToggles = syncGuardAndSilentUI(
+    storageData.guard_enabled,
+    storageData.silent_guardian_enabled
+  );
+  if (!syncedToggles.guardEnabled && Boolean(storageData.silent_guardian_enabled)) {
+    await enqueueStorageOp(async () => {
+      await chrome.storage.local.set({ silent_guardian_enabled: false });
+    });
+  }
 
   // Background Block Log UI Bindings
-  const blockLogRow = document.getElementById('block-log-row');
-  const blockLogText = document.getElementById('block-log-text');
   const clearLogBtn = document.getElementById('clear-log-btn');
 
   function updateBlockLogUI(count) {
-    if (!blockLogRow || !blockLogText) return;
+    const rowEl = document.getElementById('block-log-row');
+    const textEl = document.getElementById('block-log-text');
+    if (!rowEl || !textEl) return;
     if (count > 0) {
-      blockLogRow.classList.remove('hidden');
+      rowEl.classList.remove('hidden');
       const label = chrome.i18n.getMessage('backgroundBlockedLabel') || 'Quietly blocked: {count} sites';
-      blockLogText.textContent = label.replace('{count}', count);
+      textEl.textContent = label.replace('{count}', count);
     } else {
-      blockLogRow.classList.add('hidden');
+      rowEl.classList.add('hidden');
     }
   }
 
   updateBlockLogUI(storageData.blocked_count);
 
   // Reset the extension icon badge count since user opened the popup to check settings
-  await chrome.action.setBadgeText({ text: '' });
+  try {
+    await chrome.action.setBadgeText({ text: '' });
+  } catch (e) { }
 
   // 3. Initialize global status UI
   await updateGlobalStatusUI();
 
   // 4. Query active tab and initialize current site card
   currentDomain = null;
+  currentDomainProtocol = null;
   const currentSiteCard = document.getElementById('current-site-card');
   const currentSiteDomainEl = document.getElementById('current-site-domain');
   if (currentSiteCard) currentSiteCard.classList.add('hidden');
@@ -824,9 +1022,11 @@ async function initPopup() {
   try {
     const activeTabs = await chrome.tabs.query({ active: true, currentWindow: true });
     if (activeTabs.length > 0 && activeTabs[0].url) {
-      const domainAndPort = getHostAndPortFromUrl(activeTabs[0].url);
+      const tabUrl = activeTabs[0].url;
+      const domainAndPort = getHostAndPortFromUrl(tabUrl);
       if (domainAndPort) {
         currentDomain = domainAndPort;
+        currentDomainProtocol = extractProtocolFromUrl(tabUrl) || null;
         if (currentSiteCard) currentSiteCard.classList.remove('hidden');
         if (currentSiteDomainEl) {
           currentSiteDomainEl.textContent = currentDomain;
@@ -849,50 +1049,109 @@ async function initPopup() {
     document.body.setAttribute('data-listeners-bound', 'true');
   }
 
+  // Live-sync storage changes (Silent Guardian blocked_count, protocols, and toggle states) while popup is open
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName !== 'local' || !changes) return;
+      if (changes.domain_protocols && changes.domain_protocols.newValue) {
+        syncDomainProtocols(changes.domain_protocols.newValue, true);
+      }
+      if (changes.guard_enabled || changes.silent_guardian_enabled) {
+        const liveGuardEl = document.getElementById('guard-toggle');
+        const liveSilentEl = document.getElementById('silent-toggle');
+        const nextGuard = changes.guard_enabled
+          ? (changes.guard_enabled.newValue !== undefined ? Boolean(changes.guard_enabled.newValue) : true)
+          : (liveGuardEl ? Boolean(liveGuardEl.checked) : true);
+        const nextSilent = changes.silent_guardian_enabled
+          ? (changes.silent_guardian_enabled.newValue !== undefined ? Boolean(changes.silent_guardian_enabled.newValue) : false)
+          : (liveSilentEl ? Boolean(liveSilentEl.checked) : false);
+        const synced = syncGuardAndSilentUI(nextGuard, nextSilent);
+        if (!synced.guardEnabled && nextSilent) {
+          enqueueStorageOp(async () => {
+            await chrome.storage.local.set({ silent_guardian_enabled: false });
+          });
+        }
+      }
+      if (changes.blocked_count) {
+        const nextCount = Number(changes.blocked_count.newValue) || 0;
+        updateBlockLogUI(nextCount);
+        if (nextCount > 0 && chrome.action && typeof chrome.action.setBadgeText === 'function') {
+          try {
+            const res = chrome.action.setBadgeText({ text: '' });
+            if (res && typeof res.catch === 'function') res.catch(() => { });
+          } catch (e) { }
+        }
+      }
+    });
+  }
+
   if (clearLogBtn) {
     clearLogBtn.addEventListener('click', async () => {
-      await chrome.storage.local.set({ blocked_count: 0 });
+      await resetBlockedCount();
       updateBlockLogUI(0);
-      await chrome.action.setBadgeText({ text: '' });
+      try {
+        await chrome.action.setBadgeText({ text: '' });
+      } catch (e) { }
     });
   }
 
   if (currentSiteDomainEl) {
     currentSiteDomainEl.addEventListener('click', () => {
       if (!currentDomain) return;
+      const cleanD = normalizeDomain(currentDomain);
+      const protoMap = currentDomainProtocol && cleanD ? { [cleanD]: currentDomainProtocol } : null;
       chrome.tabs.create({
-        url: getSiteDetailsUrl(currentDomain)
+        url: getSiteDetailsUrl(currentDomain, protoMap)
       });
     });
   }
 
   const allowBtn = document.getElementById('current-site-allow');
-  if (allowBtn) {
-    allowBtn.addEventListener('click', async () => {
-      if (!currentDomain) return;
-      await allowAndTrustDomain(currentDomain);
-      await doScan();
-    });
-  }
-
   const blockBtn = document.getElementById('current-site-block');
-  if (blockBtn) {
-    blockBtn.addEventListener('click', async () => {
-      if (!currentDomain) return;
-      await blockDomain(currentDomain);
+  const resetBtn = document.getElementById('current-site-reset');
+
+  async function runCurrentSiteAction(actionFn) {
+    if (!currentDomain) return;
+    if (allowBtn) allowBtn.disabled = true;
+    if (blockBtn) blockBtn.disabled = true;
+    if (resetBtn) resetBtn.disabled = true;
+    try {
+      if (currentDomainProtocol) {
+        rememberDomainProtocol(currentDomain, currentDomainProtocol);
+      }
+      await actionFn(currentDomain, currentDomainProtocol);
+      await updateCurrentSiteStatusUI(currentDomain);
       await doScan();
-    });
+    } finally {
+      if (allowBtn) allowBtn.disabled = false;
+      if (blockBtn) blockBtn.disabled = false;
+      if (currentDomain) {
+        await updateCurrentSiteStatusUI(currentDomain);
+      }
+    }
   }
 
-  const resetBtn = document.getElementById('current-site-reset');
+  if (allowBtn) {
+    allowBtn.addEventListener('click', () =>
+      runCurrentSiteAction((d, p) => {
+        const cleanD = normalizeDomain(d);
+        const customPat = p && cleanD ? getPatternWithPortForDomain(cleanD, { [cleanD]: p }) : null;
+        return allowAndTrustDomain(d, customPat);
+      })
+    );
+  }
+
+  if (blockBtn) {
+    blockBtn.addEventListener('click', () => runCurrentSiteAction(blockDomain));
+  }
+
   if (resetBtn) {
     resetBtn.addEventListener('click', async () => {
       if (!currentDomain) return;
       const confirmMsg = chrome.i18n.getMessage('confirmResetActiveDomain') ||
         `This website is currently open in your browser. Resetting its notification settings in this state may cause the automatic block warning to reappear immediately. Please close the website's tab first, then perform the reset operation. Do you want to continue?`;
       if (!confirm(confirmMsg)) return;
-      await resetDomain(currentDomain);
-      await doScan();
+      await runCurrentSiteAction(resetDomain);
     });
   }
 
@@ -907,7 +1166,12 @@ async function initPopup() {
     clearAllRulesBtn.addEventListener('click', async () => {
       const confirmMsg = chrome.i18n.getMessage('confirmClearAllRules') || 'Reset all blocked sites?';
       if (!confirm(confirmMsg)) return;
-      await clearAllBlockedRules();
+      clearAllRulesBtn.disabled = true;
+      try {
+        await clearAllBlockedRules();
+      } finally {
+        // performScan inside clearAllBlockedRules sets accurate disabled state based on activeBlockedInChrome
+      }
     });
   }
 
@@ -923,13 +1187,34 @@ async function initPopup() {
 
   if (guardToggle) {
     guardToggle.addEventListener('change', async (e) => {
-      await chrome.storage.local.set({ guard_enabled: e.target.checked });
+      const checked = Boolean(e.target.checked);
+      const nextSilent = checked && silentToggle ? Boolean(silentToggle.checked) : false;
+      syncGuardAndSilentUI(checked, nextSilent);
+      await enqueueStorageOp(async () => {
+        const updates = { guard_enabled: checked };
+        if (!checked) {
+          updates.silent_guardian_enabled = false;
+        }
+        await chrome.storage.local.set(updates);
+      });
     });
   }
 
   if (silentToggle) {
     silentToggle.addEventListener('change', async (e) => {
-      await chrome.storage.local.set({ silent_guardian_enabled: e.target.checked });
+      const isGuardOn = guardToggle ? Boolean(guardToggle.checked) : true;
+      if (!isGuardOn) {
+        syncGuardAndSilentUI(false, false);
+        await enqueueStorageOp(async () => {
+          await chrome.storage.local.set({ guard_enabled: false, silent_guardian_enabled: false });
+        });
+        return;
+      }
+      const checked = Boolean(e.target.checked);
+      syncGuardAndSilentUI(true, checked);
+      await enqueueStorageOp(async () => {
+        await chrome.storage.local.set({ silent_guardian_enabled: checked });
+      });
     });
   }
 
@@ -989,6 +1274,14 @@ async function initPopup() {
         helpOverlay.classList.add('hidden');
       }
     });
+
+    if (typeof document.addEventListener === 'function') {
+      document.addEventListener('keydown', (e) => {
+        if (e && e.key === 'Escape' && !helpOverlay.classList.contains('hidden')) {
+          helpOverlay.classList.add('hidden');
+        }
+      });
+    }
   }
 }
 
@@ -1004,11 +1297,13 @@ if (typeof module !== 'undefined' && module.exports) {
     localizeUI,
     updateListHeaders,
     gatherDomains,
+    notifyActiveTabIconSync,
+    syncGuardAndSilentUI,
+    isDomainRuleOpenInBrowser,
     getNotificationSetting,
     getGlobalDefaultSetting,
     blockDomain,
     setGlobalDefault,
-    reapplyExtensionRules,
     resetDomain,
     clearAllBlockedRules,
     updateGlobalStatusUI,
@@ -1018,7 +1313,11 @@ if (typeof module !== 'undefined' && module.exports) {
     cleanAllSuspicious,
     initPopup,
     getCurrentDomain: () => currentDomain,
-    setCurrentDomain: (d) => { currentDomain = d; },
+    getCurrentDomainProtocol: () => currentDomainProtocol,
+    setCurrentDomain: (d, proto = null) => {
+      currentDomain = d;
+      currentDomainProtocol = proto || null;
+    },
     getCurrentSuspiciousSites: () => currentSuspiciousSites
   };
 }

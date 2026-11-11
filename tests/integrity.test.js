@@ -2,9 +2,107 @@ const { describe, it } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const zlib = require('node:zlib');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const EXT_DIR = path.join(ROOT_DIR, 'chrome_extension');
+
+function paethPredictor(a, b, c) {
+  const p = a + b - c;
+  const pa = Math.abs(p - a);
+  const pb = Math.abs(p - b);
+  const pc = Math.abs(p - c);
+  if (pa <= pb && pa <= pc) return a;
+  if (pb <= pc) return b;
+  return c;
+}
+
+// Zero-dependency RFC 2083 PNG pixel decoder supporting 8-bit RGB (colorType=2) and RGBA (colorType=6)
+function decodePngPixels(filePath) {
+  assert.ok(fs.existsSync(filePath), `Missing PNG asset: ${filePath}`);
+  const buf = fs.readFileSync(filePath);
+  assert.equal(buf.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', `Invalid PNG signature in ${filePath}`);
+
+  let pos = 8;
+  let width = 0;
+  let height = 0;
+  let bitDepth = 0;
+  let colorType = 0;
+  let interlaceMethod = 0;
+  const idatChunks = [];
+
+  while (pos < buf.length) {
+    const length = buf.readUInt32BE(pos);
+    const type = buf.subarray(pos + 4, pos + 8).toString('ascii');
+    const chunkData = buf.subarray(pos + 8, pos + 8 + length);
+    pos += 12 + length;
+
+    if (type === 'IHDR') {
+      width = chunkData.readUInt32BE(0);
+      height = chunkData.readUInt32BE(4);
+      bitDepth = chunkData[8];
+      colorType = chunkData[9];
+      interlaceMethod = chunkData[12];
+    } else if (type === 'IDAT') {
+      idatChunks.push(chunkData);
+    } else if (type === 'IEND') {
+      break;
+    }
+  }
+
+  assert.equal(bitDepth, 8, `Unsupported PNG bitDepth=${bitDepth} in ${filePath}`);
+  assert.equal(interlaceMethod, 0, `Unsupported interlaced PNG in ${filePath}`);
+  assert.ok(colorType === 2 || colorType === 6, `Unsupported PNG colorType=${colorType} in ${filePath}`);
+
+  const bpp = colorType === 6 ? 4 : 3;
+  const stride = width * bpp;
+  const raw = zlib.inflateSync(Buffer.concat(idatChunks));
+  assert.equal(raw.length, height * (stride + 1), `Unexpected decompressed PNG size in ${filePath}`);
+
+  const pixels = Buffer.alloc(height * stride);
+  for (let y = 0; y < height; y++) {
+    const filterType = raw[y * (stride + 1)];
+    const srcOffset = y * (stride + 1) + 1;
+    const dstOffset = y * stride;
+
+    for (let i = 0; i < stride; i++) {
+      const byte = raw[srcOffset + i];
+      const left = i >= bpp ? pixels[dstOffset + i - bpp] : 0;
+      const up = y > 0 ? pixels[dstOffset - stride + i] : 0;
+      const upLeft = y > 0 && i >= bpp ? pixels[dstOffset - stride + i - bpp] : 0;
+
+      let recon = byte;
+      if (filterType === 1) {
+        recon = (byte + left) & 0xff;
+      } else if (filterType === 2) {
+        recon = (byte + up) & 0xff;
+      } else if (filterType === 3) {
+        recon = (byte + ((left + up) >> 1)) & 0xff;
+      } else if (filterType === 4) {
+        recon = (byte + paethPredictor(left, up, upLeft)) & 0xff;
+      } else if (filterType !== 0) {
+        assert.fail(`Invalid PNG scanline filter ${filterType} at row ${y} in ${filePath}`);
+      }
+      pixels[dstOffset + i] = recon;
+    }
+  }
+
+  return {
+    width,
+    height,
+    bitDepth,
+    colorType,
+    getPixel(x, y) {
+      const idx = (y * width + x) * bpp;
+      return [
+        pixels[idx],
+        pixels[idx + 1],
+        pixels[idx + 2],
+        bpp === 4 ? pixels[idx + 3] : 255
+      ];
+    }
+  };
+}
 
 describe('Extension Package & Localization Integrity', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(EXT_DIR, 'manifest.json'), 'utf8'));
@@ -38,13 +136,52 @@ describe('Extension Package & Localization Integrity', () => {
       assert.ok(fs.existsSync(path.join(EXT_DIR, iconPath)), `Missing manifest icon: ${iconPath}`);
     }
 
-    // Dynamic status icons used by background.js
+    // Dynamic status icons used by background.js (verify existence, dimensions, and distinct color semantics)
     for (const prefix of ['icon', 'icon-allowed', 'icon-blocked']) {
       for (const size of [16, 48, 128]) {
         const p = path.join(EXT_DIR, `icons/${prefix}-${size}.png`);
         assert.ok(fs.existsSync(p), `Missing dynamic icon: ${p}`);
       }
     }
+    const defaultIcon48 = decodePngPixels(path.join(EXT_DIR, 'icons/icon-48.png'));
+    const allowedIcon48 = decodePngPixels(path.join(EXT_DIR, 'icons/icon-allowed-48.png'));
+    const blockedIcon48 = decodePngPixels(path.join(EXT_DIR, 'icons/icon-blocked-48.png'));
+    assert.equal(defaultIcon48.width, 48);
+    assert.equal(allowedIcon48.width, 48);
+    assert.equal(blockedIcon48.width, 48);
+
+    let hasBlue = false;
+    let hasRed = false;
+    let hasGreen = false;
+    for (let y = 0; y < 48; y++) {
+      for (let x = 0; x < 48; x++) {
+        const [r1, g1, b1, a1] = defaultIcon48.getPixel(x, y);
+        if (a1 > 200 && b1 > r1 + 60 && b1 > 150) hasBlue = true;
+        const [r2, g2, b2, a2] = allowedIcon48.getPixel(x, y);
+        if (a2 > 200 && r2 > g2 + 60 && r2 > b2 + 60) hasRed = true;
+        const [r3, g3, b3, a3] = blockedIcon48.getPixel(x, y);
+        if (a3 > 200 && g3 > r3 + 40 && g3 > b3 + 20) hasGreen = true;
+      }
+    }
+    assert.ok(hasBlue, 'icon-48.png must contain blue accent pixels');
+    assert.ok(hasRed, 'icon-allowed-48.png must contain red caution pixels');
+    assert.ok(hasGreen, 'icon-blocked-48.png must contain green protected pixels');
+
+    // Strict MV3 CSP & 100% offline/local-only popup assets (matching PRIVACY.md zero-external-network guarantee)
+    assert.ok(manifest.content_security_policy && manifest.content_security_policy.extension_pages);
+    const csp = manifest.content_security_policy.extension_pages;
+    assert.ok(csp.includes("default-src 'self'"), 'CSP must restrict default-src to self');
+    assert.ok(csp.includes("script-src 'self'"), 'CSP must restrict script-src to self');
+    assert.ok(csp.includes("connect-src 'none'"), 'CSP must disallow external network connections');
+
+    const popupHtml = fs.readFileSync(path.join(EXT_DIR, 'popup.html'), 'utf8');
+    const popupCss = fs.readFileSync(path.join(EXT_DIR, 'popup.css'), 'utf8');
+    assert.ok(
+      popupHtml.includes(`<span class="version-tag">v${manifest.version}</span>`),
+      `popup.html version-tag must match v${manifest.version}`
+    );
+    assert.ok(!/https?:\/\//i.test(popupHtml), 'popup.html must not load external http(s) resources (e.g. Google Fonts)');
+    assert.ok(!/https?:\/\//i.test(popupCss), 'popup.css must not load external http(s) resources');
   });
 
   it('all 35 supported locales exist, conform to Chrome Web Store limits, and have identical keys and valid placeholders', () => {
@@ -92,9 +229,12 @@ describe('Extension Package & Localization Integrity', () => {
     const popupJs = fs.readFileSync(path.join(EXT_DIR, 'popup.js'), 'utf8');
     const bgJs = fs.readFileSync(path.join(EXT_DIR, 'background.js'), 'utf8');
 
-    const htmlMatches = [...html.matchAll(/data-i18n="([^"]+)"/g)].map(m => m[1]);
+    const htmlMatches = [
+      ...[...html.matchAll(/data-i18n="([^"]+)"/g)].map(m => m[1]),
+      ...[...html.matchAll(/data-i18n-title="([^"]+)"/g)].map(m => m[1])
+    ];
     for (const key of htmlMatches) {
-      assert.ok(key in enMessages, `popup.html data-i18n="${key}" missing from messages.json`);
+      assert.ok(key in enMessages, `popup.html data-i18n*="${key}" missing from messages.json`);
     }
 
     const jsMatches = [...(popupJs + '\n' + bgJs).matchAll(/getMessage\(['"]([^'"]+)['"]/g)].map(m => m[1]);
@@ -115,10 +255,35 @@ describe('Extension Package & Localization Integrity', () => {
       assert.ok(!storePy.includes('spam-example.com'), 'Store asset generator must not use non-reserved domain spam-example.com');
       assert.ok(!storePy.includes('www.google.com'), 'Store asset generator must not use www.google.com in screenshots');
       assert.ok(!storePy.includes('www.example.com'), 'Store asset generator should use spam.example.com instead of www.example.com');
+      assert.ok(!storePy.includes('(238, 238, 238'), 'Store asset generator must unify both Screen 1 and Screen 2 backgrounds to pure white (#ffffff)');
+      assert.ok(storePy.includes('SCREEN_ROLE_TITLES') && storePy.includes('draw_screen_role_header'), 'Store asset generator must render distinct localized role titles on Screen 1 and Screen 2');
+      assert.ok(storePy.includes('BRAND_HEADER_Y = 90'), 'Store asset generator must align Screen 1 and Screen 2 brand headers at identical Y coordinate');
+      assert.ok(storePy.includes('desc_max_lines=2'), 'Store asset generator must cap Screen 2 editorial point lines to prevent toast overlap on verbose locales');
+      assert.ok(
+        storePy.includes('tx = px - gap - avail_w') && !storePy.includes('tx = px - gap - min(avail_w, rtw)'),
+        'Store asset generator RTL role header must right-align within [px - gap - avail_w, px - gap] without colliding with pill'
+      );
+      assert.ok(
+        storePy.includes('_CairoSurfaceImage') &&
+        storePy.includes("frombuffer('RGBa'") &&
+        !storePy.includes("frombuffer('RGBA', (self.width, self.height), buf, 'raw', 'BGRA'"),
+        'Store asset generator must include Cairo stdlib PNG fallback and unpremultiply Cairo BGRa surfaces without double-premultiplication'
+      );
+      assert.ok(
+        storePy.includes('crop((1208, 44, 1243, 75))') && !storePy.includes('crop((0, 0, 1280, 82))'),
+        'Store asset generator must patch only the toolbar icon on Screen 2 without introducing a popup top-edge notch'
+      );
+      const expectedLocales = fs.readdirSync(path.join(EXT_DIR, '_locales')).sort();
+      for (const locale of expectedLocales) {
+        assert.ok(
+          new RegExp(`['"]${locale}['"]\\s*:\\s*\\(`).test(storePy),
+          `SCREEN_ROLE_TITLES in generate_store_assets.py missing locale ${locale}`
+        );
+      }
     }
   });
 
-  it('all 35 localized store screenshots (1280x800), promo banners (440x280), and sanitized notification captures exist and have valid PNG dimensions', (t) => {
+  it('all 35 localized store screenshots (1280x800), promo banners (440x280), and sanitized notification captures exist and have valid PNG dimensions and pure white backgrounds with role titles', (t) => {
     const imagesDir = path.join(ROOT_DIR, 'images');
     if (!fs.existsSync(imagesDir)) {
       t.skip('images/ directory is gitignored in CI checkout');
@@ -132,28 +297,261 @@ describe('Extension Package & Localization Integrity', () => {
       assert.equal(buf.subarray(0, 4).toString('hex'), '89504e47', `Invalid PNG signature in ${filePath}`);
       const width = buf.readUInt32BE(16);
       const height = buf.readUInt32BE(20);
-      return { width, height };
+      const bitDepth = buf[24];
+      const colorType = buf[25];
+      return { width, height, bitDepth, colorType };
     }
 
+    const whiteBgProbeCoords = [
+      [16, 150],
+      [16, 400],
+      [760, 750],
+      [1024, 750]
+    ];
+
     for (const locale of locales) {
+      const screenImgs = {};
       for (const screenNum of [1, 2]) {
         const p = path.join(imagesDir, `notispam-cleaner_screen-${screenNum}_${locale}.png`);
-        const { width, height } = readPngDimensions(p);
-        assert.equal(width, 1280, `Invalid width for ${p}`);
-        assert.equal(height, 800, `Invalid height for ${p}`);
+        const img = decodePngPixels(p);
+        screenImgs[screenNum] = img;
+        assert.equal(img.width, 1280, `Invalid width for ${p}`);
+        assert.equal(img.height, 800, `Invalid height for ${p}`);
+        assert.equal(img.bitDepth, 8, `Expected 8-bit channel depth for ${p}`);
+        assert.equal(img.colorType, 2, `Expected 24-bit RGB PNG (no alpha, colorType=2) for ${p}, got colorType=${img.colorType}`);
+
+        // Verify unified pure #ffffff background on both Screen 1 and Screen 2
+        for (const [bx, by] of whiteBgProbeCoords) {
+          const [r, g, b] = img.getPixel(bx, by);
+          assert.deepEqual(
+            [r, g, b],
+            [255, 255, 255],
+            `Expected pure #ffffff background at (${bx}, ${by}) in ${path.basename(p)}, got rgb(${r}, ${g}, ${b}) — re-run generate_store_assets.py`
+          );
+        }
+
+        // Verify rendered role-header pill rgb(232, 240, 254) above callouts 1, 2, 3 (x=48..684, y=185..330)
+        let rolePillPixels = 0;
+        for (let y = 185; y <= 330; y++) {
+          for (let x = 48; x <= 684; x++) {
+            const [r, g, b] = img.getPixel(x, y);
+            if (Math.abs(r - 232) <= 2 && Math.abs(g - 240) <= 2 && Math.abs(b - 254) <= 2) {
+              rolePillPixels++;
+            }
+          }
+        }
+        assert.ok(
+          rolePillPixels >= 40,
+          `Expected rendered role-header pill rgb(232, 240, 254) in ${path.basename(p)} (found ${rolePillPixels} pixels) — re-run generate_store_assets.py`
+        );
+
+        // Verify bright yellow marker highlight rgb(255, 235, 126) without double-premultiplied olive darkening
+        let brightHighlightPixels = 0;
+        for (let y = 240; y <= 650; y += 2) {
+          for (let x = 48; x <= 684; x += 2) {
+            const [r, g, b] = img.getPixel(x, y);
+            if (r >= 245 && g >= 225 && g <= 245 && b >= 105 && b <= 150) {
+              brightHighlightPixels++;
+            }
+          }
+        }
+        assert.ok(
+          brightHighlightPixels >= 20,
+          `Expected bright yellow marker highlight ~rgb(255, 235, 126) without premultiplied darkening in ${path.basename(p)} (found ${brightHighlightPixels} pixels) — re-run generate_store_assets.py`
+        );
       }
+
+      // Verify Screen 1 and Screen 2 have identical Chrome toolbar bottom-border pixels just left of the popup (no shifted-popup notch)
+      assert.deepEqual(
+        screenImgs[2].getPixel(802, 81),
+        screenImgs[1].getPixel(802, 81),
+        `Expected Screen 2 toolbar border at (802, 81) to match Screen 1 without shifted-popup notch for locale ${locale}`
+      );
     }
 
     for (const bannerFile of ['notispam-cleaner_banner.png', 'notispam-cleaner_banner_en.png']) {
       const bannerDim = readPngDimensions(path.join(imagesDir, bannerFile));
       assert.equal(bannerDim.width, 440, `Invalid width for ${bannerFile}`);
       assert.equal(bannerDim.height, 280, `Invalid height for ${bannerFile}`);
+      assert.equal(bannerDim.bitDepth, 8, `Expected 8-bit channel depth for ${bannerFile}`);
+      assert.equal(bannerDim.colorType, 2, `Expected 24-bit RGB PNG (no alpha, colorType=2) for ${bannerFile}`);
     }
 
     for (const origToast of ['Screenshot 2026-05-29 at 1.25.47.png', 'スクリーンショット 2026-05-29 1.29.26.png']) {
       const toastDim = readPngDimensions(path.join(imagesDir, '_original', origToast));
       assert.equal(toastDim.width, 728, `Invalid width for ${origToast}`);
       assert.equal(toastDim.height, 252, `Invalid height for ${origToast}`);
+    }
+  });
+
+  it('scripts/cws-store-listings.json contains valid Detailed Descriptions and asset mappings for all 35 locales', () => {
+    const listingsPath = path.join(ROOT_DIR, 'scripts/cws-store-listings.json');
+    assert.ok(fs.existsSync(listingsPath), 'Missing scripts/cws-store-listings.json');
+    const listings = JSON.parse(fs.readFileSync(listingsPath, 'utf8'));
+
+    const expectedLocales = fs.readdirSync(path.join(EXT_DIR, '_locales')).sort();
+    assert.deepEqual(Object.keys(listings).sort(), expectedLocales);
+
+    for (const locale of expectedLocales) {
+      const entry = listings[locale];
+      const msgData = JSON.parse(fs.readFileSync(path.join(EXT_DIR, '_locales', locale, 'messages.json'), 'utf8'));
+
+      assert.equal(entry.locale, locale);
+      assert.ok(Array.isArray(entry.languageNames) && entry.languageNames.length >= 2, `Missing languageNames for ${locale}`);
+      assert.equal(entry.extName, msgData.extName.message, `extName mismatch in cws-store-listings.json for ${locale}`);
+      assert.equal(entry.extDesc, msgData.extDesc.message, `extDesc mismatch in cws-store-listings.json for ${locale}`);
+
+      assert.ok(
+        typeof entry.detailedDescription === 'string' &&
+        entry.detailedDescription.length >= 400 &&
+        entry.detailedDescription.length <= 16000,
+        `Invalid detailedDescription length for ${locale}: ${entry.detailedDescription?.length}`
+      );
+      assert.ok(
+        entry.detailedDescription.includes('https://github.com/mah-jp/notispam-cleaner'),
+        `Missing GitHub repository URL in detailedDescription for ${locale}`
+      );
+
+      for (const uiKey of ['scanBtn', 'cleanAllBtn', 'realtimeGuardLabel', 'silentGuardianLabel', 'openSettingsBtn']) {
+        const label = msgData[uiKey].message;
+        assert.ok(
+          entry.detailedDescription.toLowerCase().includes(label.toLowerCase()),
+          `detailedDescription for ${locale} should reference localized ${uiKey} ("${label}")`
+        );
+      }
+
+      for (const prefixKey of ['suspiciousLabel', 'trustedLabel']) {
+        const prefix = msgData[prefixKey].message.split('(')[0].split('（')[0].trim();
+        assert.ok(
+          entry.detailedDescription.toLowerCase().includes(prefix.toLowerCase()),
+          `detailedDescription for ${locale} should reference localized ${prefixKey} ("${prefix}")`
+        );
+      }
+
+      assert.deepEqual(entry.screenshots, [
+        `images/notispam-cleaner_screen-1_${locale}.png`,
+        `images/notispam-cleaner_screen-2_${locale}.png`
+      ]);
+      assert.equal(
+        entry.promoBanner,
+        locale === 'ja' ? 'images/notispam-cleaner_banner.png' : 'images/notispam-cleaner_banner_en.png'
+      );
+    }
+
+    const cwsEnPath = path.join(ROOT_DIR, 'CHROMEWEBSTORE.md');
+    if (fs.existsSync(cwsEnPath)) {
+      const cwsEn = fs.readFileSync(cwsEnPath, 'utf8');
+      assert.ok(cwsEn.includes(listings.en.extName), 'CHROMEWEBSTORE.md must include English extName');
+      assert.ok(cwsEn.includes(listings.en.extDesc), 'CHROMEWEBSTORE.md must include English extDesc');
+      assert.ok(cwsEn.includes(listings.en.detailedDescription), 'CHROMEWEBSTORE.md must match en.detailedDescription');
+    }
+
+    const cwsJaPath = path.join(ROOT_DIR, 'CHROMEWEBSTORE_JA.md');
+    if (fs.existsSync(cwsJaPath)) {
+      const cwsJa = fs.readFileSync(cwsJaPath, 'utf8');
+      assert.ok(cwsJa.includes(listings.ja.extName), 'CHROMEWEBSTORE_JA.md must include Japanese extName');
+      assert.ok(cwsJa.includes(listings.ja.extDesc), 'CHROMEWEBSTORE_JA.md must include Japanese extDesc');
+      assert.ok(cwsJa.includes(listings.ja.detailedDescription), 'CHROMEWEBSTORE_JA.md must match ja.detailedDescription');
+    }
+  });
+
+  it('local extension package notispam-cleaner-v<version>.zip matches chrome_extension/ runtime files byte-for-byte and excludes dev scripts', (t) => {
+    const zipPath = path.join(ROOT_DIR, `notispam-cleaner-v${manifest.version}.zip`);
+    if (!fs.existsSync(zipPath)) {
+      t.skip(`notispam-cleaner-v${manifest.version}.zip is gitignored in CI checkout`);
+      return;
+    }
+
+    const buf = fs.readFileSync(zipPath);
+    assert.ok(buf.length >= 22, `Corrupt ZIP archive (too small): ${zipPath}`);
+
+    let eocdPos = -1;
+    const minEocd = Math.max(0, buf.length - 65557);
+    for (let i = buf.length - 22; i >= minEocd; i--) {
+      if (buf.readUInt32LE(i) === 0x06054b50 && 22 + buf.readUInt16LE(i + 20) === buf.length - i) {
+        eocdPos = i;
+        break;
+      }
+    }
+    assert.ok(eocdPos >= 0, `Missing PKZIP End of Central Directory record in ${zipPath}`);
+
+    const totalEntries = buf.readUInt16LE(eocdPos + 10);
+    const cdOffset = buf.readUInt32LE(eocdPos + 16);
+    const zipFiles = new Map();
+
+    let pos = cdOffset;
+    for (let idx = 0; idx < totalEntries; idx++) {
+      assert.equal(buf.readUInt32LE(pos), 0x02014b50, `Invalid Central Directory signature at entry ${idx}`);
+      const compressionMethod = buf.readUInt16LE(pos + 10);
+      const expectedCrc32 = buf.readUInt32LE(pos + 16);
+      const compressedSize = buf.readUInt32LE(pos + 20);
+      const uncompressedSize = buf.readUInt32LE(pos + 24);
+      const fileNameLen = buf.readUInt16LE(pos + 28);
+      const extraFieldLen = buf.readUInt16LE(pos + 30);
+      const fileCommentLen = buf.readUInt16LE(pos + 32);
+      const localHeaderOffset = buf.readUInt32LE(pos + 42);
+      const entryName = buf.subarray(pos + 46, pos + 46 + fileNameLen).toString('utf8');
+      pos += 46 + fileNameLen + extraFieldLen + fileCommentLen;
+
+      assert.ok(!entryName.startsWith('./') && !entryName.startsWith('/') && !entryName.includes('..'), `Invalid ZIP entry path: ${entryName}`);
+      assert.ok(
+        !/^(?:scripts(?:\/|$)|.*(?:^|\/)\.DS_Store$|.*__pycache__)/.test(entryName),
+        `Excluded dev/system artifact packaged in ZIP: ${entryName}`
+      );
+
+      if (entryName.endsWith('/')) continue;
+
+      assert.equal(buf.readUInt32LE(localHeaderOffset), 0x04034b50, `Invalid Local File Header for ${entryName}`);
+      const localNameLen = buf.readUInt16LE(localHeaderOffset + 26);
+      const localExtraLen = buf.readUInt16LE(localHeaderOffset + 28);
+      const dataStart = localHeaderOffset + 30 + localNameLen + localExtraLen;
+      const compressedData = buf.subarray(dataStart, dataStart + compressedSize);
+
+      let fileBytes;
+      if (compressionMethod === 0) {
+        fileBytes = compressedData;
+      } else if (compressionMethod === 8) {
+        fileBytes = zlib.inflateRawSync(compressedData);
+      } else {
+        assert.fail(`Unsupported ZIP compression method ${compressionMethod} for ${entryName}`);
+      }
+
+      assert.equal(fileBytes.length, uncompressedSize, `Decompressed size mismatch for ${entryName}`);
+      if (typeof zlib.crc32 === 'function') {
+        assert.equal(zlib.crc32(fileBytes) >>> 0, expectedCrc32, `CRC32 mismatch for ${entryName}`);
+      }
+      assert.ok(!zipFiles.has(entryName), `Duplicate entry in ZIP: ${entryName}`);
+      zipFiles.set(entryName, fileBytes);
+    }
+
+    function collectRuntimeFiles(dir, prefix = '') {
+      const results = [];
+      for (const dirent of fs.readdirSync(dir, { withFileTypes: true })) {
+        if (dirent.name === '.DS_Store') continue;
+        const rel = prefix ? `${prefix}/${dirent.name}` : dirent.name;
+        if (rel === 'scripts') continue;
+        const full = path.join(dir, dirent.name);
+        if (dirent.isDirectory()) {
+          results.push(...collectRuntimeFiles(full, rel));
+        } else if (dirent.isFile()) {
+          results.push(rel);
+        }
+      }
+      return results;
+    }
+
+    const expectedFiles = collectRuntimeFiles(EXT_DIR).sort();
+    const actualFiles = [...zipFiles.keys()].sort();
+    assert.deepEqual(actualFiles, expectedFiles, 'ZIP file list must exactly match chrome_extension/ runtime files');
+
+    for (const relPath of expectedFiles) {
+      const diskBytes = fs.readFileSync(path.join(EXT_DIR, relPath));
+      const zipBytes = zipFiles.get(relPath);
+      assert.equal(
+        Buffer.compare(zipBytes, diskBytes),
+        0,
+        `ZIP entry ${relPath} differs from chrome_extension/${relPath} — re-run ./make_zip.sh`
+      );
     }
   });
 });

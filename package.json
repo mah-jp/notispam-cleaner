@@ -1,13 +1,14 @@
 {
   "name": "notispam-cleaner",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": true,
   "description": "NotiSpam Cleaner Chrome Extension",
   "scripts": {
     "test": "node --test tests/*.test.js",
     "cws:publish": "node scripts/cws-publish.js",
     "cws:status": "node scripts/cws-publish.js --check-status",
-    "cws:token": "node scripts/cws-publish.js --get-token"
+    "cws:token": "node scripts/cws-publish.js --get-token",
+    "cws:assets": "node scripts/cws-upload-assets.js"
   },
   "license": "MIT"
 }
