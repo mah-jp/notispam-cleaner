@@ -176,6 +176,10 @@ describe('Extension Package & Localization Integrity', () => {
 
     const popupHtml = fs.readFileSync(path.join(EXT_DIR, 'popup.html'), 'utf8');
     const popupCss = fs.readFileSync(path.join(EXT_DIR, 'popup.css'), 'utf8');
+    assert.ok(
+      popupHtml.includes(`<span class="version-tag">v${manifest.version}</span>`),
+      `popup.html version-tag must match v${manifest.version}`
+    );
     assert.ok(!/https?:\/\//i.test(popupHtml), 'popup.html must not load external http(s) resources (e.g. Google Fonts)');
     assert.ok(!/https?:\/\//i.test(popupCss), 'popup.css must not load external http(s) resources');
   });
