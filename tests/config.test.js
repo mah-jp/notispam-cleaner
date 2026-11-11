@@ -502,5 +502,67 @@ describe('config.js — Domain, URL, Pattern, and Storage Helpers', () => {
       state = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [] });
       assert.deepEqual(state.blocked_domains, ['rollback-test.example:443']);
     });
+
+    it('isolates same-port HTTP vs HTTPS custom-port rules without cross-scheme false matches or collateral protocol wiping, and rolls back in-memory protocols on failure', async () => {
+      // 1. Same host:port across different schemes must NOT falsely match in matchesDomainRuleList
+      assert.equal(
+        config.matchesDomainRuleList(
+          'dual.local:3000',
+          ['dual.local:3000'],
+          { 'dual.local:3000': 'http' },
+          'https'
+        ),
+        false,
+        'https://dual.local:3000 must not match stored http://dual.local:3000 rule'
+      );
+      assert.equal(
+        config.matchesDomainRuleList(
+          'dual.local:8080',
+          ['dual.local:3000'],
+          { 'dual.local:3000': 'http' },
+          'http'
+        ),
+        true,
+        'http://dual.local:8080 must match stored http://dual.local:3000 port-wildcard rule'
+      );
+
+      // 2. extractHostAndPortFromUrl and extractProtocolFromUrl parse URLs without mutating knownDomainProtocols
+      assert.equal(config.extractProtocolFromUrl('http://peek.local:3000/test'), 'http');
+      assert.equal(config.extractHostAndPortFromUrl('http://peek.local:3000/test'), 'peek.local:3000');
+      assert.equal(config.getProtocolForDomain('peek.local:3000'), 'https');
+
+      // 3. Blocking an unrelated domain while an HTTPS tab on other.local:3000 was observed in memory
+      //    must NOT wipe persisted domain_protocols['other.local:3000'] = 'http'
+      config.rememberDomainProtocol('other.local:3000', 'http');
+      await config.blockAndRecordDomain('other.local:3000');
+      // Now observe https://other.local:3000 in memory (e.g. open tab) WITHOUT mutating other.local:3000's rule
+      config.getHostAndPortFromUrl('https://other.local:3000/preview');
+      assert.equal(config.getProtocolForDomain('other.local:3000'), 'https');
+
+      await config.blockAndRecordDomain('unrelated-spam.example:443');
+      const afterUnrelated = await chrome.storage.local.get({ blocked_domains: [], domain_protocols: {} });
+      assert.equal(
+        afterUnrelated.domain_protocols['other.local:3000'],
+        'http',
+        'Blocking an unrelated domain must preserve persisted HTTP protocol for untouched other.local:3000'
+      );
+
+      // 4. Failed allowAndTrustDomain with explicit customPattern rolls back in-memory knownDomainProtocols too
+      config.clearKnownDomainProtocols();
+      const origSet = chrome.contentSettings.notifications.set;
+      chrome.contentSettings.notifications.set = async () => {
+        throw new Error('Set failed on custom port');
+      };
+      await assert.rejects(
+        () => config.allowAndTrustDomain('rollback-proto.local:3000', 'http://rollback-proto.local:3000/*'),
+        /Set failed on custom port/
+      );
+      chrome.contentSettings.notifications.set = origSet;
+      assert.equal(
+        config.getProtocolForDomain('rollback-proto.local:3000'),
+        'https',
+        'Rollback must restore in-memory knownDomainProtocols when allowAndTrustDomain fails'
+      );
+    });
   });
 });

@@ -255,6 +255,10 @@ describe('Extension Package & Localization Integrity', () => {
       assert.ok(storePy.includes('SCREEN_ROLE_TITLES') && storePy.includes('draw_screen_role_header'), 'Store asset generator must render distinct localized role titles on Screen 1 and Screen 2');
       assert.ok(storePy.includes('BRAND_HEADER_Y = 90'), 'Store asset generator must align Screen 1 and Screen 2 brand headers at identical Y coordinate');
       assert.ok(storePy.includes('desc_max_lines=2'), 'Store asset generator must cap Screen 2 editorial point lines to prevent toast overlap on verbose locales');
+      assert.ok(
+        storePy.includes('tx = px - gap - avail_w') && !storePy.includes('tx = px - gap - min(avail_w, rtw)'),
+        'Store asset generator RTL role header must right-align within [px - gap - avail_w, px - gap] without colliding with pill'
+      );
       const expectedLocales = fs.readdirSync(path.join(EXT_DIR, '_locales')).sort();
       for (const locale of expectedLocales) {
         assert.ok(
@@ -310,9 +314,9 @@ describe('Extension Package & Localization Integrity', () => {
           );
         }
 
-        // Verify rendered role-header pill rgb(232, 240, 254) above callouts 1, 2, 3 (x=48..684, y=185..310)
+        // Verify rendered role-header pill rgb(232, 240, 254) above callouts 1, 2, 3 (x=48..684, y=185..330)
         let rolePillPixels = 0;
-        for (let y = 185; y <= 310; y++) {
+        for (let y = 185; y <= 330; y++) {
           for (let x = 48; x <= 684; x++) {
             const [r, g, b] = img.getPixel(x, y);
             if (Math.abs(r - 232) <= 2 && Math.abs(g - 240) <= 2 && Math.abs(b - 254) <= 2) {

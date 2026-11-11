@@ -147,6 +147,42 @@ describe('background.js — Real-Time Guard, Silent Guardian, Notification Actio
         'block'
       );
     });
+
+    it('treats HTTPS notification grant on custom port (:3000) as a new threat even when HTTP on the same host:port is already in blocked_domains', async () => {
+      // http://dual-guard.local:3000 was previously blocked
+      await config.blockAndRecordDomain('dual-guard.local:3000', 'http://dual-guard.local:3000/*');
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'http://dual-guard.local:3000/' })).setting,
+        'block'
+      );
+
+      // Now user visits https://dual-guard.local:3000/ and grants notifications in Normal Guard mode
+      await background.handleNotificationGranted('dual-guard.local:3000', 'https://dual-guard.local:3000/push');
+      assert.equal(
+        chrome._state.createdNotifications.size,
+        1,
+        'Must raise Security Alert when HTTPS grants notifications even if HTTP on same host:port was in blocked_domains'
+      );
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'https://dual-guard.local:3000/' })).setting,
+        'block'
+      );
+
+      // Verify same cross-scheme distinction in Silent Guardian mode (blocked_count MUST increment)
+      await config.blockAndRecordDomain('dual-silent.local:3000', 'http://dual-silent.local:3000/*');
+      await chrome.storage.local.set({
+        guard_enabled: true,
+        silent_guardian_enabled: true,
+        blocked_count: 3
+      });
+      await background.handleNotificationGranted('dual-silent.local:3000', 'https://dual-silent.local:3000/push');
+      const state = await chrome.storage.local.get({ blocked_count: 0 });
+      assert.equal(
+        state.blocked_count,
+        4,
+        'Silent Guardian must increment blocked_count when HTTPS grants notifications on same host:port as prior HTTP block'
+      );
+    });
   });
 
   describe('handleNotificationGranted — Silent Guardian (Family Mode)', () => {

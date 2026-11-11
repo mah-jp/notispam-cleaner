@@ -784,5 +784,102 @@ describe('popup.js — UI Localization, Scanning, Classification, Self-Healing, 
       assert.equal(document.getElementById('blocked-list').classList.contains('hidden'), false);
       assert.equal(document.getElementById('allowed-list').classList.contains('hidden'), true);
     });
+
+    it('isolates same-port HTTP vs HTTPS custom-port rules in Active Website card, Blocked list, and multi-scan self-healing', async () => {
+      // Scenario A: http://dual.local:3000 is blocked by app, while user opens https://dual.local:3000 ('ask') in active tab
+      await config.blockAndRecordDomain('dual.local:3000', 'http://dual.local:3000/*');
+      chrome._state.openTabs.splice(0, chrome._state.openTabs.length, {
+        id: 1,
+        active: true,
+        windowId: 1,
+        url: 'https://dual.local:3000/app'
+      });
+
+      await popup.initPopup();
+
+      // 1. Self-healing must NOT delete dual.local:3000 or its 'http' protocol entry
+      let storage = await chrome.storage.local.get({ blocked_domains: [], domain_protocols: {} });
+      assert.deepEqual(storage.blocked_domains, ['dual.local:3000']);
+      assert.deepEqual(storage.domain_protocols, { 'dual.local:3000': 'http' });
+
+      // 2. Active tab card for https://dual.local:3000 must show Ask (Standard) with Reset disabled
+      assert.equal(document.getElementById('current-site-status').textContent, 'Ask before sending (Standard)');
+      assert.equal(document.getElementById('current-site-reset').disabled, true);
+
+      // 3. Blocked list still contains http://dual.local:3000, and resetting it does NOT falsely warn about the HTTPS tab
+      let confirmCalls = 0;
+      global.confirm = () => { confirmCalls++; return true; };
+      const blockedRows = document.getElementById('blocked-list').querySelectorAll('.site-item');
+      assert.equal(blockedRows.length, 1);
+      assert.equal(blockedRows[0].querySelector('.site-domain').getAttribute('data-protocol'), 'http');
+      await blockedRows[0].querySelector('.unblock-btn').click();
+      assert.equal(confirmCalls, 0, 'Resetting HTTP rule must not warn when open tab on same port uses HTTPS');
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'http://dual.local:3000/' })).setting,
+        'ask'
+      );
+
+      // Scenario D: https://dual-https.local:3000 is blocked by app, while an old http:// bookmark exists across multiple scans
+      config.clearKnownDomainProtocols();
+      await config.blockAndRecordDomain('dual-https.local:3000', 'https://dual-https.local:3000/*');
+      chrome._state.bookmarkTree.splice(0, chrome._state.bookmarkTree.length, {
+        id: '0',
+        children: [{ id: '1', url: 'http://dual-https.local:3000/legacy-bookmark' }]
+      });
+      await popup.doScan();
+      await popup.doScan();
+      storage = await chrome.storage.local.get({ blocked_domains: [] });
+      assert.deepEqual(
+        storage.blocked_domains,
+        ['dual-https.local:3000'],
+        'HTTPS custom-port block must survive repeated scans even when an HTTP bookmark exists on the same host:port'
+      );
+    });
+
+    it('prompts confirmation on .unblock-btn when domain is open in a background tab or secondary window, and handles storage key removal in onChanged', async () => {
+      await config.blockAndRecordDomain('bg-open.example:443');
+      await config.blockAndRecordDomain('win2-open.example:443');
+
+      // Active tab in window 1 is an unrelated safe page, while blocked sites are open in a background tab and window 2
+      chrome._state.openTabs.splice(
+        0,
+        chrome._state.openTabs.length,
+        { id: 1, active: true, windowId: 1, url: 'https://news.example.org/' },
+        { id: 2, active: false, windowId: 1, url: 'https://bg-open.example/promo' },
+        { id: 3, active: true, windowId: 2, url: 'https://win2-open.example:8443/live' }
+      );
+
+      await popup.initPopup();
+
+      let confirmCalls = 0;
+      global.confirm = () => {
+        confirmCalls++;
+        return false;
+      };
+
+      const rows = document.getElementById('blocked-list').querySelectorAll('.site-item');
+      const bgRow = rows.find(li => li.querySelector('.site-domain').getAttribute('data-domain') === 'bg-open.example:443');
+      const win2Row = rows.find(li => li.querySelector('.site-domain').getAttribute('data-domain') === 'win2-open.example:443');
+      assert.ok(bgRow && win2Row);
+
+      await bgRow.querySelector('.unblock-btn').click();
+      assert.equal(confirmCalls, 1, 'Must warn when resetting a site open in a background tab');
+
+      await win2Row.querySelector('.unblock-btn').click();
+      assert.equal(confirmCalls, 2, 'Must warn when resetting a site open in another browser window (including cross-port HTTPS)');
+
+      // Verify storage.onChanged key removal/clear restores defaults (guard_enabled: true, silent_guardian_enabled: false)
+      await chrome.storage.local.set({ guard_enabled: false, silent_guardian_enabled: false });
+      assert.equal(document.getElementById('guard-toggle').checked, false);
+      assert.equal(document.getElementById('silent-toggle').disabled, true);
+
+      await chrome.storage.local.remove('guard_enabled');
+      assert.equal(
+        document.getElementById('guard-toggle').checked,
+        true,
+        'Removing guard_enabled key must restore UI toggle to true matching background.js default'
+      );
+      assert.equal(document.getElementById('silent-toggle').disabled, false);
+    });
   });
 });

@@ -26,12 +26,13 @@ async function processNotificationGranted(domain, url) {
     silent_guardian_enabled: false,
     user_whitelist: [],
     blocked_domains: [],
-    domain_protocols: {}
+    domain_protocols: null
   });
 
   syncDomainProtocols(data.domain_protocols);
 
-  const domainFromUrl = url ? getHostAndPortFromUrl(url) : null;
+  const urlProtocol = url ? extractProtocolFromUrl(url) : '';
+  const domainFromUrl = url ? extractHostAndPortFromUrl(url) : null;
   const targetDomain = domainFromUrl || normalizeDomain(domain);
   if (!targetDomain) return;
 
@@ -41,8 +42,9 @@ async function processNotificationGranted(domain, url) {
   // Exit if the domain is built-in trusted or user-whitelisted
   if (isDomainTrusted(targetDomain, data.user_whitelist)) return;
 
-  const patternWithPort = getPatternWithPortForDomain(targetDomain);
-  const checkUrl = getPrimaryUrlForDomain(targetDomain);
+  const targetProtocolMap = urlProtocol ? { [targetDomain]: urlProtocol } : null;
+  const patternWithPort = getPatternWithPortForDomain(targetDomain, targetProtocolMap);
+  const checkUrl = getPrimaryUrlForDomain(targetDomain, targetProtocolMap);
   if (!patternWithPort || !checkUrl) return;
 
   // Deduplicate concurrent messages from multiple tabs or skip if already blocked in Chrome
@@ -53,9 +55,9 @@ async function processNotificationGranted(domain, url) {
     }
   } catch (e) { }
 
-  // If already recorded in blocked_domains (e.g. transient window during rule clear/reapply),
+  // If already recorded in blocked_domains with the same scheme rule (e.g. transient window during rule clear/reapply),
   // silently re-enforce the block without firing a duplicate alert or inflating blocked_count.
-  if (matchesDomainRuleList(targetDomain, data.blocked_domains)) {
+  if (matchesDomainRuleList(targetDomain, data.blocked_domains, data.domain_protocols, urlProtocol || null)) {
     await blockPattern(patternWithPort);
     await updateActiveTabIcons();
     return;
