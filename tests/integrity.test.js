@@ -45,6 +45,18 @@ describe('Extension Package & Localization Integrity', () => {
         assert.ok(fs.existsSync(p), `Missing dynamic icon: ${p}`);
       }
     }
+
+    // Strict MV3 CSP & 100% offline/local-only popup assets (matching PRIVACY.md zero-external-network guarantee)
+    assert.ok(manifest.content_security_policy && manifest.content_security_policy.extension_pages);
+    const csp = manifest.content_security_policy.extension_pages;
+    assert.ok(csp.includes("default-src 'self'"), 'CSP must restrict default-src to self');
+    assert.ok(csp.includes("script-src 'self'"), 'CSP must restrict script-src to self');
+    assert.ok(csp.includes("connect-src 'none'"), 'CSP must disallow external network connections');
+
+    const popupHtml = fs.readFileSync(path.join(EXT_DIR, 'popup.html'), 'utf8');
+    const popupCss = fs.readFileSync(path.join(EXT_DIR, 'popup.css'), 'utf8');
+    assert.ok(!/https?:\/\//i.test(popupHtml), 'popup.html must not load external http(s) resources (e.g. Google Fonts)');
+    assert.ok(!/https?:\/\//i.test(popupCss), 'popup.css must not load external http(s) resources');
   });
 
   it('all 35 supported locales exist, conform to Chrome Web Store limits, and have identical keys and valid placeholders', () => {
@@ -92,9 +104,12 @@ describe('Extension Package & Localization Integrity', () => {
     const popupJs = fs.readFileSync(path.join(EXT_DIR, 'popup.js'), 'utf8');
     const bgJs = fs.readFileSync(path.join(EXT_DIR, 'background.js'), 'utf8');
 
-    const htmlMatches = [...html.matchAll(/data-i18n="([^"]+)"/g)].map(m => m[1]);
+    const htmlMatches = [
+      ...[...html.matchAll(/data-i18n="([^"]+)"/g)].map(m => m[1]),
+      ...[...html.matchAll(/data-i18n-title="([^"]+)"/g)].map(m => m[1])
+    ];
     for (const key of htmlMatches) {
-      assert.ok(key in enMessages, `popup.html data-i18n="${key}" missing from messages.json`);
+      assert.ok(key in enMessages, `popup.html data-i18n*="${key}" missing from messages.json`);
     }
 
     const jsMatches = [...(popupJs + '\n' + bgJs).matchAll(/getMessage\(['"]([^'"]+)['"]/g)].map(m => m[1]);
@@ -115,6 +130,15 @@ describe('Extension Package & Localization Integrity', () => {
       assert.ok(!storePy.includes('spam-example.com'), 'Store asset generator must not use non-reserved domain spam-example.com');
       assert.ok(!storePy.includes('www.google.com'), 'Store asset generator must not use www.google.com in screenshots');
       assert.ok(!storePy.includes('www.example.com'), 'Store asset generator should use spam.example.com instead of www.example.com');
+      assert.ok(!storePy.includes('(238, 238, 238'), 'Store asset generator must unify both Screen 1 and Screen 2 backgrounds to pure white (#ffffff)');
+      assert.ok(storePy.includes('SCREEN_ROLE_TITLES') && storePy.includes('draw_screen_role_header'), 'Store asset generator must render distinct localized role titles on Screen 1 and Screen 2');
+      const expectedLocales = fs.readdirSync(path.join(EXT_DIR, '_locales')).sort();
+      for (const locale of expectedLocales) {
+        assert.ok(
+          new RegExp(`['"]${locale}['"]\\s*:\\s*\\(`).test(storePy),
+          `SCREEN_ROLE_TITLES in generate_store_assets.py missing locale ${locale}`
+        );
+      }
     }
   });
 

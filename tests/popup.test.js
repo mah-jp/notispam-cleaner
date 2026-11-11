@@ -13,6 +13,7 @@ const popup = require('../chrome_extension/popup');
 
 describe('popup.js — UI Localization, Scanning, Classification, Self-Healing, and User Actions', () => {
   beforeEach(() => {
+    config.clearKnownDomainProtocols();
     global.document = createPopupDocument();
     global.confirm = () => true;
     global.chrome = createChromeMock({
@@ -96,6 +97,13 @@ describe('popup.js — UI Localization, Scanning, Classification, Self-Healing, 
         'scam-alerts.xyz:443'
       ]);
     });
+
+    it('gracefully continues scanning remaining sources if history or bookmarks API rejects', async () => {
+      chrome.history.search = async () => { throw new Error('History unavailable'); };
+      chrome.bookmarks.getTree = async () => { throw new Error('Bookmarks unavailable'); };
+      const domains = await popup.gatherDomains();
+      assert.deepEqual(domains, ['active-site.io:443']);
+    });
   });
 
   describe('doScan — Classification, Self-Healing, and Global Default Handling', () => {
@@ -178,6 +186,87 @@ describe('popup.js — UI Localization, Scanning, Classification, Self-Healing, 
 
       await popup.updateCurrentSiteStatusUI('http-spam.test:8080');
       assert.equal(document.getElementById('current-site-status').textContent, 'Blocked (By App)');
+    });
+
+    it('detects and cleans browser-granted permissions on non-standard ports (:3000, :8443) where port 80/443 is not allowed', async () => {
+      chrome._state.historyItems.push(
+        { url: 'http://port-scam.local:3000/push' },
+        { url: 'https://tls-scam.example:8443/offer' }
+      );
+      // Browser permission granted ONLY on :3000 and :8443 (NOT on :80 or :443)
+      chrome._state.setBrowserRule('http://port-scam.local:3000/*', 'allow');
+      chrome._state.setBrowserRule('https://tls-scam.example:8443/*', 'allow');
+
+      await popup.doScan();
+
+      assert.deepEqual(popup.getCurrentSuspiciousSites().sort(), [
+        'port-scam.local:3000',
+        'tls-scam.example:8443'
+      ]);
+
+      await popup.cleanAllSuspicious();
+      assert.equal(await popup.getNotificationSetting('port-scam.local:3000'), 'block');
+      assert.equal(await popup.getNotificationSetting('tls-scam.example:8443'), 'block');
+      assert.deepEqual(popup.getCurrentSuspiciousSites(), []);
+    });
+
+    it('renders Reset (.unblock-btn) only for user-whitelisted trusted sites and not for built-in browser-allowed trusted sites', async () => {
+      chrome._state.setBrowserRule('https://mail.google.com/*', 'allow');
+      await config.allowAndTrustDomain('custom-trusted.org:443');
+
+      await popup.doScan();
+
+      const allowedItems = document.getElementById('allowed-list').querySelectorAll('.site-item');
+      const googleItem = allowedItems.find(li => li.querySelector('.site-domain').getAttribute('data-domain') === 'mail.google.com:443');
+      const customItem = allowedItems.find(li => li.querySelector('.site-domain').getAttribute('data-domain') === 'custom-trusted.org:443');
+
+      assert.ok(googleItem, 'Built-in trusted site should appear in Allowed list');
+      assert.equal(googleItem.querySelector('.unblock-btn'), null, 'Built-in browser-allowed site must not show dead Reset button');
+      assert.ok(googleItem.querySelector('.block-btn'), 'Built-in trusted site can still be explicitly blocked');
+
+      assert.ok(customItem, 'User-whitelisted site should appear in Allowed list');
+      assert.ok(customItem.querySelector('.unblock-btn'), 'User-whitelisted site must show Reset button');
+    });
+
+    it('renders Unblock (.unblock-btn) only for app-blocked sites and not for browser-blocked sites, and distinguishes global vs browser status on Active Website card', async () => {
+      chrome._state.setBrowserRule('https://bookmarked-spam.net/*', 'block');
+      await popup.blockDomain('legacy-http.example:80');
+
+      await popup.doScan();
+
+      const blockedItems = document.getElementById('blocked-list').querySelectorAll('.site-item');
+      const browserBlockedItem = blockedItems.find(li => li.querySelector('.site-domain').getAttribute('data-domain') === 'bookmarked-spam.net:443');
+      const appBlockedItem = blockedItems.find(li => li.querySelector('.site-domain').getAttribute('data-domain') === 'legacy-http.example:80');
+
+      assert.ok(browserBlockedItem);
+      assert.equal(browserBlockedItem.querySelector('.unblock-btn'), null, 'Browser-blocked site cannot be reset via extension clear()');
+      assert.ok(browserBlockedItem.querySelector('.trust-btn'), 'Browser-blocked site can still be trusted/allowed via extension rule');
+
+      assert.ok(appBlockedItem);
+      assert.ok(appBlockedItem.querySelector('.unblock-btn'), 'App-blocked site must render Unblock button');
+
+      // Active Website status & Reset button state:
+      // 1. Browser-blocked site (no app rule) -> statusActiveBlockedBrowser, reset disabled
+      await popup.updateCurrentSiteStatusUI('bookmarked-spam.net:443');
+      assert.equal(document.getElementById('current-site-status').textContent, 'Blocked (By Browser)');
+      assert.equal(document.getElementById('current-site-reset').disabled, true);
+
+      // 2. Global default set to 'block' on normal site -> statusActiveBlocked ("Blocked (Safe)"), reset disabled
+      await popup.setGlobalDefault('block');
+      await popup.updateCurrentSiteStatusUI('active-site.io:443');
+      assert.equal(document.getElementById('current-site-status').textContent, 'Blocked (Safe)');
+      assert.equal(document.getElementById('current-site-reset').disabled, true);
+
+      // 3. App-blocked site -> statusActiveBlockedApp ("Blocked (By App)"), reset enabled
+      await popup.updateCurrentSiteStatusUI('legacy-http.example:80');
+      assert.equal(document.getElementById('current-site-status').textContent, 'Blocked (By App)');
+      assert.equal(document.getElementById('current-site-reset').disabled, false);
+
+      // 4. Global default set to 'allow' on unverified site -> statusActiveAllowed ("Allowed (Caution)"), reset disabled
+      await popup.setGlobalDefault('allow');
+      await popup.updateCurrentSiteStatusUI('active-site.io:443');
+      assert.equal(document.getElementById('current-site-status').textContent, 'Allowed (Caution)');
+      assert.equal(document.getElementById('current-site-reset').disabled, true);
     });
   });
 
@@ -310,11 +399,20 @@ describe('popup.js — UI Localization, Scanning, Classification, Self-Healing, 
       await document.getElementById('close-help-btn').click();
       assert.equal(helpOverlay.classList.contains('hidden'), true);
 
-      // Help drawer also closes when clicking the overlay backdrop directly
+      // Help drawer also closes when clicking the overlay backdrop directly or pressing Escape
       await document.getElementById('help-btn').click();
       assert.equal(helpOverlay.classList.contains('hidden'), false);
       await helpOverlay.trigger('click', { target: helpOverlay });
       assert.equal(helpOverlay.classList.contains('hidden'), true);
+
+      await document.getElementById('help-btn').click();
+      assert.equal(helpOverlay.classList.contains('hidden'), false);
+      await document.dispatchEvent({ type: 'keydown', key: 'Escape' });
+      assert.equal(helpOverlay.classList.contains('hidden'), true);
+
+      // Help button title & aria-label localized via data-i18n-title
+      assert.equal(document.getElementById('help-btn').getAttribute('title'), 'What is Notification Abuse?');
+      assert.equal(document.getElementById('help-btn').getAttribute('aria-label'), 'What is Notification Abuse?');
 
       // Open browser notification settings button
       await document.getElementById('open-settings-btn').click();

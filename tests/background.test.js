@@ -11,6 +11,7 @@ const background = require('../chrome_extension/background');
 
 describe('background.js — Real-Time Guard, Silent Guardian, Notification Actions, and Icon Sync', () => {
   beforeEach(() => {
+    config.clearKnownDomainProtocols();
     global.chrome = createChromeMock({
       tabs: [{ id: 1, url: 'https://suspicious.example/page', active: true, windowId: 1 }]
     });
@@ -78,6 +79,37 @@ describe('background.js — Real-Time Guard, Silent Guardian, Notification Actio
       assert.equal(chrome._state.createdNotifications.size, 1);
       const storage = await chrome.storage.local.get({ blocked_domains: [] });
       assert.deepEqual(storage.blocked_domains, ['spam-concurrent.com:443']);
+    });
+
+    it('preserves non-standard HTTP port (:3000) across MV3 service worker cold-start when user clicks Trust & Allow', async () => {
+      chrome._state.openTabs[0] = { id: 1, url: 'http://dev-app.local:3000/dashboard', active: true, windowId: 1 };
+      chrome._state.setBrowserRule('http://dev-app.local:3000/*', 'allow');
+
+      await background.handleNotificationGranted('dev-app.local:3000', 'http://dev-app.local:3000/dashboard');
+
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'http://dev-app.local:3000/' })).setting,
+        'block'
+      );
+      let storage = await chrome.storage.local.get({ blocked_domains: [], domain_protocols: {} });
+      assert.deepEqual(storage.blocked_domains, ['dev-app.local:3000']);
+      assert.deepEqual(storage.domain_protocols, { 'dev-app.local:3000': 'http' });
+
+      const [notifId] = Array.from(chrome._state.createdNotifications.keys());
+
+      // Simulate MV3 service worker termination & cold-start clearing in-memory protocol cache
+      config.clearKnownDomainProtocols();
+
+      await background.handleNotificationButtonClicked(notifId, 0);
+
+      assert.equal(
+        (await chrome.contentSettings.notifications.get({ primaryUrl: 'http://dev-app.local:3000/' })).setting,
+        'allow'
+      );
+      storage = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [], domain_protocols: {} });
+      assert.deepEqual(storage.blocked_domains, []);
+      assert.deepEqual(storage.user_whitelist, ['dev-app.local:3000']);
+      assert.deepEqual(storage.domain_protocols, { 'dev-app.local:3000': 'http' });
     });
   });
 

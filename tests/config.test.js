@@ -5,6 +5,7 @@ const config = require('../chrome_extension/config');
 
 describe('config.js — Domain, URL, Pattern, and Storage Helpers', () => {
   beforeEach(() => {
+    config.clearKnownDomainProtocols();
     global.chrome = createChromeMock();
   });
 
@@ -17,12 +18,15 @@ describe('config.js — Domain, URL, Pattern, and Storage Helpers', () => {
       assert.equal(config.getCleanHostname('sub.domain.co.jp.:443'), 'sub.domain.co.jp');
     });
 
-    it('handles IPv6 addresses with and without port', () => {
+    it('handles IPv6 addresses with and without port (including IPv4-mapped IPv6)', () => {
       assert.equal(config.normalizeDomain('[::1]:8080'), '[::1]:8080');
       assert.equal(config.normalizeDomain('[2001:DB8::1]'), '[2001:db8::1]');
+      assert.equal(config.normalizeDomain('[::ffff:127.0.0.1]:3000'), '[::ffff:127.0.0.1]:3000');
       assert.equal(config.getCleanHostname('[::1]:8080'), '[::1]');
       assert.equal(config.normalizeDomain('[::1:8080'), '');
       assert.equal(config.normalizeDomain('[::1]:abc'), '');
+      assert.equal(config.normalizeDomain('[:]'), '');
+      assert.equal(config.normalizeDomain('[.:1]'), '');
     });
 
     it('rejects empty, non-string, malformed, or out-of-range port domains', () => {
@@ -50,9 +54,16 @@ describe('config.js — Domain, URL, Pattern, and Storage Helpers', () => {
 
       // Custom port HTTP URL tracked via getHostAndPortFromUrl / rememberDomainProtocol
       assert.equal(config.getHostAndPortFromUrl('http://custom-http.local:3000/app'), 'custom-http.local:3000');
+      assert.equal(config.getPortFromDomain('custom-http.local:3000'), '3000');
+      assert.equal(config.getPortFromDomain('[::1]:8080'), '8080');
+      assert.equal(config.getPortFromDomain('example.com'), '');
       assert.equal(config.getProtocolForDomain('custom-http.local:3000'), 'http');
       assert.equal(config.getPrimaryPatternForDomain('custom-http.local:3000'), 'http://custom-http.local/*');
-      assert.equal(config.getPrimaryUrlForDomain('custom-http.local:3000'), 'http://custom-http.local/');
+      assert.equal(config.getPatternWithPortForDomain('custom-http.local:3000'), 'http://custom-http.local:3000/*');
+      assert.equal(config.getPrimaryUrlForDomain('custom-http.local:3000'), 'http://custom-http.local:3000/');
+      assert.equal(config.getPrimaryUrlForDomain('scam.example:8443'), 'https://scam.example:8443/');
+      assert.equal(config.getHostAndPortFromUrl('http://[::1]:8080/app'), '[::1]:8080');
+      assert.equal(config.getPrimaryUrlForDomain('[::1]:8080'), 'http://[::1]:8080/');
       assert.equal(
         config.getSiteDetailsUrl('custom-http.local:3000'),
         'chrome://settings/content/siteDetails?site=http%3A%2F%2Fcustom-http.local%3A3000'
@@ -163,14 +174,16 @@ describe('config.js — Domain, URL, Pattern, and Storage Helpers', () => {
       assert.equal(config.stripPortFromPattern('https://example.com:8443/path'), 'https://example.com/path');
       assert.equal(config.stripPortFromPattern('https://example.com:*/*'), 'https://example.com/*');
       assert.equal(config.stripPortFromPattern('http://[::1]:8080/*'), 'http://[::1]/*');
+      assert.equal(config.stripPortFromPattern('*://Example.COM:8080/*'), '*://example.com/*');
       assert.equal(config.stripPortFromPattern('<all_urls>'), '<all_urls>');
       assert.equal(config.stripPortFromPattern(''), '');
     });
 
-    it('extracts domain:port from contentSettings patterns (including IPv6 wildcard ports) and rejects wildcard-only patterns', () => {
+    it('extracts domain:port from contentSettings patterns (including *:// and IPv6 wildcard ports) and rejects wildcard-only patterns', () => {
       assert.equal(config.getDomainFromPattern('https://example.com:443/*'), 'example.com:443');
       assert.equal(config.getDomainFromPattern('http://example.com:80/*'), 'example.com:80');
       assert.equal(config.getDomainFromPattern('https://[*.]sub.example.com/*'), 'sub.example.com:443');
+      assert.equal(config.getDomainFromPattern('*://[*.]example.com/*'), 'example.com:443');
       assert.equal(config.getDomainFromPattern('https://example.com:*/*'), 'example.com:443');
       assert.equal(config.getDomainFromPattern('http://[::1]:*/*'), '[::1]:80');
       assert.equal(config.getDomainFromPattern('example.com'), 'example.com:443');
@@ -239,6 +252,83 @@ describe('config.js — Domain, URL, Pattern, and Storage Helpers', () => {
 
       const details = await chrome.contentSettings.notifications.get({ primaryUrl: 'https://site.org/' });
       assert.equal(details.setting, 'allow');
+    });
+
+    it('prunes domain_protocols in storage when custom-port HTTP domains are removed or cleared', async () => {
+      config.rememberDomainProtocol('http-one.local:3000', 'http');
+      config.rememberDomainProtocol('http-two.local:8080', 'http');
+      await config.addBlockedDomain('http-one.local:3000');
+      await config.addWhitelistedDomain('http-two.local:8080');
+
+      let data = await chrome.storage.local.get({ domain_protocols: {} });
+      assert.deepEqual(data.domain_protocols, {
+        'http-one.local:3000': 'http',
+        'http-two.local:8080': 'http'
+      });
+
+      await config.removeBlockedDomain('http-one.local:3000');
+      data = await chrome.storage.local.get({ domain_protocols: {} });
+      assert.deepEqual(data.domain_protocols, {
+        'http-two.local:8080': 'http'
+      });
+
+      await config.removeWhitelistedDomain('http-two.local:8080');
+      data = await chrome.storage.local.get({ domain_protocols: {} });
+      assert.deepEqual(data.domain_protocols, {});
+    });
+
+    it('serializes concurrent resetDomainRules without losing global default block or remaining rules', async () => {
+      await config.setGlobalNotificationDefault('block');
+      await config.blockAndRecordDomain('spam-a.com:443');
+      await config.blockAndRecordDomain('spam-b.com:443');
+      await config.blockAndRecordDomain('spam-keep.com:443');
+      await config.allowAndTrustDomain('trusted-keep.com:443');
+
+      await Promise.all([
+        config.resetDomainRules('spam-a.com:443'),
+        config.resetDomainRules('spam-b.com:443')
+      ]);
+
+      assert.equal(await config.getGlobalNotificationDefault(), 'block');
+      const keepBlocked = await chrome.contentSettings.notifications.get({ primaryUrl: 'https://spam-keep.com/' });
+      const keepTrusted = await chrome.contentSettings.notifications.get({ primaryUrl: 'https://trusted-keep.com/' });
+      assert.equal(keepBlocked.setting, 'block');
+      assert.equal(keepTrusted.setting, 'allow');
+
+      const storage = await chrome.storage.local.get({ blocked_domains: [], user_whitelist: [] });
+      assert.deepEqual(storage.blocked_domains, ['spam-keep.com:443']);
+      assert.deepEqual(storage.user_whitelist, ['trusted-keep.com:443']);
+    });
+
+    it('setGlobalNotificationDefault("ask") clears <all_urls> override so browser-native PrefProvider rules are not shadowed', async () => {
+      chrome._state.setBrowserRule('https://mail.google.com/*', 'allow');
+      chrome._state.setBrowserRule('https://scam.example/*', 'allow');
+      await config.allowAndTrustDomain('ext-trusted.org:443');
+
+      // Global block overrides browser-native PrefProvider rules while keeping extension whitelist
+      await config.setGlobalNotificationDefault('block');
+      assert.equal(await config.getGlobalNotificationDefault(), 'block');
+      assert.equal((await chrome.contentSettings.notifications.get({ primaryUrl: 'https://scam.example/' })).setting, 'block');
+      assert.equal((await chrome.contentSettings.notifications.get({ primaryUrl: 'https://ext-trusted.org/' })).setting, 'allow');
+
+      // Restoring 'ask' removes <all_urls> from ExtensionProvider, restoring PrefProvider site rules
+      await config.setGlobalNotificationDefault('ask');
+      assert.equal(await config.getGlobalNotificationDefault(), 'ask');
+      assert.equal((await chrome.contentSettings.notifications.get({ primaryUrl: 'https://mail.google.com/' })).setting, 'allow');
+      assert.equal((await chrome.contentSettings.notifications.get({ primaryUrl: 'https://scam.example/' })).setting, 'allow');
+      assert.equal((await chrome.contentSettings.notifications.get({ primaryUrl: 'https://ext-trusted.org/' })).setting, 'allow');
+    });
+
+    it('serializes incrementBlockedCount and resetBlockedCount atomically', async () => {
+      const counts = await Promise.all([
+        config.incrementBlockedCount(),
+        config.incrementBlockedCount(),
+        config.incrementBlockedCount()
+      ]);
+      assert.deepEqual(counts, [1, 2, 3]);
+      await config.resetBlockedCount();
+      const afterReset = await config.incrementBlockedCount();
+      assert.equal(afterReset, 1);
     });
   });
 });

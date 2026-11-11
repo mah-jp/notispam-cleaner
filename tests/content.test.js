@@ -95,12 +95,46 @@ describe('content.js — Real-time Notification Permission Monitor', () => {
     await initContentPermissionMonitor();
     assert.equal(chrome._state.sentMessages.length, 0);
 
-    // 2. Rejected sendMessage promise does not cause unhandled rejection
-    global.window.location.hostname = 'valid.example';
+    // 2. Non-http(s) protocol with non-empty hostname (e.g. chrome://settings) is ignored
+    global.window.location = {
+      hostname: 'settings',
+      port: '',
+      protocol: 'chrome:',
+      href: 'chrome://settings/content/notifications'
+    };
+    await initContentPermissionMonitor();
+    assert.equal(chrome._state.sentMessages.length, 0);
+
+    // 3. Rejected sendMessage promise does not cause unhandled rejection
+    global.window.location = {
+      hostname: 'valid.example',
+      port: '',
+      protocol: 'https:',
+      href: 'https://valid.example/'
+    };
     chrome.runtime.sendMessage = () => Promise.reject(new Error('Extension context invalidated'));
     await initContentPermissionMonitor();
 
-    // 3. Missing navigator.permissions
+    // 4. navigator.permissions without .query method or rejected .query() returns null cleanly
+    Object.defineProperty(globalThis, 'navigator', {
+      value: { permissions: {} },
+      configurable: true,
+      writable: true
+    });
+    assert.equal(await initContentPermissionMonitor(), null);
+
+    Object.defineProperty(globalThis, 'navigator', {
+      value: {
+        permissions: {
+          query: () => Promise.reject(new Error('Permissions API blocked'))
+        }
+      },
+      configurable: true,
+      writable: true
+    });
+    assert.equal(await initContentPermissionMonitor(), null);
+
+    // 5. Missing navigator.permissions
     Object.defineProperty(globalThis, 'navigator', {
       value: {},
       configurable: true,
