@@ -259,6 +259,16 @@ describe('Extension Package & Localization Integrity', () => {
         storePy.includes('tx = px - gap - avail_w') && !storePy.includes('tx = px - gap - min(avail_w, rtw)'),
         'Store asset generator RTL role header must right-align within [px - gap - avail_w, px - gap] without colliding with pill'
       );
+      assert.ok(
+        storePy.includes('_CairoSurfaceImage') &&
+        storePy.includes("frombuffer('RGBa'") &&
+        !storePy.includes("frombuffer('RGBA', (self.width, self.height), buf, 'raw', 'BGRA'"),
+        'Store asset generator must include Cairo stdlib PNG fallback and unpremultiply Cairo BGRa surfaces without double-premultiplication'
+      );
+      assert.ok(
+        storePy.includes('crop((1208, 44, 1243, 75))') && !storePy.includes('crop((0, 0, 1280, 82))'),
+        'Store asset generator must patch only the toolbar icon on Screen 2 without introducing a popup top-edge notch'
+      );
       const expectedLocales = fs.readdirSync(path.join(EXT_DIR, '_locales')).sort();
       for (const locale of expectedLocales) {
         assert.ok(
@@ -296,9 +306,11 @@ describe('Extension Package & Localization Integrity', () => {
     ];
 
     for (const locale of locales) {
+      const screenImgs = {};
       for (const screenNum of [1, 2]) {
         const p = path.join(imagesDir, `notispam-cleaner_screen-${screenNum}_${locale}.png`);
         const img = decodePngPixels(p);
+        screenImgs[screenNum] = img;
         assert.equal(img.width, 1280, `Invalid width for ${p}`);
         assert.equal(img.height, 800, `Invalid height for ${p}`);
         assert.equal(img.bitDepth, 8, `Expected 8-bit channel depth for ${p}`);
@@ -328,7 +340,29 @@ describe('Extension Package & Localization Integrity', () => {
           rolePillPixels >= 40,
           `Expected rendered role-header pill rgb(232, 240, 254) in ${path.basename(p)} (found ${rolePillPixels} pixels) — re-run generate_store_assets.py`
         );
+
+        // Verify bright yellow marker highlight rgb(255, 235, 126) without double-premultiplied olive darkening
+        let brightHighlightPixels = 0;
+        for (let y = 240; y <= 650; y += 2) {
+          for (let x = 48; x <= 684; x += 2) {
+            const [r, g, b] = img.getPixel(x, y);
+            if (r >= 245 && g >= 225 && g <= 245 && b >= 105 && b <= 150) {
+              brightHighlightPixels++;
+            }
+          }
+        }
+        assert.ok(
+          brightHighlightPixels >= 20,
+          `Expected bright yellow marker highlight ~rgb(255, 235, 126) without premultiplied darkening in ${path.basename(p)} (found ${brightHighlightPixels} pixels) — re-run generate_store_assets.py`
+        );
       }
+
+      // Verify Screen 1 and Screen 2 have identical Chrome toolbar bottom-border pixels just left of the popup (no shifted-popup notch)
+      assert.deepEqual(
+        screenImgs[2].getPixel(802, 81),
+        screenImgs[1].getPixel(802, 81),
+        `Expected Screen 2 toolbar border at (802, 81) to match Screen 1 without shifted-popup notch for locale ${locale}`
+      );
     }
 
     for (const bannerFile of ['notispam-cleaner_banner.png', 'notispam-cleaner_banner_en.png']) {
@@ -414,6 +448,106 @@ describe('Extension Package & Localization Integrity', () => {
       assert.ok(cwsJa.includes(listings.ja.extName), 'CHROMEWEBSTORE_JA.md must include Japanese extName');
       assert.ok(cwsJa.includes(listings.ja.extDesc), 'CHROMEWEBSTORE_JA.md must include Japanese extDesc');
       assert.ok(cwsJa.includes(listings.ja.detailedDescription), 'CHROMEWEBSTORE_JA.md must match ja.detailedDescription');
+    }
+  });
+
+  it('local extension package notispam-cleaner-v<version>.zip matches chrome_extension/ runtime files byte-for-byte and excludes dev scripts', (t) => {
+    const zipPath = path.join(ROOT_DIR, `notispam-cleaner-v${manifest.version}.zip`);
+    if (!fs.existsSync(zipPath)) {
+      t.skip(`notispam-cleaner-v${manifest.version}.zip is gitignored in CI checkout`);
+      return;
+    }
+
+    const buf = fs.readFileSync(zipPath);
+    assert.ok(buf.length >= 22, `Corrupt ZIP archive (too small): ${zipPath}`);
+
+    let eocdPos = -1;
+    const minEocd = Math.max(0, buf.length - 65557);
+    for (let i = buf.length - 22; i >= minEocd; i--) {
+      if (buf.readUInt32LE(i) === 0x06054b50 && 22 + buf.readUInt16LE(i + 20) === buf.length - i) {
+        eocdPos = i;
+        break;
+      }
+    }
+    assert.ok(eocdPos >= 0, `Missing PKZIP End of Central Directory record in ${zipPath}`);
+
+    const totalEntries = buf.readUInt16LE(eocdPos + 10);
+    const cdOffset = buf.readUInt32LE(eocdPos + 16);
+    const zipFiles = new Map();
+
+    let pos = cdOffset;
+    for (let idx = 0; idx < totalEntries; idx++) {
+      assert.equal(buf.readUInt32LE(pos), 0x02014b50, `Invalid Central Directory signature at entry ${idx}`);
+      const compressionMethod = buf.readUInt16LE(pos + 10);
+      const expectedCrc32 = buf.readUInt32LE(pos + 16);
+      const compressedSize = buf.readUInt32LE(pos + 20);
+      const uncompressedSize = buf.readUInt32LE(pos + 24);
+      const fileNameLen = buf.readUInt16LE(pos + 28);
+      const extraFieldLen = buf.readUInt16LE(pos + 30);
+      const fileCommentLen = buf.readUInt16LE(pos + 32);
+      const localHeaderOffset = buf.readUInt32LE(pos + 42);
+      const entryName = buf.subarray(pos + 46, pos + 46 + fileNameLen).toString('utf8');
+      pos += 46 + fileNameLen + extraFieldLen + fileCommentLen;
+
+      assert.ok(!entryName.startsWith('./') && !entryName.startsWith('/') && !entryName.includes('..'), `Invalid ZIP entry path: ${entryName}`);
+      assert.ok(
+        !/^(?:scripts(?:\/|$)|.*(?:^|\/)\.DS_Store$|.*__pycache__)/.test(entryName),
+        `Excluded dev/system artifact packaged in ZIP: ${entryName}`
+      );
+
+      if (entryName.endsWith('/')) continue;
+
+      assert.equal(buf.readUInt32LE(localHeaderOffset), 0x04034b50, `Invalid Local File Header for ${entryName}`);
+      const localNameLen = buf.readUInt16LE(localHeaderOffset + 26);
+      const localExtraLen = buf.readUInt16LE(localHeaderOffset + 28);
+      const dataStart = localHeaderOffset + 30 + localNameLen + localExtraLen;
+      const compressedData = buf.subarray(dataStart, dataStart + compressedSize);
+
+      let fileBytes;
+      if (compressionMethod === 0) {
+        fileBytes = compressedData;
+      } else if (compressionMethod === 8) {
+        fileBytes = zlib.inflateRawSync(compressedData);
+      } else {
+        assert.fail(`Unsupported ZIP compression method ${compressionMethod} for ${entryName}`);
+      }
+
+      assert.equal(fileBytes.length, uncompressedSize, `Decompressed size mismatch for ${entryName}`);
+      if (typeof zlib.crc32 === 'function') {
+        assert.equal(zlib.crc32(fileBytes) >>> 0, expectedCrc32, `CRC32 mismatch for ${entryName}`);
+      }
+      assert.ok(!zipFiles.has(entryName), `Duplicate entry in ZIP: ${entryName}`);
+      zipFiles.set(entryName, fileBytes);
+    }
+
+    function collectRuntimeFiles(dir, prefix = '') {
+      const results = [];
+      for (const dirent of fs.readdirSync(dir, { withFileTypes: true })) {
+        if (dirent.name === '.DS_Store') continue;
+        const rel = prefix ? `${prefix}/${dirent.name}` : dirent.name;
+        if (rel === 'scripts') continue;
+        const full = path.join(dir, dirent.name);
+        if (dirent.isDirectory()) {
+          results.push(...collectRuntimeFiles(full, rel));
+        } else if (dirent.isFile()) {
+          results.push(rel);
+        }
+      }
+      return results;
+    }
+
+    const expectedFiles = collectRuntimeFiles(EXT_DIR).sort();
+    const actualFiles = [...zipFiles.keys()].sort();
+    assert.deepEqual(actualFiles, expectedFiles, 'ZIP file list must exactly match chrome_extension/ runtime files');
+
+    for (const relPath of expectedFiles) {
+      const diskBytes = fs.readFileSync(path.join(EXT_DIR, relPath));
+      const zipBytes = zipFiles.get(relPath);
+      assert.equal(
+        Buffer.compare(zipBytes, diskBytes),
+        0,
+        `ZIP entry ${relPath} differs from chrome_extension/${relPath} — re-run ./make_zip.sh`
+      );
     }
   });
 });
